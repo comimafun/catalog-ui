@@ -16,6 +16,7 @@
     "framer-motion": "^11.2.10",
     "next": "14.2.3",
     "nookies": "^2.5.2",
+    "qs": "^6.12.1",
     "react": "^18",
     "react-dom": "^18",
     "tailwind-merge": "^2.3.0",
@@ -24,6 +25,7 @@
   "devDependencies": {
     "@tanstack/react-query-devtools": "^5.40.1",
     "@types/node": "^20",
+    "@types/qs": "^6.9.15",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "eslint": "^8",

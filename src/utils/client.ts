@@ -1,3 +1,5 @@
+import qs from 'qs';
+
 const parseError = (err: Error | null) => {
   if (err) {
     try {
@@ -13,12 +15,21 @@ const parseError = (err: Error | null) => {
   return null;
 };
 
-const client = async (endpoint: string, requestInit?: RequestInit) => {
-  const { body, ...customConfig } = requestInit || {};
+const client = async <T>(
+  endpoint: string,
+  requestInit?: RequestInit & { params?: Parameters<typeof qs.stringify>[0] },
+) => {
+  const { body, params, ...customConfig } = requestInit || {};
   const baseURL = 'http://localhost:8080';
-  const headers = {
+  const headers: HeadersInit = {
     'Content-Type': 'application/json',
   };
+
+  let queryString = '';
+
+  if (params) {
+    queryString = qs.stringify(params, { arrayFormat: 'repeat' });
+  }
 
   const config: RequestInit = {
     method: body ? 'POST' : 'GET',
@@ -32,14 +43,16 @@ const client = async (endpoint: string, requestInit?: RequestInit) => {
   if (body) {
     config.body = JSON.stringify(body);
   }
-  return fetch(baseURL + endpoint, config).then(async (res) => {
-    if (res.ok) {
-      return await res.json();
-    } else {
-      const errorMessage = await res.text();
-      return Promise.reject(new Error(errorMessage));
-    }
-  });
+  return fetch(baseURL + endpoint + '?' + queryString, config).then(
+    async (res) => {
+      if (res.ok) {
+        return (await res.json()) as T;
+      } else {
+        const errorMessage = await res.text();
+        return Promise.reject(new Error(errorMessage));
+      }
+    },
+  );
 };
 
 export { client, parseError };

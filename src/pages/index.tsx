@@ -6,14 +6,14 @@ export default function Home() {
   const { data, error } = useQuery({
     queryKey: ['/api/v1/circle'],
     queryFn: async () => {
-      const res = await client('/api/v1/circle');
+      const res = await client('/api/v1/circle', {
+        params: { limit: 10, page: 1 },
+      });
       return res;
     },
     retry: 0,
   });
 
-  console.log(data);
-  console.log('error', parseError(error));
   return (
     <main
       className={`flex min-h-screen flex-col items-center justify-between p-24`}
