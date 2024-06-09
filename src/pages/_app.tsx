@@ -9,6 +9,8 @@ import type { AppProps } from 'next/app';
 import { Inter } from 'next/font/google';
 import { useState } from 'react';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import MainLayout from '@/components/general/Layout';
+import { Toaster } from 'react-hot-toast';
 
 const fontInter = Inter({
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
@@ -23,6 +25,7 @@ export default function App({
   pageProps,
 }: AppProps & { dehydratedState: unknown }) {
   const [queryClient] = useState(() => new QueryClient());
+
   return (
     <>
       <div className="hidden">
@@ -38,7 +41,10 @@ export default function App({
         <HydrationBoundary state={pageProps.dehydratedState}>
           <ReactQueryDevtools initialIsOpen={false} />
           <NextUIProvider>
-            <Component {...pageProps} />
+            <MainLayout>
+              <Component {...pageProps} />
+              <Toaster />
+            </MainLayout>
           </NextUIProvider>
         </HydrationBoundary>
       </QueryClientProvider>
