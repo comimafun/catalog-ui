@@ -13,3 +13,15 @@ export const newTokenResponse = backendResponseSchema(
     refresh_token_expired_at: z.string(),
   }),
 );
+
+export const selfResponse = backendResponseSchema(
+  z.object({
+    user_id: z.number(),
+    circle_id: z.number(),
+    email: z.string(),
+    access_token_expired_at: z.string(),
+    refresh_token_expired_at: z.string(),
+  }),
+);
+
+export type SelfResponse = z.infer<typeof selfResponse>;

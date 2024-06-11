@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { client } from '@/utils/client';
+import { useSession } from '@/components/general/providers/SessionProvider';
 
 export default function Home() {
   const { data, error } = useQuery({
@@ -15,6 +16,10 @@ export default function Home() {
     },
     retry: 0,
   });
+
+  const { session } = useSession();
+
+  console.log(session);
 
   return (
     <main>

@@ -1,9 +1,15 @@
 import { ZodError } from 'zod';
 import { parseError } from './client';
 
-export const parseErrorMessage = (error: Error | null) => {
+export const prettifyError = (error: Error | null) => {
   if (error instanceof ZodError) {
-    return `CLIENT_ERROR: field ${error.errors.map((e) => e.message).join(', ')}`;
+    const fields = Object.entries(error.flatten().fieldErrors).map(
+      ([field, err]) => {
+        const message = err ? err.join(', ') : 'SCHEMA_ERROR';
+        return `${field}: ${message}}`;
+      },
+    );
+    return fields.join(' | ');
   }
 
   const apiError = parseError(error);

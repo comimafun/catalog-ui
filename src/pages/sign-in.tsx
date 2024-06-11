@@ -1,9 +1,6 @@
-import { authService } from '@/services/auth';
-import { onSuccessGoogleSchema } from '@/types/auth';
-import { parseErrorMessage } from '@/utils/helper';
-import { GoogleOAuthProvider, useGoogleLogin } from '@react-oauth/google';
-import React from 'react';
-import toast from 'react-hot-toast';
+import { GoogleOAuthProvider } from '@react-oauth/google';
+import { useLogin } from '@/hooks/auth/useLogin';
+import { GetServerSidePropsContext } from 'next';
 import nookies from 'nookies';
 
 const GoogleIcon = (props: JSX.IntrinsicElements['svg']) => (
@@ -35,25 +32,7 @@ const GoogleIcon = (props: JSX.IntrinsicElements['svg']) => (
 );
 
 const SignInWithGoogle = () => {
-  const signIn = useGoogleLogin({
-    flow: 'auth-code',
-    ux_mode: 'popup',
-    redirect_uri: 'http://localhost:3000',
-    onSuccess: async (response) => {
-      try {
-        const parsed = onSuccessGoogleSchema.parse(response);
-        const { data } = await authService.googleCallback(parsed.code);
-
-        nookies.set(null, 'access_token', data.access_token, {
-          maxAge: new Date(data.access_token_expired_at).getSeconds(),
-          path: '/',
-        });
-      } catch (error) {
-        const msg = parseErrorMessage(error as Error);
-        toast.error(msg);
-      }
-    },
-  });
+  const { signIn } = useLogin();
   return (
     <button
       className="mt-3 flex w-full items-center justify-center gap-4 rounded-[61px] border border-neutral-500 py-2 font-bold shadow-lg active:scale-95"
@@ -64,6 +43,22 @@ const SignInWithGoogle = () => {
       Sign In with Google
     </button>
   );
+};
+
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
+  const cookies = nookies.get(ctx);
+  if (cookies.access_token) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
 };
 
 function SignInPage() {

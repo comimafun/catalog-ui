@@ -11,6 +11,7 @@ import { useState } from 'react';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import MainLayout from '@/components/general/Layout';
 import { Toaster } from 'react-hot-toast';
+import { SessionProvider } from '@/components/general/providers/SessionProvider';
 
 const fontInter = Inter({
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
@@ -41,10 +42,12 @@ export default function App({
         <HydrationBoundary state={pageProps.dehydratedState}>
           <ReactQueryDevtools initialIsOpen={false} />
           <NextUIProvider>
-            <MainLayout>
-              <Component {...pageProps} />
-              <Toaster />
-            </MainLayout>
+            <SessionProvider>
+              <MainLayout>
+                <Component {...pageProps} />
+                <Toaster />
+              </MainLayout>
+            </SessionProvider>
           </NextUIProvider>
         </HydrationBoundary>
       </QueryClientProvider>

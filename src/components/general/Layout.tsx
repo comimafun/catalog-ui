@@ -1,7 +1,52 @@
-import { classNames } from '@/utils/cn';
+import { classNames } from '@/utils/classNames';
 import { useInView } from 'framer-motion';
 import Link from 'next/link';
-import React, { ReactNode, useRef } from 'react';
+import { ReactNode, useRef } from 'react';
+import { useSession } from './providers/SessionProvider';
+import { Button } from '@nextui-org/react';
+import { useLogout } from '@/hooks/auth/useLogout';
+
+const RightMenu = () => {
+  const { session } = useSession();
+  const { logout, isPending } = useLogout();
+
+  return (
+    <div className="flex gap-3">
+      {session && (
+        <Link href="/join">
+          <Button size="sm" variant="solid" color="primary">
+            Create your circle
+          </Button>
+        </Link>
+      )}
+      {session ? (
+        <Button
+          className="font-medium"
+          color="secondary"
+          size="sm"
+          type="button"
+          variant="flat"
+          isLoading={isPending}
+          onClick={logout}
+        >
+          Logout
+        </Button>
+      ) : (
+        <Link href="/sign-in">
+          <Button
+            className="font-semibold"
+            color="primary"
+            size="sm"
+            type="button"
+            variant="flat"
+          >
+            Sign In
+          </Button>
+        </Link>
+      )}
+    </div>
+  );
+};
 
 const Navbar = () => {
   const ref = useRef<HTMLDivElement>(null);
@@ -15,9 +60,12 @@ const Navbar = () => {
           isInView ? 'shadow-none' : 'shadow-lg',
         )}
       >
-        <nav className="mx-auto flex w-full max-w-[640px] justify-between bg-white px-4 py-5">
-          <div className="font-bold">LOGO</div>
-          <Link href="/sign-in">Sign In</Link>
+        <nav className="mx-auto flex max-h-[56px] w-full max-w-[640px] justify-between bg-white px-4 py-5">
+          <Link href="/" className="font-bold">
+            LOGO
+          </Link>
+
+          <RightMenu />
         </nav>
       </div>
       <div className="pt-[56px]" />

@@ -1,3 +1,4 @@
+import { parseCookies } from 'nookies';
 import qs from 'qs';
 
 const TOKEN_NEED_TO_REFRESH = [
@@ -21,14 +22,15 @@ const parseError = (err: Error | null) => {
   return null;
 };
 
-const client = async <T>(
-  endpoint: string,
-  requestInit?: Omit<RequestInit, 'body'> & {
-    params?: Parameters<typeof qs.stringify>[0];
-    body?: Record<string, unknown>;
-    method?: 'GET' | 'POST' | 'PATCH' | 'DELETE' | 'PUT';
-  },
-) => {
+type RequestConfig = Omit<RequestInit, 'body'> & {
+  params?: Parameters<typeof qs.stringify>[0];
+  body?: Record<string, unknown> | FormData;
+  method?: 'GET' | 'POST' | 'PATCH' | 'DELETE' | 'PUT';
+};
+
+const client = async <T>(endpoint: string, requestInit?: RequestConfig) => {
+  const cookies = parseCookies();
+  const accessToken = cookies.access_token;
   const { body, params, ...customConfig } = requestInit || {};
   const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
   const headers: HeadersInit = {
@@ -41,19 +43,24 @@ const client = async <T>(
     queryString = '?' + qs.stringify(params, { arrayFormat: 'repeat' });
   }
 
+  if (accessToken) {
+    headers.Authorization = `Bearer ${accessToken}`;
+  }
+
   const config: RequestInit = {
+    credentials: 'include',
     method: body ? 'POST' : 'GET',
     ...customConfig,
     headers: {
       ...headers,
       ...customConfig.headers,
     },
-    credentials: 'include',
   };
 
   if (body) {
     config.body = JSON.stringify(body);
   }
+
   return fetch(baseURL + endpoint + queryString, config).then(async (res) => {
     if (res.ok) {
       return (await res.json()) as T;
@@ -63,7 +70,11 @@ const client = async <T>(
     const errObj = new Error(errorMessage);
     const err = parseError(errObj);
 
-    if (err && err.code === 401 && TOKEN_NEED_TO_REFRESH.includes(err.error)) {
+    if (
+      err &&
+      res.status === 401 &&
+      TOKEN_NEED_TO_REFRESH.includes(err.error)
+    ) {
       // refresh token here
     }
 
