@@ -27,11 +27,8 @@ export const useLogin = () => {
         const self = await authService.getSelf();
         queryClient.setQueryData(['/api/v1/auth/self'], self);
 
-        if (!self.circle_id) {
-          router.push('/onboarding');
-        } else {
-          router.push('/');
-        }
+        toast.success('Welcome to ComimaFun!');
+        router.push('/');
       } catch (error) {
         const msg = prettifyError(error as Error);
         toast.error(msg);

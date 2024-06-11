@@ -1,5 +1,9 @@
+import { newTokenResponse } from '@/types/auth';
 import { parseCookies } from 'nookies';
 import qs from 'qs';
+import { z } from 'zod';
+
+import nookies from 'nookies';
 
 const TOKEN_NEED_TO_REFRESH = [
   'TOKEN_EXPIRED',
@@ -75,7 +79,16 @@ const client = async <T>(endpoint: string, requestInit?: RequestConfig) => {
       res.status === 401 &&
       TOKEN_NEED_TO_REFRESH.includes(err.error)
     ) {
-      // refresh token here
+      const res = await fetch(baseURL + '/api/v1/auth/refresh', {
+        ...config,
+      });
+      if (res.ok) {
+        const data = (await res.json()) as z.infer<typeof newTokenResponse>;
+        nookies.set(null, 'access_token', data.data.access_token, {
+          maxAge: new Date(data.data.access_token_expired_at).getTime() / 1000,
+          path: '/',
+        });
+      }
     }
 
     return Promise.reject(errObj);

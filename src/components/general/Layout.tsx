@@ -2,7 +2,7 @@ import { classNames } from '@/utils/classNames';
 import { useInView } from 'framer-motion';
 import Link from 'next/link';
 import { ReactNode, useRef } from 'react';
-import { useSession } from './providers/SessionProvider';
+import { useSession } from '../providers/SessionProvider';
 import { Button } from '@nextui-org/react';
 import { useLogout } from '@/hooks/auth/useLogout';
 
@@ -13,11 +13,16 @@ const RightMenu = () => {
   return (
     <div className="flex gap-3">
       {session && (
-        <Link href="/join">
-          <Button size="sm" variant="solid" color="primary">
-            Create your circle
-          </Button>
-        </Link>
+        <Button
+          type="button"
+          as={Link}
+          href="/join"
+          size="sm"
+          variant="solid"
+          color="primary"
+        >
+          Create your circle
+        </Button>
       )}
       {session ? (
         <Button
@@ -27,22 +32,23 @@ const RightMenu = () => {
           type="button"
           variant="flat"
           isLoading={isPending}
-          onClick={logout}
+          onPress={logout}
         >
           Logout
         </Button>
       ) : (
-        <Link href="/sign-in">
-          <Button
-            className="font-semibold"
-            color="primary"
-            size="sm"
-            type="button"
-            variant="flat"
-          >
-            Sign In
-          </Button>
-        </Link>
+        <Button
+          className="font-semibold"
+          href="/sign-in"
+          as={Link}
+          color="primary"
+          size="sm"
+          type="button"
+          variant="flat"
+          typeof="button"
+        >
+          Sign In
+        </Button>
       )}
     </div>
   );
