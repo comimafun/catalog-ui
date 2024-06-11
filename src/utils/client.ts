@@ -1,4 +1,11 @@
+import { parseCookies } from 'nookies';
 import qs from 'qs';
+
+const TOKEN_NEED_TO_REFRESH = [
+  'TOKEN_EXPIRED',
+  'TOKEN_INVALID',
+  'TOKEN_IS_EMPTY',
+];
 
 const parseError = (err: Error | null) => {
   if (err) {
@@ -15,12 +22,17 @@ const parseError = (err: Error | null) => {
   return null;
 };
 
-const client = async <T>(
-  endpoint: string,
-  requestInit?: RequestInit & { params?: Parameters<typeof qs.stringify>[0] },
-) => {
+type RequestConfig = Omit<RequestInit, 'body'> & {
+  params?: Parameters<typeof qs.stringify>[0];
+  body?: Record<string, unknown> | FormData;
+  method?: 'GET' | 'POST' | 'PATCH' | 'DELETE' | 'PUT';
+};
+
+const client = async <T>(endpoint: string, requestInit?: RequestConfig) => {
+  const cookies = parseCookies();
+  const accessToken = cookies.access_token;
   const { body, params, ...customConfig } = requestInit || {};
-  const baseURL = 'http://localhost:8080';
+  const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
   const headers: HeadersInit = {
     'Content-Type': 'application/json',
   };
@@ -28,10 +40,15 @@ const client = async <T>(
   let queryString = '';
 
   if (params) {
-    queryString = qs.stringify(params, { arrayFormat: 'repeat' });
+    queryString = '?' + qs.stringify(params, { arrayFormat: 'repeat' });
+  }
+
+  if (accessToken) {
+    headers.Authorization = `Bearer ${accessToken}`;
   }
 
   const config: RequestInit = {
+    credentials: 'include',
     method: body ? 'POST' : 'GET',
     ...customConfig,
     headers: {
@@ -43,16 +60,26 @@ const client = async <T>(
   if (body) {
     config.body = JSON.stringify(body);
   }
-  return fetch(baseURL + endpoint + '?' + queryString, config).then(
-    async (res) => {
-      if (res.ok) {
-        return (await res.json()) as T;
-      } else {
-        const errorMessage = await res.text();
-        return Promise.reject(new Error(errorMessage));
-      }
-    },
-  );
+
+  return fetch(baseURL + endpoint + queryString, config).then(async (res) => {
+    if (res.ok) {
+      return (await res.json()) as T;
+    }
+
+    const errorMessage = await res.text();
+    const errObj = new Error(errorMessage);
+    const err = parseError(errObj);
+
+    if (
+      err &&
+      res.status === 401 &&
+      TOKEN_NEED_TO_REFRESH.includes(err.error)
+    ) {
+      // refresh token here
+    }
+
+    return Promise.reject(errObj);
+  });
 };
 
 export { client, parseError };
