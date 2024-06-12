@@ -50,6 +50,8 @@ export const circleSchema = circleEntity.extend({
   fandom: z.array(fandomWorkTypeSchema),
 });
 
+export type Circle = z.infer<typeof circleSchema>;
+
 export const onboardCircleResponse = backendResponseSchema(circleSchema);
 
 export const getCirclesResponse = backendResponsePagination(circleSchema);

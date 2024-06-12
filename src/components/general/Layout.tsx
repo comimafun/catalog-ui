@@ -76,7 +76,7 @@ const Navbar = () => {
     <>
       <div
         className={classNames(
-          'fixed mx-auto w-full bg-white transition-all',
+          'fixed z-10 mx-auto w-full bg-white transition-all',
           isInView ? 'shadow-none' : 'shadow-lg',
         )}
       >
