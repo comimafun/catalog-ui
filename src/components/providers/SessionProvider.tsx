@@ -1,6 +1,6 @@
 import { useGetSelf } from '@/hooks/auth/useAuth';
 import { SelfResponse } from '@/types/auth';
-import { createContext, useContext } from 'react';
+import { createContext, useContext, useMemo } from 'react';
 
 const ctx = createContext<{
   session?: SelfResponse['data'];
@@ -9,16 +9,13 @@ const ctx = createContext<{
 
 const SessionProvider = ({ children }: { children: React.ReactNode }) => {
   const { data, isLoading } = useGetSelf();
-  return (
-    <ctx.Provider
-      value={{
-        session: data,
-        isLoading,
-      }}
-    >
-      {children}
-    </ctx.Provider>
+
+  const value = useMemo(
+    () => ({ session: data, isLoading }),
+    [data, isLoading],
   );
+
+  return <ctx.Provider value={value}>{children}</ctx.Provider>;
 };
 
 export const useSession = () => {

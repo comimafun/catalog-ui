@@ -12,30 +12,44 @@ const RightMenu = () => {
 
   return (
     <div className="flex gap-3">
-      {session && (
-        <Button
-          type="button"
-          as={Link}
-          href="/join"
-          size="sm"
-          variant="solid"
-          color="primary"
-        >
-          Create your circle
-        </Button>
-      )}
       {session ? (
-        <Button
-          className="font-medium"
-          color="secondary"
-          size="sm"
-          type="button"
-          variant="flat"
-          isLoading={isPending}
-          onPress={logout}
-        >
-          Logout
-        </Button>
+        <>
+          {!!session.circle ? (
+            <Button
+              type="button"
+              as={Link}
+              href={`/c/${session.circle.slug}`}
+              size="sm"
+              variant="solid"
+              color="primary"
+            >
+              Your circle
+            </Button>
+          ) : (
+            <Button
+              type="button"
+              as={Link}
+              href="/join"
+              size="sm"
+              variant="solid"
+              color="primary"
+            >
+              Create your circle
+            </Button>
+          )}
+
+          <Button
+            className="font-medium"
+            color="secondary"
+            size="sm"
+            type="button"
+            variant="flat"
+            isLoading={isPending}
+            onPress={logout}
+          >
+            Logout
+          </Button>
+        </>
       ) : (
         <Button
           className="font-semibold"
@@ -66,7 +80,7 @@ const Navbar = () => {
           isInView ? 'shadow-none' : 'shadow-lg',
         )}
       >
-        <nav className="mx-auto flex max-h-[56px] w-full max-w-[640px] justify-between bg-white px-4 py-5">
+        <nav className="mx-auto flex w-full max-w-[640px] items-center justify-between bg-white px-4 py-5">
           <Link href="/" className="font-bold">
             LOGO
           </Link>
@@ -74,7 +88,7 @@ const Navbar = () => {
           <RightMenu />
         </nav>
       </div>
-      <div className="pt-[56px]" />
+      <div className="pt-[63px]" />
       <div ref={ref} className="w-full"></div>
     </>
   );

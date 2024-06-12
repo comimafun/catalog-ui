@@ -26,11 +26,9 @@ const fandomWorkTypeSchema = z.object({
   id: z.number(),
 });
 
-export const circleSchema = z.object({
+export const circleEntity = z.object({
   id: z.number(),
   batch: z.number().nullable(),
-  block: z.string().nullable(),
-  bookmarked: z.boolean(),
   created_at: z.string(),
   updated_at: z.string(),
   day: z.enum(['first', 'second', 'both']).nullable(),
@@ -43,8 +41,13 @@ export const circleSchema = z.object({
   name: z.string(),
   published: z.boolean(),
   verified: z.boolean(),
-  fandom: z.array(fandomWorkTypeSchema),
+});
+
+export const circleSchema = circleEntity.extend({
+  block: z.string().nullable(),
+  bookmarked: z.boolean(),
   work_type: z.array(fandomWorkTypeSchema),
+  fandom: z.array(fandomWorkTypeSchema),
 });
 
 export const onboardCircleResponse = backendResponseSchema(circleSchema);

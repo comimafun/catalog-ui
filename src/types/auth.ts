@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { backendResponseSchema } from './common';
+import { circleEntity } from './circle';
 
 export const onSuccessGoogleSchema = z.object({
   code: z.string(),
@@ -14,11 +15,18 @@ export const newTokenResponse = backendResponseSchema(
   }),
 );
 
+export const userEntity = z.object({
+  circle_id: z.number().nullable(),
+  id: z.number(),
+  name: z.string(),
+  email: z.string(),
+  profile_picture_url: z.string().nullable(),
+});
+
 export const selfResponse = backendResponseSchema(
   z.object({
-    user_id: z.number(),
-    circle_id: z.number(),
-    email: z.string(),
+    user: userEntity,
+    circle: circleEntity.nullable(),
     access_token_expired_at: z.string(),
     refresh_token_expired_at: z.string(),
   }),

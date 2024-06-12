@@ -1,10 +1,9 @@
 import { authService } from '@/services/auth';
 import { onSuccessGoogleSchema } from '@/types/auth';
-import { prettifyError } from '@/utils/helper';
+import { prettifyError, setAccessToken } from '@/utils/helper';
 import { useGoogleLogin } from '@react-oauth/google';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
-import nookies from 'nookies';
 import toast from 'react-hot-toast';
 
 export const useLogin = () => {
@@ -19,10 +18,7 @@ export const useLogin = () => {
         const parsed = onSuccessGoogleSchema.parse(response);
         const { data } = await authService.googleCallback(parsed.code);
 
-        nookies.set(null, 'access_token', data.access_token, {
-          maxAge: new Date(data.access_token_expired_at).getTime() / 1000,
-          path: '/',
-        });
+        setAccessToken(data.access_token, data.access_token_expired_at);
 
         const self = await authService.getSelf();
         queryClient.setQueryData(['/api/v1/auth/self'], self);

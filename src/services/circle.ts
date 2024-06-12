@@ -12,7 +12,7 @@ export const circleService = {
     return getCirclesResponse.parse(res);
   },
   postOnboarding: async (payload: OnboardingPayload) => {
-    const res = await client('/api/v1/circle/onboarding', { body: payload });
+    const res = await client('/api/v1/circle/onboard', { body: payload });
     return onboardCircleResponse.parse(res);
   },
 };

@@ -1,16 +1,17 @@
 import LoadingWrapper from '@/components/general/Spinner';
+import Uploader from '@/components/general/Uploader';
 import { useSession } from '@/components/providers/SessionProvider';
 import { ACCEPTED_IMAGE_TYPES, FIVE_MB } from '@/constants/common';
 import { useOnboarding } from '@/hooks/circle/useOnboarding';
 import ImageIcon from '@/icons/ImageIcon';
 import MegaphoneIcon from '@/icons/MegaphoneIcon';
 import { onboardingPayloadSchema } from '@/types/circle';
-import { classNames } from '@/utils/classNames';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button, Input } from '@nextui-org/react';
 import { useRouter } from 'next/router';
-import React, { useEffect } from 'react';
-import { FieldError, FieldErrorsImpl, Merge, useForm } from 'react-hook-form';
+import { useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import toast from 'react-hot-toast';
 import { z } from 'zod';
 
 const joinSchema = onboardingPayloadSchema.extend({
@@ -19,11 +20,11 @@ const joinSchema = onboardingPayloadSchema.extend({
       ? z.any()
       : z
           .instanceof(FileList)
-          .refine((x) => x.length === 1, { message: 'Please select a file' })
-          .refine((x) => x[0]?.size <= FIVE_MB, {
+          .optional()
+          .refine((x) => !x?.[0] || x[0].size <= FIVE_MB, {
             message: 'Max file size is 5MB',
           })
-          .refine((x) => ACCEPTED_IMAGE_TYPES.includes(x[0]?.type), {
+          .refine((x) => !x?.[0] || ACCEPTED_IMAGE_TYPES.includes(x[0]?.type), {
             message: 'File type must be jpg, jpeg, png, or webp',
           }),
 });
@@ -32,65 +33,20 @@ type JoinSchema = z.infer<typeof joinSchema>;
 
 const useProtectRoute = () => {
   const { session, isLoading } = useSession();
-  const _router = useRouter();
+  const router = useRouter();
   useEffect(() => {
     if (isLoading) return;
 
-    // if (!!session?.circle_id) {
-    //   toast.error('You are already in a circle');
-    //   router.push('/');
-    // }
-  }, [isLoading, session?.circle_id]);
+    if (!!session?.circle) {
+      toast.error('You are already in a circle');
+      router.push('/');
+    }
+  }, [isLoading, session?.circle?.id]);
 };
-
-// eslint-disable-next-line react/display-name
-const Uploader = React.forwardRef<
-  HTMLInputElement,
-  {
-    children: React.ReactNode;
-    errorMessage?:
-      | string
-      | FieldError
-      | Merge<FieldError, FieldErrorsImpl<any>>;
-    isInvalid?: boolean;
-  } & JSX.IntrinsicElements['input']
->((props, ref) => {
-  const {
-    children,
-    className,
-    name,
-    errorMessage,
-    isInvalid = false,
-    ...rest
-  } = props;
-  return (
-    <label
-      className={classNames(
-        'cursor-pointer space-y-2',
-        props.disabled && 'cursor-none',
-        className,
-      )}
-      htmlFor={name}
-    >
-      {children}
-      {!!errorMessage && isInvalid && (
-        <p className="text-tiny text-danger">{String(errorMessage)}</p>
-      )}
-      <input
-        type="file"
-        className="hidden"
-        ref={ref}
-        {...rest}
-        name={name}
-        id={name}
-      />
-    </label>
-  );
-});
 
 function JoinPage() {
   useProtectRoute();
-  const { handleOnboarding: _a, isPending } = useOnboarding();
+  const { handleOnboarding, isPending } = useOnboarding();
   const form = useForm<JoinSchema>({
     resolver: zodResolver(joinSchema),
     defaultValues: {
@@ -103,9 +59,8 @@ function JoinPage() {
     },
   });
 
-  console.log(form.formState.errors);
   return (
-    <main className="flex min-h-[calc(100vh-56px)] w-full items-center justify-center bg-white px-4 pt-4">
+    <main className="flex min-h-[calc(100vh-63px)] w-full items-center justify-center bg-white px-4 pt-4">
       <div className="w-full space-y-3">
         <h1 className="text-center text-xl font-bold">
           Create your circle profile,
@@ -121,16 +76,13 @@ function JoinPage() {
           <LoadingWrapper spinning={isPending}>
             <form
               className="gap-3"
-              onSubmit={form.handleSubmit((val) => {
-                console.log('submitted', val.file);
-                // handleOnboarding(val)
-              })}
+              onSubmit={form.handleSubmit((val) => handleOnboarding(val))}
             >
               <Uploader
                 accept={ACCEPTED_IMAGE_TYPES.join(',')}
                 className="mx-auto flex max-w-[200px] flex-col items-center justify-center"
                 isInvalid={!!form.formState.errors.file}
-                errorMessage={form.formState.errors.file?.message}
+                errorMessage={String(form.formState.errors.file?.message)}
                 {...form.register('file')}
               >
                 <div className="flex h-24 w-24 items-center justify-center rounded-full bg-slate-500">

@@ -63,7 +63,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
 
 function SignInPage() {
   return (
-    <main className="flex min-h-[calc(100vh-56px)] w-full items-center justify-center bg-white px-4 pt-4">
+    <main className="flex min-h-[calc(100vh-63px)] w-full items-center justify-center bg-white px-4 pt-4">
       <div className="rounded-lg border border-neutral-950 p-4 shadow-md">
         <h1 className="text-center text-xl font-bold">Sign In to Comimafun</h1>
         <p className="font-medium">

@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { circleService } from '@/services/circle';
 
 export default function Home() {
-  const { data, error } = useQuery({
+  const { data } = useQuery({
     queryKey: ['/api/v1/circle'],
     queryFn: async () => {
       const res = await circleService.getCircles({ limit: 20, page: 1 });
@@ -10,10 +10,6 @@ export default function Home() {
     },
     retry: 0,
   });
-
-  console.log(data, error);
-
-  console.log(error?.message);
 
   return (
     <main>
