@@ -1,11 +1,12 @@
+import { newTokenResponse } from '@/types/auth';
 import { parseCookies } from 'nookies';
 import qs from 'qs';
+import { z } from 'zod';
 
-const TOKEN_NEED_TO_REFRESH = [
-  'TOKEN_EXPIRED',
-  'TOKEN_INVALID',
-  'TOKEN_IS_EMPTY',
-];
+import nookies from 'nookies';
+import { setAccessToken } from './helper';
+
+const TOKEN_NEED_TO_REFRESH = ['TOKEN_EXPIRED', 'TOKEN_INVALID'];
 
 const parseError = (err: Error | null) => {
   if (err) {
@@ -67,6 +68,7 @@ const client = async <T>(endpoint: string, requestInit?: RequestConfig) => {
     }
 
     const errorMessage = await res.text();
+
     const errObj = new Error(errorMessage);
     const err = parseError(errObj);
 
@@ -75,7 +77,22 @@ const client = async <T>(endpoint: string, requestInit?: RequestConfig) => {
       res.status === 401 &&
       TOKEN_NEED_TO_REFRESH.includes(err.error)
     ) {
-      // refresh token here
+      const res = await fetch(baseURL + '/api/v1/auth/refresh', config);
+
+      if (res.ok) {
+        const data = (await res.json()) as z.infer<typeof newTokenResponse>;
+        setAccessToken(
+          data.data.access_token,
+          data.data.access_token_expired_at,
+        );
+      } else {
+        const refreshError = await res.text();
+        const refreshErrObj = new Error(refreshError);
+        nookies.destroy(null, 'access_token');
+        nookies.destroy(null, 'refresh_token');
+
+        return Promise.reject(refreshErrObj);
+      }
     }
 
     return Promise.reject(errObj);

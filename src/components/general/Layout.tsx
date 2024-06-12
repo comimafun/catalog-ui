@@ -2,7 +2,7 @@ import { classNames } from '@/utils/classNames';
 import { useInView } from 'framer-motion';
 import Link from 'next/link';
 import { ReactNode, useRef } from 'react';
-import { useSession } from './providers/SessionProvider';
+import { useSession } from '../providers/SessionProvider';
 import { Button } from '@nextui-org/react';
 import { useLogout } from '@/hooks/auth/useLogout';
 
@@ -12,37 +12,57 @@ const RightMenu = () => {
 
   return (
     <div className="flex gap-3">
-      {session && (
-        <Link href="/join">
-          <Button size="sm" variant="solid" color="primary">
-            Create your circle
-          </Button>
-        </Link>
-      )}
       {session ? (
-        <Button
-          className="font-medium"
-          color="secondary"
-          size="sm"
-          type="button"
-          variant="flat"
-          isLoading={isPending}
-          onClick={logout}
-        >
-          Logout
-        </Button>
-      ) : (
-        <Link href="/sign-in">
+        <>
+          {!!session.circle ? (
+            <Button
+              type="button"
+              as={Link}
+              href={`/c/${session.circle.slug}`}
+              size="sm"
+              variant="solid"
+              color="primary"
+            >
+              Your circle
+            </Button>
+          ) : (
+            <Button
+              type="button"
+              as={Link}
+              href="/join"
+              size="sm"
+              variant="solid"
+              color="primary"
+            >
+              Create your circle
+            </Button>
+          )}
+
           <Button
-            className="font-semibold"
-            color="primary"
+            className="font-medium"
+            color="secondary"
             size="sm"
             type="button"
             variant="flat"
+            isLoading={isPending}
+            onPress={logout}
           >
-            Sign In
+            Logout
           </Button>
-        </Link>
+        </>
+      ) : (
+        <Button
+          className="font-semibold"
+          href="/sign-in"
+          as={Link}
+          color="primary"
+          size="sm"
+          type="button"
+          variant="flat"
+          typeof="button"
+        >
+          Sign In
+        </Button>
       )}
     </div>
   );
@@ -60,7 +80,7 @@ const Navbar = () => {
           isInView ? 'shadow-none' : 'shadow-lg',
         )}
       >
-        <nav className="mx-auto flex max-h-[56px] w-full max-w-[640px] justify-between bg-white px-4 py-5">
+        <nav className="mx-auto flex w-full max-w-[640px] items-center justify-between bg-white px-4 py-5">
           <Link href="/" className="font-bold">
             LOGO
           </Link>
@@ -68,7 +88,7 @@ const Navbar = () => {
           <RightMenu />
         </nav>
       </div>
-      <div className="pt-[56px]" />
+      <div className="pt-[63px]" />
       <div ref={ref} className="w-full"></div>
     </>
   );

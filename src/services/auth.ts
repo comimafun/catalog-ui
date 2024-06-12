@@ -17,6 +17,10 @@ const authService = {
     client('/api/v1/auth/logout', {
       method: 'POST',
     }),
+  getRefreshToken: async () => {
+    const res = await client('/api/v1/auth/refresh');
+    return newTokenResponse.parse(res);
+  },
 };
 
 export { authService };
