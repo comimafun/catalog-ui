@@ -18,7 +18,7 @@ const RightMenu = () => {
             <Button
               type="button"
               as={Link}
-              href={`/c/${session.circle.slug}`}
+              href={`/${session.circle.slug}`}
               size="sm"
               variant="solid"
               color="primary"

@@ -15,14 +15,18 @@ export const circlesQueryParamsClient = z.object({
     .array(z.coerce.number())
     .or(z.coerce.number().transform((x) => [x]))
     .default([]),
-  day: z.enum(['first', 'second', 'both']).or(z.literal('')).default(''),
+  day: z
+    .enum(['first', 'second', 'both'])
+    .or(z.literal(''))
+    .default('')
+    .optional(),
 });
 
 export type GetCircleQueryParamsClient = z.infer<
   typeof circlesQueryParamsClient
 >;
 
-export const getCirclesQueryParams = circlesQueryParamsClient.extend({
+export const getCirclesQueryParams = circlesQueryParamsClient.partial().extend({
   limit: z.number().min(1).max(20),
   page: z.number().min(1).default(1),
 });
@@ -41,6 +45,7 @@ export const circleEntity = z.object({
   updated_at: z.string(),
   day: z.enum(['first', 'second', 'both']).nullable(),
   description: z.string().nullable(),
+  url: z.string().nullable(),
   facebook_url: z.string().nullable(),
   twitter_url: z.string().nullable(),
   picture_url: z.string().nullable(),
@@ -51,18 +56,27 @@ export const circleEntity = z.object({
   verified: z.boolean(),
 });
 
+export const productEntity = z.object({
+  id: z.number(),
+  name: z.string(),
+  image_url: z.string(),
+});
+
 export const circleSchema = circleEntity.extend({
   block: z.string().nullable(),
   bookmarked: z.boolean(),
   work_type: z.array(fandomWorkTypeSchema),
   fandom: z.array(fandomWorkTypeSchema),
+  product: z.array(productEntity),
 });
 
-export type Circle = z.infer<typeof circleSchema>;
+export type CircleCard = Omit<z.infer<typeof circleSchema>, 'product'>;
 
-export const onboardCircleResponse = backendResponseSchema(circleSchema);
-
-export const getCirclesResponse = backendResponsePagination(circleSchema);
+export const onboardCircleResponse = backendResponseSchema(circleEntity);
+export const getOneCircleResponse = backendResponseSchema(circleSchema);
+export const getCirclesResponse = backendResponsePagination(
+  circleSchema.omit({ product: true }),
+);
 
 export const onboardingPayloadSchema = z.object({
   name: z

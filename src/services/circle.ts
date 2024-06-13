@@ -4,6 +4,7 @@ import {
   GetCircleQueryParams,
   getCirclesResponse,
   getFandomResponse,
+  getOneCircleResponse,
   onboardCircleResponse,
   OnboardingPayload,
 } from '@/types/circle';
@@ -13,6 +14,10 @@ export const circleService = {
   getCircles: async (params: GetCircleQueryParams) => {
     const res = await client('/api/v1/circle', { params: params });
     return getCirclesResponse.parse(res);
+  },
+  getCircleBySlug: async (slug: string) => {
+    const res = await client(`/api/v1/circle/${slug}`);
+    return getOneCircleResponse.parse(res);
   },
   postOnboarding: async (payload: OnboardingPayload) => {
     const res = await client('/api/v1/circle/onboard', { body: payload });

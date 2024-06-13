@@ -7,6 +7,7 @@ import { useParseCircleQueryToParams } from '@/hooks/circle/useParseClientQueryT
 import FilterIcon from '@/icons/FilterIcon';
 import { useDrawerFilterStore } from '@/store/circle';
 import dynamic from 'next/dynamic';
+import EachPageLayout from '@/components/general/EachPageLayout';
 
 const FilterDrawer = dynamic(() => import('@/components/circle/FilterDrawer'), {
   ssr: false,
@@ -76,7 +77,7 @@ const CircleListGrid = () => {
 export default function Home() {
   const setOpen = useDrawerFilterStore((state) => state.setDrawerFilterIsOpen);
   return (
-    <main className="min-h-[calc(100vh-63px)] w-full bg-white px-4 pb-20 pt-4">
+    <EachPageLayout className="pb-20">
       <div className="h-48 w-full rounded-lg bg-slate-400"></div>
       <div className="my-6 flex w-full items-center gap-2">
         <SearchInput />
@@ -90,6 +91,6 @@ export default function Home() {
         <FilterDrawer />
       </div>
       <CircleListGrid />
-    </main>
+    </EachPageLayout>
   );
 }

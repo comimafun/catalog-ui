@@ -1,3 +1,4 @@
+import EachPageLayout from '@/components/general/EachPageLayout';
 import LoadingWrapper from '@/components/general/Spinner';
 import Uploader from '@/components/general/Uploader';
 import { useSession } from '@/components/providers/SessionProvider';
@@ -60,7 +61,7 @@ function JoinPage() {
   });
 
   return (
-    <main className="flex min-h-[calc(100vh-63px)] w-full items-center justify-center bg-white px-4 pt-4">
+    <EachPageLayout className="flex items-center justify-center">
       <div className="w-full space-y-3">
         <h1 className="text-center text-xl font-bold">
           Create your circle profile,
@@ -157,7 +158,7 @@ function JoinPage() {
           </LoadingWrapper>
         </div>
       </div>
-    </main>
+    </EachPageLayout>
   );
 }
 
