@@ -5,18 +5,26 @@ import {
   optionalUrl,
 } from './common';
 
-export const getCirclesQueryParams = z.object({
-  search: z.string().optional(),
-  limit: z.number().min(1).max(20),
-  page: z.number().min(1),
+export const circlesQueryParamsClient = z.object({
+  search: z.string().optional().or(z.literal('')),
   work_type_id: z
     .array(z.coerce.number())
     .or(z.coerce.number().transform((x) => [x]))
-    .optional(),
+    .default([]),
   fandom_id: z
     .array(z.coerce.number())
     .or(z.coerce.number().transform((x) => [x]))
-    .optional(),
+    .default([]),
+  day: z.enum(['first', 'second', 'both']).or(z.literal('')).default(''),
+});
+
+export type GetCircleQueryParamsClient = z.infer<
+  typeof circlesQueryParamsClient
+>;
+
+export const getCirclesQueryParams = circlesQueryParamsClient.extend({
+  limit: z.number().min(1).max(20),
+  page: z.number().min(1).default(1),
 });
 
 export type GetCircleQueryParams = z.infer<typeof getCirclesQueryParams>;
@@ -50,6 +58,8 @@ export const circleSchema = circleEntity.extend({
   fandom: z.array(fandomWorkTypeSchema),
 });
 
+export type Circle = z.infer<typeof circleSchema>;
+
 export const onboardCircleResponse = backendResponseSchema(circleSchema);
 
 export const getCirclesResponse = backendResponsePagination(circleSchema);
@@ -68,3 +78,18 @@ export const onboardingPayloadSchema = z.object({
 });
 
 export type OnboardingPayload = z.infer<typeof onboardingPayloadSchema>;
+
+export const fandomQueryParams = z.object({
+  search: z.string().optional(),
+  limit: z.number().min(1).max(20),
+  page: z.number().min(1).default(1),
+});
+
+export type FandomQueryParams = z.infer<typeof fandomQueryParams>;
+
+export const getFandomResponse =
+  backendResponsePagination(fandomWorkTypeSchema);
+
+export const getAllWorkTypeResponse = backendResponseSchema(
+  z.array(fandomWorkTypeSchema),
+);
