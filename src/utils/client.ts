@@ -68,7 +68,6 @@ const client = async <T>(endpoint: string, requestInit?: RequestConfig) => {
     }
 
     const errorMessage = await res.text();
-
     const errObj = new Error(errorMessage);
     const err = parseError(errObj);
 
@@ -77,22 +76,38 @@ const client = async <T>(endpoint: string, requestInit?: RequestConfig) => {
       res.status === 401 &&
       TOKEN_NEED_TO_REFRESH.includes(err.error)
     ) {
-      const res = await fetch(baseURL + '/api/v1/auth/refresh', config);
-
-      if (res.ok) {
-        const data = (await res.json()) as z.infer<typeof newTokenResponse>;
-        setAccessToken(
-          data.data.access_token,
-          data.data.access_token_expired_at,
-        );
-      } else {
-        const refreshError = await res.text();
+      const refreshing = await fetch(baseURL + '/api/v1/auth/refresh', {
+        ...config,
+        method: 'GET',
+      });
+      if (!refreshing.ok) {
+        const refreshError = await refreshing.text();
         const refreshErrObj = new Error(refreshError);
         nookies.destroy(null, 'access_token');
         nookies.destroy(null, 'refresh_token');
-
         return Promise.reject(refreshErrObj);
       }
+
+      const data = (await refreshing.json()) as z.infer<
+        typeof newTokenResponse
+      >;
+      setAccessToken(data.data.access_token, data.data.access_token_expired_at);
+
+      /**
+       * Retry the original request with new access token
+       */
+      config.headers = {
+        ...config.headers,
+        Authorization: `Bearer ${data.data.access_token}`,
+      };
+      const retryRes = await fetch(baseURL + endpoint + queryString, config);
+      if (retryRes.ok) {
+        return (await retryRes.json()) as T;
+      }
+
+      const retryErrorMessage = await retryRes.text();
+      const retryErrObj = new Error(retryErrorMessage);
+      return Promise.reject(retryErrObj);
     }
 
     return Promise.reject(errObj);
