@@ -1,6 +1,6 @@
 import { AnyZodObject, z } from 'zod';
 
-export const backendResponseSchema = <T extends AnyZodObject>(zodObj: T) => {
+export const backendResponseSchema = <T extends z.ZodTypeAny>(zodObj: T) => {
   return z.object({
     code: z.number(),
     data: zodObj,

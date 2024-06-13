@@ -2,12 +2,13 @@ import HeartIcon from '@/icons/HeartIcon';
 import StopIcon from '@/icons/StopIcon';
 import { Circle } from '@/types/circle';
 import { classNames } from '@/utils/classNames';
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSession } from '../providers/SessionProvider';
 import { useRouter } from 'next/router';
 import toast from 'react-hot-toast';
 import { prettifyError } from '@/utils/helper';
 import { useSaveUnsave } from '@/hooks/circle/useSaveUnsave';
+import Link from 'next/link';
 
 const NoImage = () => {
   return (
@@ -38,29 +39,40 @@ const BookmarkButton = ({
 
     try {
       if (localBookmarked) {
-        await unsave(id);
         setLocalBookmarked(false);
+        await unsave(id);
       } else {
-        await save(id);
         setLocalBookmarked(true);
+        await save(id);
       }
     } catch (error) {
       setLocalBookmarked((prev) => !prev);
       toast.error(prettifyError(error as Error));
     }
   };
+
+  useEffect(() => {
+    if (bookmarked !== localBookmarked) setLocalBookmarked(bookmarked);
+  }, [bookmarked]);
+
   return (
     <button
-      className="absolute right-4 top-4 active:scale-80"
+      className="group absolute right-4 top-4 active:scale-80"
       type="button"
-      onClick={handleBookmark}
+      onClick={(e) => {
+        e.stopPropagation();
+        e.preventDefault();
+
+        if (isPending) return;
+        handleBookmark();
+      }}
       disabled={isPending}
     >
       <HeartIcon
         height={24}
         width={24}
         className={classNames(
-          'transition-all delay-200 hover:text-pink-500',
+          'transition-all delay-200 group-hover:text-pink-500 group-active:scale-80',
           localBookmarked ? 'text-pink-500' : '',
         )}
         fill={localBookmarked ? 'currentColor' : 'none'}
@@ -71,30 +83,34 @@ const BookmarkButton = ({
 
 function CircleCard(circle: Circle) {
   return (
-    <li
-      className="flex flex-col overflow-hidden rounded-lg border border-neutral-950 shadow-md"
-      key={circle.id}
-    >
-      <div className="relative flex h-[273px] w-full items-center justify-center">
-        <BookmarkButton id={circle.id} bookmarked={circle.bookmarked} />
-        <NoImage />
-      </div>
-      <div className="w-full space-y-1.5 p-2 font-medium">
-        <p className="break-all text-base font-semibold">{circle.name}</p>
-        {circle.fandom.length > 0 && (
-          <p className="text-xs">
-            Fandom: {circle.fandom.map((x) => x.name).join(', ')}
-          </p>
-        )}
+    <li className="flex flex-col overflow-hidden rounded-lg border border-neutral-950 shadow-md">
+      <Link
+        href={{
+          pathname: '/c/[slug]',
+          query: { slug: circle.slug },
+        }}
+      >
+        <div className="relative flex h-[273px] w-full items-center justify-center">
+          <BookmarkButton id={circle.id} bookmarked={circle.bookmarked} />
+          <NoImage />
+        </div>
+        <div className="w-full space-y-1.5 p-2 font-medium">
+          <p className="break-all text-base font-semibold">{circle.name}</p>
+          {circle.fandom.length > 0 && (
+            <p className="text-xs">
+              Fandom: {circle.fandom.map((x) => x.name).join(', ')}
+            </p>
+          )}
 
-        {circle.work_type.length > 0 && (
-          <p className="text-xs">
-            Work Type: {circle.work_type.map((x) => x.name).join(', ')}
-          </p>
-        )}
+          {circle.work_type.length > 0 && (
+            <p className="text-xs">
+              Work Type: {circle.work_type.map((x) => x.name).join(', ')}
+            </p>
+          )}
 
-        <p className="text-xs">Day: {circle.day ?? 'TBA'}</p>
-      </div>
+          <p className="text-xs">Day: {circle.day ?? 'TBA'}</p>
+        </div>
+      </Link>
     </li>
   );
 }
