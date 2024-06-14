@@ -19,9 +19,9 @@ export const useGetCircleBySlug = (options?: {
     slug = router.query.circleSlug as string;
   }
   return useQuery({
-    queryKey: ['/api/v1/circle', slug],
+    queryKey: ['/v1/circle/[slug]', slug],
     queryFn: async () => {
-      return (await circleService.getCircleBySlug(slug)).data;
+      return (await circleService.getCircleBySlug(null, slug)).data;
     },
     retry: 1,
     refetchOnWindowFocus: false,

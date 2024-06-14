@@ -1,6 +1,6 @@
 import { ZodError } from 'zod';
-import { parseError } from './client';
 import nookies from 'nookies';
+import { parseError } from './fetch-wrapper';
 
 export const prettifyError = (error: Error | null) => {
   if (error instanceof ZodError) {

@@ -21,7 +21,7 @@ export const useLogin = () => {
         setAccessToken(data.access_token, data.access_token_expired_at);
 
         const self = await authService.getSelf();
-        queryClient.setQueryData(['/api/v1/auth/self'], self);
+        queryClient.setQueryData(['/v1/auth/self'], self);
 
         toast.success('Welcome to ComimaFun!');
         router.push('/');

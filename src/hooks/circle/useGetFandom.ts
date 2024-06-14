@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 
 export const useGetFandom = (params: FandomQueryParams) => {
   return useQuery({
-    queryKey: ['/api/v1/fandom', params],
+    queryKey: ['/v1/fandom', params],
     queryFn: async () => {
       return (await circleService.getFandoms(params)).data;
     },

@@ -33,9 +33,19 @@ export const getCirclesQueryParams = circlesQueryParamsClient.partial().extend({
 
 export type GetCircleQueryParams = z.infer<typeof getCirclesQueryParams>;
 
-const fandomWorkTypeSchema = z.object({
+const fandomWorkTypeBaseEntity = z.object({
   name: z.string(),
   id: z.number(),
+});
+
+export const circleBlockEntity = z.object({
+  id: z.number(),
+  prefix: z.string().min(1).max(2),
+  postfix: z.string().min(1).max(8),
+});
+
+export const circleBlockWithName = circleBlockEntity.extend({
+  name: z.string(),
 });
 
 export const circleEntity = z.object({
@@ -65,8 +75,8 @@ export const productEntity = z.object({
 export const circleSchema = circleEntity.extend({
   block: z.string().nullable(),
   bookmarked: z.boolean(),
-  work_type: z.array(fandomWorkTypeSchema),
-  fandom: z.array(fandomWorkTypeSchema),
+  work_type: z.array(fandomWorkTypeBaseEntity),
+  fandom: z.array(fandomWorkTypeBaseEntity),
   product: z.array(productEntity),
 });
 
@@ -101,9 +111,10 @@ export const fandomQueryParams = z.object({
 
 export type FandomQueryParams = z.infer<typeof fandomQueryParams>;
 
-export const getFandomResponse =
-  backendResponsePagination(fandomWorkTypeSchema);
+export const getFandomResponse = backendResponsePagination(
+  fandomWorkTypeBaseEntity,
+);
 
 export const getAllWorkTypeResponse = backendResponseSchema(
-  z.array(fandomWorkTypeSchema),
+  z.array(fandomWorkTypeBaseEntity),
 );

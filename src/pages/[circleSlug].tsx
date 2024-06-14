@@ -4,20 +4,18 @@ import { useGetCircleBySlug } from '@/hooks/circle/useGetCircleBySlug';
 import LinkIcon from '@/icons/LinkIcon';
 import InstagramIcon from '@/icons/socmed/InstagramIcon';
 import TwitterIcon from '@/icons/socmed/TwitterIcon';
-import { getOneCircleResponse } from '@/types/circle';
 import { prettifyError } from '@/utils/helper';
-import { serverFetch } from '@/utils/serverFetch';
 import { dehydrate, QueryClient } from '@tanstack/react-query';
 import { GetServerSidePropsContext } from 'next';
+import { circleService } from '@/services/circle';
 
 export const getServerSideProps = async (c: GetServerSidePropsContext) => {
   const circleSlug = c.query.circleSlug as string;
   const queryClient = new QueryClient();
   await queryClient.prefetchQuery({
-    queryKey: ['/api/v1/circle', circleSlug],
+    queryKey: ['/v1/circle/[slug]', circleSlug],
     queryFn: async () => {
-      const res = await serverFetch(c, `/api/v1/circle/${circleSlug}`);
-      return getOneCircleResponse.parse(res).data;
+      return (await circleService.getCircleBySlug(c, circleSlug)).data;
     },
   });
 
