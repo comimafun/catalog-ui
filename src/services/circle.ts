@@ -7,6 +7,7 @@ import {
   getOneCircleResponse,
   onboardCircleResponse,
   OnboardingPayload,
+  UpdateCirclePayload,
 } from '@/types/circle';
 import { FetchContext, fetchInstance } from '@/utils/fetch-wrapper';
 
@@ -17,6 +18,18 @@ export const circleService = {
   },
   getCircleBySlug: async (c: FetchContext, slug: string) => {
     const res = await fetchInstance(c, `/v1/circle/${slug}`);
+    return getOneCircleResponse.parse(res);
+  },
+  publishUnpublishMyCircle: (circleID: number) =>
+    fetchInstance(null, `/v1/circle/${circleID}/publish`, { method: 'POST' }),
+  patchUpdateCircleByID: async (
+    circleID: number,
+    payload: UpdateCirclePayload,
+  ) => {
+    const res = await fetchInstance(null, `/v1/circle/${circleID}`, {
+      body: payload,
+      method: 'PATCH',
+    });
     return getOneCircleResponse.parse(res);
   },
   postOnboarding: async (payload: OnboardingPayload) => {

@@ -6,6 +6,7 @@ type Props = {
   children: React.ReactNode;
   errorMessage?: string;
   isInvalid?: boolean;
+  customRequest?: (file: FileList | null) => void;
 } & JSX.IntrinsicElements['input'];
 
 const Uploader = forwardRef<HTMLInputElement, Props>((props, ref) => {
@@ -15,6 +16,8 @@ const Uploader = forwardRef<HTMLInputElement, Props>((props, ref) => {
     name,
     errorMessage,
     isInvalid = false,
+    customRequest,
+    onChange,
     ...rest
   } = props;
   return (
@@ -35,6 +38,12 @@ const Uploader = forwardRef<HTMLInputElement, Props>((props, ref) => {
         className="hidden"
         ref={ref}
         {...rest}
+        onChange={(e) => {
+          onChange?.(e);
+          if (customRequest) {
+            customRequest(e.target.files);
+          }
+        }}
         name={name}
         id={name}
       />

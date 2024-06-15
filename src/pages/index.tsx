@@ -63,9 +63,7 @@ const CircleListGrid = () => {
           type="button"
           color="primary"
           variant="shadow"
-          onClick={async () => {
-            await fetchNextPage();
-          }}
+          onPress={() => fetchNextPage()}
         >
           Load More
         </Button>

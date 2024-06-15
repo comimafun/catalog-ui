@@ -1,3 +1,4 @@
+import { useSession } from '@/components/providers/SessionProvider';
 import { circleService } from '@/services/circle';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
@@ -25,7 +26,15 @@ export const useGetCircleBySlug = (options?: {
     },
     retry: 1,
     refetchOnWindowFocus: false,
+    refetchOnMount: false,
     enabled: !!slug,
     ...options,
   });
+};
+
+export const useIsMyCircle = () => {
+  const { data: circle } = useGetCircleBySlug();
+  const { session } = useSession();
+
+  return circle?.id === session?.circle?.id;
 };

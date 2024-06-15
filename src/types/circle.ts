@@ -3,10 +3,13 @@ import {
   backendResponsePagination,
   backendResponseSchema,
   optionalUrl,
+  trimmedString,
+  varchar255,
 } from './common';
+import { ACCEPTED_IMAGE_TYPES, FIVE_MB } from '@/constants/common';
 
 export const circlesQueryParamsClient = z.object({
-  search: z.string().optional().or(z.literal('')),
+  search: trimmedString.optional(),
   work_type_id: z
     .array(z.coerce.number())
     .or(z.coerce.number().transform((x) => [x]))
@@ -40,11 +43,6 @@ const fandomWorkTypeBaseEntity = z.object({
 
 export const circleBlockEntity = z.object({
   id: z.number(),
-  prefix: z.string().min(1).max(2),
-  postfix: z.string().min(1).max(8),
-});
-
-export const circleBlockWithName = circleBlockEntity.extend({
   name: z.string(),
 });
 
@@ -73,7 +71,7 @@ export const productEntity = z.object({
 });
 
 export const circleSchema = circleEntity.extend({
-  block: z.string().nullable(),
+  block: circleBlockEntity.nullable(),
   bookmarked: z.boolean(),
   work_type: z.array(fandomWorkTypeBaseEntity),
   fandom: z.array(fandomWorkTypeBaseEntity),
@@ -101,6 +99,36 @@ export const onboardingPayloadSchema = z.object({
   facebook_url: optionalUrl,
 });
 
+const blockString = trimmedString.refine(
+  (x) => {
+    const split = x.split('-');
+    const prefix = split[0];
+    const postfix = split[1];
+    return split.length === 2 || (prefix.length <= 2 && postfix.length <= 8);
+  },
+  {
+    message: 'Invalid block format',
+  },
+);
+
+export const editGeneralInfoPayload = onboardingPayloadSchema.extend({
+  block: blockString.optional(),
+  file:
+    typeof window === 'undefined'
+      ? z.any()
+      : z
+          .instanceof(FileList)
+          .optional()
+          .refine((x) => !x?.[0] || x[0].size <= FIVE_MB, {
+            message: 'Max file size is 5MB',
+          })
+          .refine((x) => !x?.[0] || ACCEPTED_IMAGE_TYPES.includes(x[0]?.type), {
+            message: 'File type must be jpg, jpeg, png, or webp',
+          }),
+});
+
+export type EditGeneralInfoPayload = z.infer<typeof editGeneralInfoPayload>;
+
 export type OnboardingPayload = z.infer<typeof onboardingPayloadSchema>;
 
 export const fandomQueryParams = z.object({
@@ -118,3 +146,23 @@ export const getFandomResponse = backendResponsePagination(
 export const getAllWorkTypeResponse = backendResponseSchema(
   z.array(fandomWorkTypeBaseEntity),
 );
+
+export const updateCirclePayload = z.object({
+  name: varchar255.optional(),
+  circle_block: blockString.optional(),
+  /**
+   * TODO: HTML string validation
+   */
+  description: z.string().optional(),
+  batch: z.number().optional(),
+  day: z.enum(['first', 'second', 'both']).optional(),
+  url: optionalUrl.optional(),
+  facebook_url: optionalUrl.optional(),
+  twitter_url: optionalUrl.optional(),
+  instagram_url: optionalUrl.optional(),
+  picture_url: optionalUrl.optional(),
+  fandom_ids: z.array(z.number()).optional(),
+  work_type_ids: z.array(z.number()).optional(),
+});
+
+export type UpdateCirclePayload = z.infer<typeof updateCirclePayload>;

@@ -10,9 +10,11 @@ import { classNames } from '@/utils/classNames';
 function CircleBookmarkButton({
   bookmarked,
   id,
+  className,
 }: {
   bookmarked: boolean;
   id: number;
+  className?: string;
 }) {
   const [localBookmarked, setLocalBookmarked] = useState(bookmarked);
   const router = useRouter();
@@ -45,7 +47,10 @@ function CircleBookmarkButton({
 
   return (
     <button
-      className="group absolute right-4 top-4 active:scale-80"
+      className={classNames(
+        'group absolute right-4 top-4 active:scale-80',
+        className,
+      )}
       type="button"
       onClick={(e) => {
         e.stopPropagation();

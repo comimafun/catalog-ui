@@ -27,3 +27,11 @@ export const optionalUrl = z.union([
   z.literal(''),
   z.string().trim().url().max(255),
 ]);
+
+export const trimmedString = z.union([z.literal(''), z.string().trim()]);
+
+export const varchar255 = z
+  .string()
+  .max(255, { message: 'Too long' })
+  .trim()
+  .or(z.literal(''));
