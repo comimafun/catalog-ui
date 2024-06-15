@@ -33,8 +33,26 @@ export const useGetCircleBySlug = (options?: {
 };
 
 export const useIsMyCircle = () => {
-  const { data: circle } = useGetCircleBySlug();
-  const { session } = useSession();
+  const { data: circle, isLoading: isLoadingCircle } = useGetCircleBySlug();
+  const { session, isLoading: isLoadingSession } = useSession();
+  const isLoading = isLoadingCircle || isLoadingSession;
+  const getState = () => {
+    if (isLoading) {
+      return 'loading';
+    }
 
-  return circle?.id === session?.circle?.id;
+    if (!session?.circle?.id || !circle?.id) {
+      return 'not-allowed';
+    }
+
+    return circle.id === session.circle.id ? 'allowed' : 'not-allowed';
+  };
+  const state = getState();
+
+  return {
+    isAllowed: state === 'allowed',
+    isLoading: state === 'loading',
+    isNotAllowed: state === 'not-allowed',
+    state,
+  };
 };

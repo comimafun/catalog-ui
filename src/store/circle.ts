@@ -26,3 +26,36 @@ export const useDrawerFilterStore = create<DrawerState & DrawerAction>(
     reset: () => set(drawerInitialState),
   }),
 );
+
+type EditFandomWorkTypeStore = {
+  tab: 'fandom' | 'workType';
+  fandomSearch: string;
+  fandomLocalSearch: string;
+};
+
+type EditFandomWorkTypeAction = {
+  setTab: (tab: EditFandomWorkTypeStore['tab']) => void;
+  setFandomSearch: (search: string) => void;
+  setFandomLocalSearch: (search: string) => void;
+  reset: () => void;
+};
+
+const EditFandomInitialState: EditFandomWorkTypeStore = {
+  tab: 'workType',
+  fandomSearch: '',
+  fandomLocalSearch: '',
+};
+
+export const useEditFandomWorkTypeStore = create<
+  EditFandomWorkTypeStore & EditFandomWorkTypeAction
+>((set) => ({
+  ...EditFandomInitialState,
+  tab: 'fandom',
+  setTab: (tab) => set({ tab }),
+  search: '',
+  setFandomSearch: (search) => set({ fandomSearch: search }),
+  localSearch: '',
+  setFandomLocalSearch: (localSearch) =>
+    set({ fandomLocalSearch: localSearch }),
+  reset: () => set(EditFandomInitialState),
+}));

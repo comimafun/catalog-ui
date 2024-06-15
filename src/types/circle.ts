@@ -36,7 +36,7 @@ export const getCirclesQueryParams = circlesQueryParamsClient.partial().extend({
 
 export type GetCircleQueryParams = z.infer<typeof getCirclesQueryParams>;
 
-const fandomWorkTypeBaseEntity = z.object({
+export const fandomWorkTypeBaseEntity = z.object({
   name: z.string(),
   id: z.number(),
 });
@@ -166,3 +166,12 @@ export const updateCirclePayload = z.object({
 });
 
 export type UpdateCirclePayload = z.infer<typeof updateCirclePayload>;
+
+export const updateFandomSchema = z.object({
+  fandom: z
+    .array(z.object({ id: z.coerce.number(), name: z.string() }))
+    .max(5, { message: 'You can only select up to 5 fandoms' })
+    .default([]),
+});
+
+export type UpdateFandomSchema = z.infer<typeof updateFandomSchema>;

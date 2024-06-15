@@ -23,7 +23,7 @@ const PublishSwitcher = () => {
     },
   });
   const { mutateAsync, isPending } = usePublishMyCircle();
-  const isMyCircle = useIsMyCircle();
+  const { isNotAllowed } = useIsMyCircle();
 
   const handlePublishUnpublish = async () => {
     if (!data) return;
@@ -50,7 +50,7 @@ const PublishSwitcher = () => {
     }
   }, [data?.published]);
 
-  if (!isMyCircle) return;
+  if (isNotAllowed) return;
 
   return (
     <Switch
@@ -58,14 +58,14 @@ const PublishSwitcher = () => {
       isDisabled={isPending}
       isSelected={localPubllished}
     >
-      Publish
+      <span className="hidden sm:inline"> Publish</span>
     </Switch>
   );
 };
 
 function GeneralInfoSection() {
   const { data } = useGetCircleBySlug();
-  const isMyCircle = useIsMyCircle();
+  const { isAllowed } = useIsMyCircle();
   const isAnyUrlExist =
     data?.url || data?.twitter_url || data?.instagram_url || data?.facebook_url;
   return (
@@ -133,8 +133,9 @@ function GeneralInfoSection() {
         </div>
       </div>
 
-      {isMyCircle && (
-        <div className="flex gap-1.5 self-start">
+      {isAllowed && (
+        <div className="flex flex-col items-end gap-1.5 self-start sm:flex-row">
+          <PublishSwitcher />
           <Link
             href={{
               pathname: `/[circleSlug]/edit`,
@@ -146,12 +147,11 @@ function GeneralInfoSection() {
           >
             <Chip
               color="warning"
-              endContent={<EditIcon width={14} height={14} />}
+              endContent={<EditIcon width={16} height={16} />}
             >
               <span className="font-semibold">Edit</span>
             </Chip>
           </Link>
-          <PublishSwitcher />
         </div>
       )}
     </div>

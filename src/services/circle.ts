@@ -1,5 +1,6 @@
 import {
   FandomQueryParams,
+  fandomWorkTypeBaseEntity,
   getAllWorkTypeResponse,
   GetCircleQueryParams,
   getCirclesResponse,
@@ -9,6 +10,7 @@ import {
   OnboardingPayload,
   UpdateCirclePayload,
 } from '@/types/circle';
+import { backendResponseSchema } from '@/types/common';
 import { FetchContext, fetchInstance } from '@/utils/fetch-wrapper';
 
 export const circleService = {
@@ -46,6 +48,14 @@ export const circleService = {
     fetchInstance(null, `/v1/circle/${circleId}/bookmark`, {
       method: 'DELETE',
     }),
+  postCreateFandom: async (name: string) => {
+    const res = await fetchInstance(null, '/v1/fandom', {
+      body: {
+        name,
+      },
+    });
+    return backendResponseSchema(fandomWorkTypeBaseEntity).parse(res);
+  },
   getFandoms: async (params: FandomQueryParams) => {
     const res = await fetchInstance(null, '/v1/fandom', { params: params });
     return getFandomResponse.parse(res);
