@@ -1,6 +1,7 @@
 import { ZodError } from 'zod';
 import nookies from 'nookies';
 import { parseError } from './fetch-wrapper';
+import DOMPurify from 'isomorphic-dompurify';
 
 export const prettifyError = (error: Error | null) => {
   if (error instanceof ZodError) {
@@ -30,4 +31,9 @@ export const setAccessToken = (accessToken: string, _expires: string) => {
     // expires: new Date(expires),
     path: '/',
   });
+};
+
+export const sanitizeHtmlString = (html: string) => {
+  const cleaned = DOMPurify.sanitize(html);
+  return cleaned;
 };

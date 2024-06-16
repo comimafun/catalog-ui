@@ -1,3 +1,4 @@
+import EditDescriptionSection from '@/components/circle/detail-page/EditDescriptionSection';
 import EditFandomWorkTypeSection from '@/components/circle/detail-page/EditFandomWorkTypeSection';
 import EditGeneralInfoSection from '@/components/circle/detail-page/EditGeneralInfoSection';
 import EachPageLayout from '@/components/general/EachPageLayout';
@@ -10,7 +11,7 @@ import { useRouter } from 'next/router';
 import { Fragment, useEffect } from 'react';
 import toast from 'react-hot-toast';
 
-const AVAILABLE_STATE = new Set(['general', 'fandom_work_type']);
+const AVAILABLE_STATE = new Set(['general', 'fandom_work_type', 'description']);
 
 export const getServerSideProps = async (c: GetServerSidePropsContext) => {
   const { section } = c.query;
@@ -68,6 +69,8 @@ function CircleEditPage() {
       {router.query.section === 'fandom_work_type' && (
         <EditFandomWorkTypeSection />
       )}
+
+      {router.query.section === 'description' && <EditDescriptionSection />}
     </Fragment>
   );
 }

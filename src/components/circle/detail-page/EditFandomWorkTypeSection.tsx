@@ -148,7 +148,7 @@ const WorkTypeSection = () => {
           render={({ fieldState, field }) => {
             return (
               <Button
-                className="mt-4 font-medium"
+                className="mt-4 font-medium text-neutral-100"
                 type="submit"
                 color="warning"
                 fullWidth
@@ -336,7 +336,7 @@ const FandomSection = () => {
           render={({ fieldState, field }) => {
             return (
               <Button
-                className="mt-4 font-medium"
+                className="mt-4 font-medium text-neutral-100"
                 type="submit"
                 color="warning"
                 fullWidth
