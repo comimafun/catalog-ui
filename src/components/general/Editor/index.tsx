@@ -285,7 +285,7 @@ const EditorWYSIWYG = ({
       attributes: {
         class: classNames(
           'focus:outline-none border rounded-b-lg border-neutral-500 focus:ring-1 focus:ring-neutral-500 focus:ring-opacity-50',
-          'py-1 px-2.5 w-full',
+          'py-1 px-2.5 w-full min-h-[260px]',
           ...PROSE_WYISIWYG_CLASSNAMES,
         ),
       },

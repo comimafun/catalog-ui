@@ -73,7 +73,7 @@ function JoinPage() {
           <p className="font-medium">Help us create better community!</p>
         </div>
 
-        <div className="mx-auto max-w-[360px] rounded-lg border border-neutral-950 p-4 shadow-md">
+        <div className="mx-auto max-w-[400px] rounded-lg border border-neutral-950 p-4 shadow-md">
           <LoadingWrapper spinning={isPending}>
             <form
               className="gap-3"

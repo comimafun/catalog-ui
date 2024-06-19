@@ -35,3 +35,7 @@ export const varchar255 = z
   .max(255, { message: 'Too long' })
   .trim()
   .or(z.literal(''));
+
+export type CommonStoreSetter<T extends Record<string, unknown>> = {
+  [K in keyof T as `set${Capitalize<string & K>}`]: (value: T[K]) => void;
+};

@@ -14,6 +14,9 @@
     ],
     "svg-jsx/camel-case-dash": "error",
     "svg-jsx/camel-case-colon": "error",
-    "svg-jsx/no-style-string": "error"
+    "svg-jsx/no-style-string": "error",
+    "no-console": ["error", { "allow": ["warn", "error"] }],
+    "react/no-array-index-key": "warn",
+    "@typescript-eslint/no-explicit-any": "error"
   }
 }

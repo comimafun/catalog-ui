@@ -7,6 +7,7 @@ import {
   varchar255,
 } from './common';
 import { ACCEPTED_IMAGE_TYPES, FIVE_MB } from '@/constants/common';
+import { eventEntity } from './event';
 
 export const circlesQueryParamsClient = z.object({
   search: trimmedString.optional(),
@@ -46,12 +47,14 @@ export const circleBlockEntity = z.object({
   name: z.string(),
 });
 
+export const dayEnum = z.enum(['first', 'second', 'both']);
+
 export const circleEntity = z.object({
   id: z.number(),
   batch: z.number().nullable(),
   created_at: z.string(),
   updated_at: z.string(),
-  day: z.enum(['first', 'second', 'both']).nullable(),
+  day: dayEnum.nullable(),
   description: z.string().nullable(),
   url: z.string().nullable(),
   facebook_url: z.string().nullable(),
@@ -62,6 +65,7 @@ export const circleEntity = z.object({
   name: z.string(),
   published: z.boolean(),
   verified: z.boolean(),
+  event_id: z.number().nullable(),
 });
 
 export const productEntity = z.object({
@@ -76,15 +80,18 @@ export const circleSchema = circleEntity.extend({
   work_type: z.array(fandomWorkTypeBaseEntity),
   fandom: z.array(fandomWorkTypeBaseEntity),
   product: z.array(productEntity),
+  event: eventEntity.nullable(),
 });
 
-export type CircleCard = Omit<z.infer<typeof circleSchema>, 'product'>;
+const circles = circleSchema.omit({ product: true, event: true });
+
+export type CircleCard = z.infer<typeof circles>;
 
 export const onboardCircleResponse = backendResponseSchema(circleEntity);
-export const getOneCircleResponse = backendResponseSchema(circleSchema);
-export const getCirclesResponse = backendResponsePagination(
-  circleSchema.omit({ product: true }),
+export const getOneCircleResponse = backendResponseSchema(
+  circleSchema.omit({ event_id: true }),
 );
+export const getCirclesResponse = backendResponsePagination(circles);
 
 export const onboardingPayloadSchema = z.object({
   name: z
@@ -155,7 +162,7 @@ export const updateCirclePayload = z.object({
    */
   description: z.string().optional(),
   batch: z.number().optional(),
-  day: z.enum(['first', 'second', 'both']).optional(),
+  day: dayEnum.or(z.literal('')).optional(),
   url: optionalUrl.optional(),
   facebook_url: optionalUrl.optional(),
   twitter_url: optionalUrl.optional(),
@@ -163,6 +170,7 @@ export const updateCirclePayload = z.object({
   picture_url: optionalUrl.optional(),
   fandom_ids: z.array(z.number()).optional(),
   work_type_ids: z.array(z.number()).optional(),
+  event_id: z.number().optional(),
 });
 
 export type UpdateCirclePayload = z.infer<typeof updateCirclePayload>;

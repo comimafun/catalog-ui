@@ -53,6 +53,6 @@ export const useIsMyCircle = () => {
     isAllowed: state === 'allowed',
     isLoading: state === 'loading',
     isNotAllowed: state === 'not-allowed',
-    state,
+    state: state as 'allowed' | 'loading' | 'not-allowed',
   };
 };

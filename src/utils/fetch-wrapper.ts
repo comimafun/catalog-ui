@@ -27,7 +27,7 @@ export const parseError = (err: Error | null) => {
 };
 
 type RequestInitConfig = Omit<RequestInit, 'body'> & {
-  params?: any;
+  params?: Parameters<typeof QueryString.stringify>[0];
   body?: Record<string, unknown> | FormData;
   method?: 'GET' | 'POST' | 'PATCH' | 'DELETE' | 'PUT';
 };

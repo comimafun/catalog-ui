@@ -8,6 +8,7 @@ import SectionPartitionWrapper from '@/components/circle/detail-page/SectionPart
 import GeneralInfoSection from '@/components/circle/detail-page/GeneralInfoSection';
 import FandomWorkTypeSection from '@/components/circle/detail-page/FandomWorkTypeSection';
 import DescriptionSection from '@/components/circle/detail-page/DescriptionSection';
+import EventSection from '@/components/circle/detail-page/EventSection';
 
 export const getServerSideProps = async (c: GetServerSidePropsContext) => {
   const circleSlug = c.query.circleSlug as string;
@@ -29,7 +30,7 @@ export const getServerSideProps = async (c: GetServerSidePropsContext) => {
 };
 
 function CirclePage() {
-  const { error } = useGetCircleBySlug();
+  const { error } = useGetCircleBySlug({ options: { refetchOnMount: true } });
 
   if (error) {
     const errMsg = prettifyError(error);
@@ -44,6 +45,9 @@ function CirclePage() {
     <div className="space-y-4">
       <SectionPartitionWrapper>
         <GeneralInfoSection />
+      </SectionPartitionWrapper>
+      <SectionPartitionWrapper>
+        <EventSection />
       </SectionPartitionWrapper>
       <SectionPartitionWrapper>
         <FandomWorkTypeSection />

@@ -63,7 +63,6 @@ function EditGeneralInfoSection() {
 
                 try {
                   const payload = updateCirclePayload.parse(val);
-                  console.log(payload);
                   const updated = await mutateAsync({
                     circleID: data.id,
                     payload,

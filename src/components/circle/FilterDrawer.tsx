@@ -238,7 +238,6 @@ const MainFilter = () => {
         control={filterForm.control}
         name="day"
         render={({ field: { disabled, onChange, ...fields } }) => {
-          console.log(fields.value);
           return (
             <RadioGroup
               label={<div className="font-medium">Day</div>}

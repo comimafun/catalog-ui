@@ -1,17 +1,26 @@
 import EditDescriptionSection from '@/components/circle/detail-page/EditDescriptionSection';
+import EditEventSection from '@/components/circle/detail-page/EditEventSection';
 import EditFandomWorkTypeSection from '@/components/circle/detail-page/EditFandomWorkTypeSection';
 import EditGeneralInfoSection from '@/components/circle/detail-page/EditGeneralInfoSection';
 import EachPageLayout from '@/components/general/EachPageLayout';
 import LoadingWrapper from '@/components/general/Spinner';
 import { useSession } from '@/components/providers/SessionProvider';
-import { useGetCircleBySlug } from '@/hooks/circle/useGetCircleBySlug';
+import {
+  useGetCircleBySlug,
+  useIsMyCircle,
+} from '@/hooks/circle/useGetCircleBySlug';
 import { prettifyError } from '@/utils/helper';
 import { GetServerSidePropsContext } from 'next';
 import { useRouter } from 'next/router';
 import { Fragment, useEffect } from 'react';
 import toast from 'react-hot-toast';
 
-const AVAILABLE_STATE = new Set(['general', 'fandom_work_type', 'description']);
+const AVAILABLE_STATE = new Set([
+  'general',
+  'fandom_work_type',
+  'description',
+  'event',
+]);
 
 export const getServerSideProps = async (c: GetServerSidePropsContext) => {
   const { section } = c.query;
@@ -28,16 +37,14 @@ export const getServerSideProps = async (c: GetServerSidePropsContext) => {
 
 const useProtectRoute = () => {
   const router = useRouter();
-  const { data, isLoading, error } = useGetCircleBySlug();
-  const { isLoading: isSessionLoading, session } = useSession();
-  const isMyCircle = session?.circle?.id === data?.id;
+  const { state } = useIsMyCircle();
   useEffect(() => {
-    if (!data || isLoading || isSessionLoading || error) return;
-    if (!isMyCircle) {
+    if (state === 'loading' || state === 'allowed') return;
+    if (state === 'not-allowed') {
       toast.error('You are not allowed to edit this circle');
-      router.replace('/404');
+      router.push(`/circle/${router.query.circleSlug}`);
     }
-  }, [isMyCircle, isLoading, isSessionLoading, session, error]);
+  }, [state]);
 };
 
 function CircleEditPage() {
@@ -71,6 +78,7 @@ function CircleEditPage() {
       )}
 
       {router.query.section === 'description' && <EditDescriptionSection />}
+      {router.query.section === 'event' && <EditEventSection />}
     </Fragment>
   );
 }

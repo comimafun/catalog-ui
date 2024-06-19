@@ -1,3 +1,4 @@
+import { CommonStoreSetter } from '@/types/common';
 import { create } from 'zustand';
 
 type DrawerState = {
@@ -5,12 +6,10 @@ type DrawerState = {
   drawerFilterIsOpen: boolean;
   searchFandom: string;
 };
-type DrawerAction = {
-  setDrawerFilterStep: (step: DrawerState['drawerFilterStep']) => void;
-  setDrawerFilterIsOpen: (open: DrawerState['drawerFilterIsOpen']) => void;
-  setSearchFandom: (search: DrawerState['searchFandom']) => void;
+type DrawerAction = CommonStoreSetter<DrawerState> & {
   reset: () => void;
 };
+
 const drawerInitialState: DrawerState = {
   drawerFilterStep: null,
   drawerFilterIsOpen: false,
@@ -33,10 +32,7 @@ type EditFandomWorkTypeStore = {
   fandomLocalSearch: string;
 };
 
-type EditFandomWorkTypeAction = {
-  setTab: (tab: EditFandomWorkTypeStore['tab']) => void;
-  setFandomSearch: (search: string) => void;
-  setFandomLocalSearch: (search: string) => void;
+type EditFandomWorkTypeAction = CommonStoreSetter<EditFandomWorkTypeStore> & {
   reset: () => void;
 };
 
@@ -51,10 +47,10 @@ export const useEditFandomWorkTypeStore = create<
 >((set) => ({
   ...EditFandomInitialState,
   tab: 'fandom',
+  fandomLocalSearch: '',
+  fandomSearch: '',
   setTab: (tab) => set({ tab }),
-  search: '',
   setFandomSearch: (search) => set({ fandomSearch: search }),
-  localSearch: '',
   setFandomLocalSearch: (localSearch) =>
     set({ fandomLocalSearch: localSearch }),
   reset: () => set(EditFandomInitialState),

@@ -4,6 +4,7 @@ import { parseError } from './fetch-wrapper';
 import DOMPurify from 'isomorphic-dompurify';
 
 export const prettifyError = (error: Error | null) => {
+  console.error(error);
   if (error instanceof ZodError) {
     const fields = Object.entries(error.flatten().fieldErrors).map(
       ([field, err]) => {
