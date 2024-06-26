@@ -2,7 +2,7 @@ import EachPageLayout from '@/components/general/EachPageLayout';
 import LoadingWrapper from '@/components/general/Spinner';
 import Uploader from '@/components/general/Uploader';
 import { useSession } from '@/components/providers/SessionProvider';
-import { ACCEPTED_IMAGE_TYPES, FIVE_MB } from '@/constants/common';
+import { ACCEPTED_IMAGE_TYPES_SET, MEGABYTE } from '@/constants/common';
 import { useOnboarding } from '@/hooks/circle/useOnboarding';
 import ImageIcon from '@/icons/ImageIcon';
 import MegaphoneIcon from '@/icons/MegaphoneIcon';
@@ -14,7 +14,8 @@ import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { z } from 'zod';
-import { Image } from 'image-js';
+
+const acceptedTypes = Array.from(ACCEPTED_IMAGE_TYPES_SET).join(', ');
 
 const joinSchema = onboardingPayloadSchema.extend({
   file:
@@ -23,11 +24,11 @@ const joinSchema = onboardingPayloadSchema.extend({
       : z
           .instanceof(FileList)
           .optional()
-          .refine((x) => !x?.[0] || x[0].size <= FIVE_MB, {
-            message: 'Max file size is 5MB',
+          .refine((x) => !x?.[0] || x[0].size <= 1 * MEGABYTE, {
+            message: 'Max file size is 1MB',
           })
-          .refine((x) => !x?.[0] || ACCEPTED_IMAGE_TYPES.includes(x[0]?.type), {
-            message: 'File type must be jpg, jpeg, png, or webp',
+          .refine((x) => !x?.[0] || ACCEPTED_IMAGE_TYPES_SET.has(x[0]?.type), {
+            message: 'File type must be' + acceptedTypes,
           }),
 });
 
@@ -81,32 +82,29 @@ function JoinPage() {
               onSubmit={form.handleSubmit((val) => handleOnboarding(val))}
             >
               <Uploader
-                accept={ACCEPTED_IMAGE_TYPES.join(',')}
+                accept={Array.from(ACCEPTED_IMAGE_TYPES_SET).join(',')}
                 className="mx-auto flex max-w-[200px] flex-col items-center justify-center"
                 isInvalid={!!form.formState.errors.file}
                 errorMessage={String(form.formState.errors.file?.message)}
                 customRequest={async (files) => {
                   const file = files?.[0];
                   if (!file) return;
-                  const buffer = await file.arrayBuffer();
-                  const image = await Image.load(buffer);
-                  const resizedBlob = await image
-                    .resize({
-                      preserveAspectRatio: true,
-                      width: 300,
-                      interpolation: 'nearestNeighbor',
-                    })
-                    .toBlob(file.type, 0.75);
 
-                  const newFile = new File([resizedBlob], file.name, {
-                    type: file.type,
-                    lastModified: Date.now(),
-                  });
+                  if (file.size > 1 * MEGABYTE) {
+                    toast.error('Max file size is 1MB');
+                    return;
+                  }
 
-                  const formData = new FormData();
-                  formData.append('file', newFile);
-                  formData.append('type', 'covers')
-                  console.log(formData);
+                  if (!ACCEPTED_IMAGE_TYPES_SET.has(file.type)) {
+                    toast.error('File type must be' + acceptedTypes);
+                    return;
+                  }
+
+                  console.log(file);
+                  // await uploadService.uploadImage({
+                  //   file: newFile,
+                  //   type: 'covers',
+                  // });
                 }}
                 {...form.register('file')}
               >

@@ -39,9 +39,10 @@ const Uploader = forwardRef<HTMLInputElement, Props>((props, ref) => {
         ref={ref}
         {...rest}
         onChange={(e) => {
-          onChange?.(e);
           if (customRequest) {
             customRequest(e.target.files);
+          } else {
+            onChange?.(e);
           }
         }}
         name={name}

@@ -1,7 +1,7 @@
 import { ZodError } from 'zod';
 import nookies from 'nookies';
 import { parseError } from './fetch-wrapper';
-import DOMPurify from 'isomorphic-dompurify';
+import { Image, ResizeOptions } from 'image-js';
 
 export const prettifyError = (error: Error | null) => {
   console.error(error);
@@ -34,7 +34,24 @@ export const setAccessToken = (accessToken: string, _expires: string) => {
   });
 };
 
-export const sanitizeHtmlString = (html: string) => {
-  const cleaned = DOMPurify.sanitize(html);
-  return cleaned;
+export const downSizeForCoverImage = async (
+  file: File,
+  resizeOptions?: ResizeOptions,
+  quality?: number,
+) => {
+  const buffer = await file.arrayBuffer();
+  const image = await Image.load(buffer);
+  const resizedBlob = await image
+    .resize({
+      preserveAspectRatio: true,
+      width: 300,
+      interpolation: 'nearestNeighbor',
+      ...resizeOptions,
+    })
+    .toBlob(file.type, quality ?? 0.75);
+
+  return new File([resizedBlob], file.name, {
+    type: file.type,
+    lastModified: Date.now(),
+  });
 };
