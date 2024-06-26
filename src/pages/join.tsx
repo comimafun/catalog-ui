@@ -14,6 +14,7 @@ import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { z } from 'zod';
+import { Image } from 'image-js';
 
 const joinSchema = onboardingPayloadSchema.extend({
   file:
@@ -84,6 +85,29 @@ function JoinPage() {
                 className="mx-auto flex max-w-[200px] flex-col items-center justify-center"
                 isInvalid={!!form.formState.errors.file}
                 errorMessage={String(form.formState.errors.file?.message)}
+                customRequest={async (files) => {
+                  const file = files?.[0];
+                  if (!file) return;
+                  const buffer = await file.arrayBuffer();
+                  const image = await Image.load(buffer);
+                  const resizedBlob = await image
+                    .resize({
+                      preserveAspectRatio: true,
+                      width: 300,
+                      interpolation: 'nearestNeighbor',
+                    })
+                    .toBlob(file.type, 0.75);
+
+                  const newFile = new File([resizedBlob], file.name, {
+                    type: file.type,
+                    lastModified: Date.now(),
+                  });
+
+                  const formData = new FormData();
+                  formData.append('file', newFile);
+                  formData.append('type', 'covers')
+                  console.log(formData);
+                }}
                 {...form.register('file')}
               >
                 <div className="flex h-24 w-24 items-center justify-center rounded-full bg-slate-500">

@@ -42,7 +42,7 @@ const useProtectRoute = () => {
     if (state === 'loading' || state === 'allowed') return;
     if (state === 'not-allowed') {
       toast.error('You are not allowed to edit this circle');
-      router.push(`/circle/${router.query.circleSlug}`);
+      router.push(`/${router.query.circleSlug}`);
     }
   }, [state]);
 };
