@@ -100,7 +100,6 @@ function JoinPage() {
                     return;
                   }
 
-                  console.log(file);
                   // await uploadService.uploadImage({
                   //   file: newFile,
                   //   type: 'covers',

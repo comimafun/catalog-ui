@@ -22,7 +22,7 @@ concurrency:
 
 jobs:
   lint:
-    name: Lin
+    name: Lint & Typechecking
     if: github.event.pull_request.draft == false
     env:
       CI: true

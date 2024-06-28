@@ -23,13 +23,8 @@ import {
   useDisclosure,
 } from '@nextui-org/react';
 import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
-import {
-  Controller,
-  FormProvider,
-  useForm,
-  useFormContext,
-} from 'react-hook-form';
+import { useEffect, useState } from 'react';
+import { Controller, FormProvider, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { z } from 'zod';
 
