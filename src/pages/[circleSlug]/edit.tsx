@@ -4,7 +4,6 @@ import EditFandomWorkTypeSection from '@/components/circle/detail-page/EditFando
 import EditGeneralInfoSection from '@/components/circle/detail-page/EditGeneralInfoSection';
 import EachPageLayout from '@/components/general/EachPageLayout';
 import LoadingWrapper from '@/components/general/Spinner';
-import { useSession } from '@/components/providers/SessionProvider';
 import {
   useGetCircleBySlug,
   useIsMyCircle,
