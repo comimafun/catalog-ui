@@ -64,9 +64,12 @@ export const fetchInstance = async <T>(
     headers: customHeaders,
     ...customConfig
   } = requestInit || {};
-  const headers: HeadersInit = {
+  const headers: HeadersInit & {
+    'Content-Type'?: string;
+  } = {
     'Content-Type': 'application/json',
   };
+  const isFormData = body instanceof FormData;
 
   if (accessToken) {
     headers.Authorization = `Bearer ${accessToken}`;
@@ -75,6 +78,10 @@ export const fetchInstance = async <T>(
   if (params) {
     queryString =
       '?' + QueryString.stringify(params, { arrayFormat: 'repeat' });
+  }
+
+  if (isFormData) {
+    delete headers['Content-Type'];
   }
 
   const config: RequestInit = {
@@ -87,8 +94,10 @@ export const fetchInstance = async <T>(
     },
   };
 
-  if (body) {
+  if (body && !isFormData) {
     config.body = JSON.stringify(body);
+  } else if (body && isFormData) {
+    config.body = body;
   }
 
   return fetch(baseURL + endpoint + queryString, config).then(async (res) => {
@@ -108,6 +117,7 @@ export const fetchInstance = async <T>(
       const refreshing = await fetch(baseURL + '/v1/auth/refresh', {
         ...config,
         method: 'GET',
+        body: undefined,
         headers: {
           ...config.headers,
           'Content-Type': 'application/json',

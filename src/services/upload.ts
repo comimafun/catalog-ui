@@ -1,4 +1,8 @@
+import { backendResponseSchema } from '@/types/common';
 import { fetchInstance } from '@/utils/fetch-wrapper';
+import { z } from 'zod';
+
+const uploadResponse = backendResponseSchema(z.string());
 
 export const uploadService = {
   uploadImage: async ({
@@ -6,17 +10,15 @@ export const uploadService = {
     type,
   }: {
     file: File;
-    type: 'covers' | 'products' | 'circles';
+    type: 'covers' | 'products' | 'profiles';
   }) => {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('type', type);
-    return fetchInstance(null, '/v1/upload/image', {
+    const res = await fetchInstance(null, '/v1/upload/image', {
       method: 'POST',
       body: formData,
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
     });
+    return uploadResponse.parse(res);
   },
 };

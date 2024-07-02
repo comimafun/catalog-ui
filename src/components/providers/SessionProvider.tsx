@@ -29,6 +29,11 @@ const SessionProvider = ({ children }: { children: React.ReactNode }) => {
         exact: false,
         refetchType: 'active',
       }),
+      queryClient.invalidateQueries({
+        queryKey: ['/v1/auth/self'],
+        refetchType: 'active',
+        exact: false,
+      }),
     ]);
   };
 
