@@ -1,11 +1,11 @@
 import { circleService } from '@/services/circle';
 import { GetCircleQueryParamsClient } from '@/types/circle';
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/react-query';
 
-export const useGetCirclesInfinite = (
+export const getCirclesOptions = (
   params: Partial<GetCircleQueryParamsClient>,
 ) => {
-  const res = useInfiniteQuery({
+  return infiniteQueryOptions({
     initialPageParam: 1,
     queryKey: ['/v1/circle', params],
     queryFn: async ({ pageParam = 1 }) => {
@@ -21,7 +21,12 @@ export const useGetCirclesInfinite = (
       return undefined;
     },
   });
+};
 
+export const useGetCirclesInfinite = (
+  params: Partial<GetCircleQueryParamsClient>,
+) => {
+  const res = useInfiniteQuery(getCirclesOptions(params));
   const result = res.data?.pages.flatMap((page) => page.data) ?? [];
 
   return {
