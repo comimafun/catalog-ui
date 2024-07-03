@@ -79,11 +79,10 @@ export const circleSchema = circleEntity.extend({
   bookmarked: z.boolean(),
   work_type: z.array(fandomWorkTypeBaseEntity),
   fandom: z.array(fandomWorkTypeBaseEntity),
-  product: z.array(productEntity),
   event: eventEntity.nullable(),
 });
 
-const circles = circleSchema.omit({ product: true, event: true });
+const circles = circleSchema.omit({ event: true });
 
 export type CircleCard = z.infer<typeof circles>;
 

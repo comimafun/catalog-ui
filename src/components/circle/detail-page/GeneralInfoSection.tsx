@@ -17,11 +17,7 @@ import LinkIcon from '@/icons/LinkIcon';
 
 const PublishSwitcher = () => {
   const [localPubllished, setLocalPubllished] = useState(false);
-  const { data, refetch } = useGetCircleBySlug({
-    options: {
-      refetchOnMount: true,
-    },
-  });
+  const { data, refetch } = useGetCircleBySlug();
   const { mutateAsync, isPending } = usePublishMyCircle();
   const { isNotAllowed } = useIsMyCircle();
 

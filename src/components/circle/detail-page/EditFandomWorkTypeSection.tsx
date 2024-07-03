@@ -59,7 +59,7 @@ const WorkTypeSection = () => {
 
   return (
     <div className="space-y-1 p-4">
-      <h2 className="text-base font-medium">Selected WorkType</h2>
+      <h2 className="text-base font-medium">Selected Work Type</h2>
       <form
         onSubmit={form.handleSubmit(async (val) => {
           if (!circle) return;
@@ -114,7 +114,7 @@ const WorkTypeSection = () => {
           control={form.control}
           name="work_type"
           render={({ field }) => {
-            if (field.value.length === 0) {
+            if (workTypes?.length === 0) {
               return <p>No work type found</p>;
             }
             return (
