@@ -16,6 +16,20 @@ import { ACCEPTED_IMAGE_TYPES_SET, MEGABYTE } from '@/constants/common';
 import toast from 'react-hot-toast';
 import { prettifyError } from '@/utils/helper';
 import { uploadService } from '@/services/upload';
+import { create } from 'zustand';
+import { CommonStoreSetter } from '@/types/common';
+import LoadingWrapper from '../Spinner';
+
+type EditorStore = {
+  isLoading: boolean;
+};
+
+type EditorStoreSetter = CommonStoreSetter<EditorStore>;
+
+const useEditorStore = create<EditorStore & EditorStoreSetter>((set) => ({
+  isLoading: false,
+  setIsLoading: (isLoading) => set({ isLoading }),
+}));
 
 const HEADING_LEVELS = [1, 2, 3] as Level[];
 
@@ -44,8 +58,11 @@ const extensions = [
     linkOnPaste: true,
     autolink: true,
   }),
-  // TODO: Add image extension
-  Image,
+  Image.configure({
+    HTMLAttributes: {
+      loading: 'lazy',
+    },
+  }),
 ];
 
 const LinkMenu = ({ editor }: { editor: Editor | null }) => {
@@ -174,6 +191,8 @@ const HeadingsMenu = ({ editor }: { editor: Editor | null }) => {
 };
 
 const ImageMenu = ({ editor }: { editor: Editor | null }) => {
+  const setLoading = useEditorStore((s) => s.setIsLoading);
+
   if (!editor) {
     return null;
   }
@@ -186,6 +205,7 @@ const ImageMenu = ({ editor }: { editor: Editor | null }) => {
       )}
       customRequest={async (files) => {
         try {
+          setLoading(true);
           const file = files?.[0];
           if (!file) return;
 
@@ -209,6 +229,8 @@ const ImageMenu = ({ editor }: { editor: Editor | null }) => {
           editor.chain().focus().setImage({ src: data, alt: file.name }).run();
         } catch (error) {
           toast.error(prettifyError(error as Error));
+        } finally {
+          setLoading(false);
         }
       }}
     >
@@ -293,6 +315,8 @@ const EditorWYSIWYG = ({
   content?: string;
   onChange?: (html: string) => void;
 }) => {
+  const isLoading = useEditorStore((s) => s.isLoading);
+  const setLoading = useEditorStore((s) => s.setIsLoading);
   const editor = useEditor({
     content,
     onUpdate: (c) => onChange?.(c.editor.getHTML()),
@@ -304,6 +328,58 @@ const EditorWYSIWYG = ({
           'py-1 px-2.5 w-full min-h-[260px]',
           ...PROSE_WYISIWYG_CLASSNAMES,
         ),
+      },
+      handleDrop: (view, event, _slice, moved) => {
+        if (
+          !moved &&
+          event.dataTransfer &&
+          event.dataTransfer.files &&
+          event.dataTransfer.files[0]
+        ) {
+          const file = event.dataTransfer.files[0];
+          if (file.size > 2 * MEGABYTE) {
+            toast.error('Max file size is 2MB');
+            return;
+          }
+
+          if (!ACCEPTED_IMAGE_TYPES_SET.has(file.type)) {
+            toast.error(
+              'File type must be' +
+                Array.from(ACCEPTED_IMAGE_TYPES_SET).join(','),
+            );
+            return;
+          }
+          const coordinates = view.posAtCoords({
+            left: event.clientX,
+            top: event.clientY,
+          });
+
+          if (!coordinates) return false;
+          setLoading(true);
+          uploadService
+            .uploadImage({
+              file,
+              type: 'profiles',
+            })
+            .then(({ data }) => {
+              const { schema } = view.state;
+              const node = schema.nodes.image.create({
+                src: data,
+                alt: file.name,
+              });
+              const transaction = view.state.tr.insert(coordinates.pos, node);
+              return view.dispatch(transaction);
+            })
+            .catch((err) => {
+              toast.error(prettifyError(err as Error));
+              return false;
+            })
+            .finally(() => {
+              setLoading(false);
+            });
+        }
+
+        return false;
       },
     },
   });
@@ -317,10 +393,10 @@ const EditorWYSIWYG = ({
   }, [content, editor]);
 
   return (
-    <>
+    <LoadingWrapper spinning={isLoading}>
       <MenuBar editor={editor} />
       <EditorContent editor={editor} />
-    </>
+    </LoadingWrapper>
   );
 };
 
