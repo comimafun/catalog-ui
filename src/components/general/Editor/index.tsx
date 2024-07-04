@@ -53,6 +53,10 @@ const extensions = [
     heading: {
       levels: HEADING_LEVELS,
     },
+    dropcursor: {
+      color: '#6A00F5',
+      width: 2,
+    },
   }),
   Underline,
   Link.configure({

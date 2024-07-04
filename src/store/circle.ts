@@ -37,7 +37,7 @@ type EditFandomWorkTypeAction = CommonStoreSetter<EditFandomWorkTypeStore> & {
 };
 
 const EditFandomInitialState: EditFandomWorkTypeStore = {
-  tab: 'workType',
+  tab: 'fandom',
   fandomSearch: '',
   fandomLocalSearch: '',
 };
