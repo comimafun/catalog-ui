@@ -11,8 +11,6 @@ import GeneralInfoSection from '@/components/circle/detail-page/GeneralInfoSecti
 import FandomWorkTypeSection from '@/components/circle/detail-page/FandomWorkTypeSection';
 import DescriptionSection from '@/components/circle/detail-page/DescriptionSection';
 import EventSection from '@/components/circle/detail-page/EventSection';
-import { Accordion, AccordionItem, Button } from '@nextui-org/react';
-import Image from 'next/image';
 import CircleCutSection from '@/components/circle/detail-page/CircleCutSection';
 
 export const getServerSideProps = async (c: GetServerSidePropsContext) => {
