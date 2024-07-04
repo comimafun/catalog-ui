@@ -1,14 +1,14 @@
 import {
-  FandomQueryParams,
   fandomWorkTypeBaseEntity,
   getAllWorkTypeResponse,
-  GetCircleQueryParams,
   getCirclesResponse,
   getFandomResponse,
   getOneCircleResponse,
   onboardCircleResponse,
-  OnboardingPayload,
-  UpdateCirclePayload,
+  type FandomQueryParams,
+  type GetCircleQueryParams,
+  type OnboardingPayload,
+  type UpdateCirclePayload,
 } from '@/types/circle';
 import { backendResponseSchema } from '@/types/common';
 import { FetchContext, fetchInstance } from '@/utils/fetch-wrapper';

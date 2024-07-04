@@ -1,3 +1,4 @@
+import EditCircleCutSection from '@/components/circle/detail-page/EditCircleCutSection';
 import EditDescriptionSection from '@/components/circle/detail-page/EditDescriptionSection';
 import EditEventSection from '@/components/circle/detail-page/EditEventSection';
 import EditFandomWorkTypeSection from '@/components/circle/detail-page/EditFandomWorkTypeSection';
@@ -19,6 +20,7 @@ const AVAILABLE_STATE = new Set([
   'fandom_work_type',
   'description',
   'event',
+  'circle_cut',
 ]);
 
 export const getServerSideProps = async (c: GetServerSidePropsContext) => {
@@ -78,6 +80,7 @@ function CircleEditPage() {
 
       {router.query.section === 'description' && <EditDescriptionSection />}
       {router.query.section === 'event' && <EditEventSection />}
+      {router.query.section === 'circle_cut' && <EditCircleCutSection />}
     </Fragment>
   );
 }

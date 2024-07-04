@@ -44,7 +44,6 @@ export const downSizeForCoverImage = async (
   const resizedBlob = await image
     .resize({
       preserveAspectRatio: true,
-      width: 300,
       interpolation: 'nearestNeighbor',
       ...resizeOptions,
     })

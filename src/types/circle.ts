@@ -57,6 +57,7 @@ export const circleEntity = z.object({
   day: dayEnum.nullable(),
   description: z.string().nullable(),
   url: z.string().nullable(),
+  cover_picture_url: z.string().nullable(),
   facebook_url: z.string().nullable(),
   twitter_url: z.string().nullable(),
   picture_url: z.string().nullable(),
@@ -170,6 +171,7 @@ export const updateCirclePayload = z.object({
   fandom_ids: z.array(z.number()).optional(),
   work_type_ids: z.array(z.number()).optional(),
   event_id: z.number().optional(),
+  cover_picture_url: optionalUrl.optional(),
 });
 
 export type UpdateCirclePayload = z.infer<typeof updateCirclePayload>;

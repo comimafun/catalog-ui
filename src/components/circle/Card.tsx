@@ -2,6 +2,7 @@ import StopIcon from '@/icons/StopIcon';
 import type { CircleCard } from '@/types/circle';
 import Link from 'next/link';
 import CircleBookmarkButton from './CircleBookmarkButton';
+import Image from 'next/image';
 
 const NoImage = () => {
   return (
@@ -21,9 +22,21 @@ function CircleCard(circle: CircleCard) {
           query: { circleSlug: circle.slug },
         }}
       >
-        <div className="relative flex h-[273px] w-full items-center justify-center">
+        <div className="relative flex h-[273px] w-full items-center justify-center overflow-hidden border-b border-neutral-900">
           <CircleBookmarkButton id={circle.id} bookmarked={circle.bookmarked} />
-          <NoImage />
+          {circle.cover_picture_url ? (
+            <Image
+              height={273}
+              width={192}
+              src={circle.cover_picture_url}
+              alt={`Circle cut of` + circle.name}
+              quality={60}
+              loading="lazy"
+              className="h-full w-full object-cover"
+            />
+          ) : (
+            <NoImage />
+          )}
         </div>
         <div className="w-full space-y-1.5 p-2 font-medium">
           <p className="break-all text-base font-semibold">{circle.name}</p>
