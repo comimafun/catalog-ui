@@ -1,12 +1,19 @@
 import { Editor, EditorContent, useEditor } from '@tiptap/react';
+import type { EditorOptions } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { classNames } from '@/utils/classNames';
 import EditorMenuIcon from '@/icons/editor/EditorMenuIcon';
 import Link from '@tiptap/extension-link';
 import Underline from '@tiptap/extension-underline';
-import { Level } from '@tiptap/extension-heading';
+import type { Level } from '@tiptap/extension-heading';
 import Image from '@tiptap/extension-image';
-import { useEffect, useState } from 'react';
+import {
+  createContext,
+  Fragment,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
 import LinkIcon from '@/icons/LinkIcon';
 import { Popover, PopoverContent, PopoverTrigger } from '@nextui-org/react';
 import XCircleIcon from '@/icons/XCircleIcon';
@@ -18,7 +25,7 @@ import { prettifyError } from '@/utils/helper';
 import { uploadService } from '@/services/upload';
 import { create } from 'zustand';
 import { CommonStoreSetter } from '@/types/common';
-import LoadingWrapper from '../Spinner';
+import Spin from '../Spin';
 
 type EditorStore = {
   isLoading: boolean;
@@ -41,7 +48,6 @@ export const PROSE_WYISIWYG_CLASSNAMES = [
   'prose-h3:mt-2 prose-h3:mb-2',
 ];
 
-// define your extension array
 const extensions = [
   StarterKit.configure({
     heading: {
@@ -65,12 +71,117 @@ const extensions = [
   }),
 ];
 
-const LinkMenu = ({ editor }: { editor: Editor | null }) => {
+type HandleDrop = EditorOptions['editorProps']['handleDrop'];
+
+const editorCtx = createContext<Editor | null>(null);
+
+const EditorProvider = ({
+  children,
+  content,
+  onChange,
+}: {
+  children: React.ReactNode;
+  content?: string;
+  onChange?: (html: string) => void;
+}) => {
+  const isLoading = useEditorStore((s) => s.isLoading);
+  const setLoading = useEditorStore((s) => s.setIsLoading);
+  const handleDrop: HandleDrop = (view, event, _slice, moved) => {
+    if (
+      !moved &&
+      event.dataTransfer &&
+      event.dataTransfer.files &&
+      event.dataTransfer.files[0]
+    ) {
+      const file = event.dataTransfer.files[0];
+      if (file.size > 2 * MEGABYTE) {
+        toast.error('Max file size is 2MB');
+        return;
+      }
+
+      if (!ACCEPTED_IMAGE_TYPES_SET.has(file.type)) {
+        toast.error(
+          'File type must be' + Array.from(ACCEPTED_IMAGE_TYPES_SET).join(', '),
+        );
+        return;
+      }
+      const coordinates = view.posAtCoords({
+        left: event.clientX,
+        top: event.clientY,
+      });
+
+      if (!coordinates) return false;
+      setLoading(true);
+      uploadService
+        .uploadImage({
+          file,
+          type: 'profiles',
+        })
+        .then(({ data }) => {
+          const { schema } = view.state;
+          const node = schema.nodes.image.create({
+            src: data,
+            alt: file.name,
+          });
+          const transaction = view.state.tr.insert(coordinates.pos, node);
+          return view.dispatch(transaction);
+        })
+        .catch((err) => {
+          toast.error(prettifyError(err as Error));
+          return false;
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
+
+    return false;
+  };
+  const editor = useEditor({
+    content,
+    onUpdate: (c) => onChange?.(c.editor.getHTML()),
+    extensions,
+    editorProps: {
+      attributes: {
+        class: classNames(
+          'focus:outline-none border rounded-b-lg border-neutral-500 focus:ring-1 focus:ring-neutral-500 focus:ring-opacity-50',
+          'py-1 px-2.5 w-full min-h-[260px]',
+          ...PROSE_WYISIWYG_CLASSNAMES,
+        ),
+      },
+      handleDrop,
+    },
+  });
+
+  useEffect(() => {
+    if (content && content !== '<p</p>') {
+      editor?.commands.setContent(content);
+    } else {
+      editor?.commands.setContent('<p>Tell us about your circle! 🥳</p>');
+    }
+  }, [content, editor]);
+
+  if (!editor) return null;
+
+  return (
+    <Spin spinning={isLoading}>
+      <editorCtx.Provider value={editor}>{children}</editorCtx.Provider>
+    </Spin>
+  );
+};
+
+const useLocaleEditor = () => {
+  const ctx = useContext(editorCtx);
+  if (!ctx) {
+    throw new Error('useLocaleEditor must be used within a EditorProvider');
+  }
+  return ctx;
+};
+
+const LinkMenu = () => {
   const [link, setLink] = useState('');
 
-  if (!editor) {
-    return null;
-  }
+  const editor = useLocaleEditor();
 
   return (
     <Popover placement="bottom-start">
@@ -134,39 +245,8 @@ const LinkMenu = ({ editor }: { editor: Editor | null }) => {
   );
 };
 
-const HeadingsMenu = ({ editor }: { editor: Editor | null }) => {
-  if (!editor) {
-    return null;
-  }
-
-  const TooltipContent = () => {
-    return (
-      <div className="flex flex-col overflow-hidden rounded-lg bg-white">
-        {HEADING_LEVELS.map((level) => {
-          return (
-            <button
-              type="button"
-              className={classNames(
-                'whitespace-nowrap px-2 py-2 transition-all hover:bg-neutral-500 hover:text-white',
-                editor.isActive('heading', { level })
-                  ? 'bg-neutral-500 !text-white'
-                  : 'bg-white text-neutral-500',
-              )}
-              key={level}
-              disabled={
-                !editor.can().chain().focus().toggleHeading({ level }).run()
-              }
-              onClick={() =>
-                editor.chain().toggleHeading({ level: level }).run()
-              }
-            >
-              Heading {level}
-            </button>
-          );
-        })}
-      </div>
-    );
-  };
+const HeadingsMenu = () => {
+  const editor = useLocaleEditor();
 
   return (
     <Popover placement="bottom-start">
@@ -179,30 +259,47 @@ const HeadingsMenu = ({ editor }: { editor: Editor | null }) => {
               : 'bg-white',
           )}
         >
-          {' '}
           Heading
         </div>
       </PopoverTrigger>
       <PopoverContent className="p-0">
-        <TooltipContent />
+        <div className="flex flex-col overflow-hidden rounded-lg bg-white">
+          {HEADING_LEVELS.map((level) => {
+            return (
+              <button
+                type="button"
+                className={classNames(
+                  'whitespace-nowrap px-2 py-2 transition-all hover:bg-neutral-500 hover:text-white',
+                  editor.isActive('heading', { level })
+                    ? 'bg-neutral-500 !text-white'
+                    : 'bg-white text-neutral-500',
+                )}
+                key={level}
+                disabled={
+                  !editor.can().chain().focus().toggleHeading({ level }).run()
+                }
+                onClick={() =>
+                  editor.chain().toggleHeading({ level: level }).run()
+                }
+              >
+                Heading {level}
+              </button>
+            );
+          })}
+        </div>
       </PopoverContent>
     </Popover>
   );
 };
 
-const ImageMenu = ({ editor }: { editor: Editor | null }) => {
+const ImageMenu = () => {
   const setLoading = useEditorStore((s) => s.setIsLoading);
-
-  if (!editor) {
-    return null;
-  }
+  const editor = useLocaleEditor();
 
   return (
     <Uploader
       accept={Array.from(ACCEPTED_IMAGE_TYPES_SET).join(',')}
-      className={classNames(
-        'flex items-center rounded border border-neutral-500 bg-white p-1 text-neutral-500',
-      )}
+      className="'flex text-neutral-500', items-center rounded border border-neutral-500 bg-white p-1"
       customRequest={async (files) => {
         try {
           setLoading(true);
@@ -239,14 +336,13 @@ const ImageMenu = ({ editor }: { editor: Editor | null }) => {
   );
 };
 
-const MenuBar = ({ editor }: { editor: Editor | null }) => {
-  if (!editor) {
-    return null;
-  }
+const MenuBar = () => {
+  const editor = useLocaleEditor();
+
   return (
     <div className="w-full rounded-t-lg border-x-1 border-t-1 border-neutral-500 px-2.5 py-2">
       <div className="relative flex gap-1">
-        <HeadingsMenu editor={editor} />
+        <HeadingsMenu />
         <button
           className={classNames(
             'rounded border border-neutral-500 p-1',
@@ -300,11 +396,22 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
           <EditorMenuIcon.StrikeThrough width={16} height={16} />
         </button>
 
-        <LinkMenu editor={editor} />
+        <LinkMenu />
 
-        <ImageMenu editor={editor} />
+        <ImageMenu />
       </div>
     </div>
+  );
+};
+
+const Main = () => {
+  const editor = useLocaleEditor();
+
+  return (
+    <Fragment>
+      <MenuBar />
+      <EditorContent editor={editor} />
+    </Fragment>
   );
 };
 
@@ -315,88 +422,10 @@ const EditorWYSIWYG = ({
   content?: string;
   onChange?: (html: string) => void;
 }) => {
-  const isLoading = useEditorStore((s) => s.isLoading);
-  const setLoading = useEditorStore((s) => s.setIsLoading);
-  const editor = useEditor({
-    content,
-    onUpdate: (c) => onChange?.(c.editor.getHTML()),
-    extensions,
-    editorProps: {
-      attributes: {
-        class: classNames(
-          'focus:outline-none border rounded-b-lg border-neutral-500 focus:ring-1 focus:ring-neutral-500 focus:ring-opacity-50',
-          'py-1 px-2.5 w-full min-h-[260px]',
-          ...PROSE_WYISIWYG_CLASSNAMES,
-        ),
-      },
-      handleDrop: (view, event, _slice, moved) => {
-        if (
-          !moved &&
-          event.dataTransfer &&
-          event.dataTransfer.files &&
-          event.dataTransfer.files[0]
-        ) {
-          const file = event.dataTransfer.files[0];
-          if (file.size > 2 * MEGABYTE) {
-            toast.error('Max file size is 2MB');
-            return;
-          }
-
-          if (!ACCEPTED_IMAGE_TYPES_SET.has(file.type)) {
-            toast.error(
-              'File type must be' +
-                Array.from(ACCEPTED_IMAGE_TYPES_SET).join(','),
-            );
-            return;
-          }
-          const coordinates = view.posAtCoords({
-            left: event.clientX,
-            top: event.clientY,
-          });
-
-          if (!coordinates) return false;
-          setLoading(true);
-          uploadService
-            .uploadImage({
-              file,
-              type: 'profiles',
-            })
-            .then(({ data }) => {
-              const { schema } = view.state;
-              const node = schema.nodes.image.create({
-                src: data,
-                alt: file.name,
-              });
-              const transaction = view.state.tr.insert(coordinates.pos, node);
-              return view.dispatch(transaction);
-            })
-            .catch((err) => {
-              toast.error(prettifyError(err as Error));
-              return false;
-            })
-            .finally(() => {
-              setLoading(false);
-            });
-        }
-
-        return false;
-      },
-    },
-  });
-
-  useEffect(() => {
-    if (content && content !== '<p</p>') {
-      editor?.commands.setContent(content);
-    } else {
-      editor?.commands.setContent('<p>Tell us about your circle! 🥳</p>');
-    }
-  }, [content, editor]);
-
   return (
-    <LoadingWrapper spinning={isLoading}>
-      <MenuBar editor={editor} />
-      <EditorContent editor={editor} />
-    </LoadingWrapper>
+    <EditorProvider content={content} onChange={onChange}>
+      <Main />
+    </EditorProvider>
   );
 };
 

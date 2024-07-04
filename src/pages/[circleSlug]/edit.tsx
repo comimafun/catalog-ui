@@ -3,7 +3,7 @@ import EditEventSection from '@/components/circle/detail-page/EditEventSection';
 import EditFandomWorkTypeSection from '@/components/circle/detail-page/EditFandomWorkTypeSection';
 import EditGeneralInfoSection from '@/components/circle/detail-page/EditGeneralInfoSection';
 import EachPageLayout from '@/components/general/EachPageLayout';
-import LoadingWrapper from '@/components/general/Spinner';
+import Spin from '@/components/general/Spin';
 import {
   useGetCircleBySlug,
   useIsMyCircle,
@@ -63,9 +63,9 @@ function CircleEditPage() {
 
   if (isLoading) {
     return (
-      <LoadingWrapper spinning>
+      <Spin spinning>
         <EachPageLayout></EachPageLayout>
-      </LoadingWrapper>
+      </Spin>
     );
   }
 

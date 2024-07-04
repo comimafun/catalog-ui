@@ -1,5 +1,5 @@
 import EachPageLayout from '@/components/general/EachPageLayout';
-import LoadingWrapper from '@/components/general/Spinner';
+import Spin from '@/components/general/Spin';
 import Uploader from '@/components/general/Uploader';
 import { useSession } from '@/components/providers/SessionProvider';
 import { ACCEPTED_IMAGE_TYPES_SET, MEGABYTE } from '@/constants/common';
@@ -67,7 +67,7 @@ function JoinPage() {
         </div>
 
         <div className="mx-auto max-w-[400px] rounded-lg border border-neutral-950 p-4 shadow-md">
-          <LoadingWrapper spinning={isPending || isLoading}>
+          <Spin spinning={isPending || isLoading}>
             <FormProvider {...form}>
               <form
                 className="gap-3"
@@ -212,7 +212,7 @@ function JoinPage() {
                 </Button>
               </form>
             </FormProvider>
-          </LoadingWrapper>
+          </Spin>
         </div>
       </div>
     </EachPageLayout>

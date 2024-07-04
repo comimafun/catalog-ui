@@ -2,7 +2,7 @@ import React from 'react';
 import { Spinner } from '@nextui-org/react';
 import { classNames } from '@/utils/classNames';
 
-function LoadingWrapper({
+function Spin({
   children,
   spinning = false,
   className,
@@ -31,4 +31,4 @@ function LoadingWrapper({
   );
 }
 
-export default LoadingWrapper;
+export default Spin;

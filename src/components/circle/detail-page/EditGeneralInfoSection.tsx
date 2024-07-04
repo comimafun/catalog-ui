@@ -1,5 +1,5 @@
 import EachPageLayout from '@/components/general/EachPageLayout';
-import LoadingWrapper from '@/components/general/Spinner';
+import Spin from '@/components/general/Spin';
 import Uploader from '@/components/general/Uploader';
 import { ACCEPTED_IMAGE_TYPES } from '@/constants/common';
 import { useGetCircleBySlug } from '@/hooks/circle/useGetCircleBySlug';
@@ -54,7 +54,7 @@ function EditGeneralInfoSection() {
         <h1 className="text-xl font-bold">Edit General Info</h1>
       </div>
       <section className="w-full rounded-lg border border-neutral-950 p-4">
-        <LoadingWrapper spinning={isPending}>
+        <Spin spinning={isPending}>
           <FormProvider {...form}>
             <form
               className="flex flex-col gap-2"
@@ -165,7 +165,7 @@ function EditGeneralInfoSection() {
               </Button>
             </form>
           </FormProvider>
-        </LoadingWrapper>
+        </Spin>
       </section>
     </EachPageLayout>
   );
