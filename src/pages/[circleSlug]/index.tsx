@@ -1,9 +1,11 @@
 import EachPageLayout from '@/components/general/EachPageLayout';
-import { useGetCircleBySlug } from '@/hooks/circle/useGetCircleBySlug';
+import {
+  getCircleBySlugOptions,
+  useGetCircleBySlug,
+} from '@/hooks/circle/useGetCircleBySlug';
 import { prettifyError } from '@/utils/helper';
 import { dehydrate, QueryClient } from '@tanstack/react-query';
 import { GetServerSidePropsContext } from 'next';
-import { circleService } from '@/services/circle';
 import SectionPartitionWrapper from '@/components/circle/detail-page/SectionPartitionWrapper';
 import GeneralInfoSection from '@/components/circle/detail-page/GeneralInfoSection';
 import FandomWorkTypeSection from '@/components/circle/detail-page/FandomWorkTypeSection';
@@ -13,12 +15,9 @@ import EventSection from '@/components/circle/detail-page/EventSection';
 export const getServerSideProps = async (c: GetServerSidePropsContext) => {
   const circleSlug = c.query.circleSlug as string;
   const queryClient = new QueryClient();
-  await queryClient.prefetchQuery({
-    queryKey: ['/v1/circle/[slug]', circleSlug],
-    queryFn: async () => {
-      return (await circleService.getCircleBySlug(c, circleSlug)).data;
-    },
-  });
+  await queryClient.prefetchQuery(
+    getCircleBySlugOptions(c, circleSlug, { retry: 0 }),
+  );
 
   const dehydratedState = dehydrate(queryClient);
 

@@ -20,7 +20,7 @@ const SessionProvider = ({ children }: { children: React.ReactNode }) => {
   const invalidateIfAuthedQueries = async () => {
     await Promise.all([
       queryClient.invalidateQueries({
-        queryKey: [getCircleBySlugOptions('', {}).queryKey[0]],
+        queryKey: [getCircleBySlugOptions(null, '', {}).queryKey[0]],
         exact: false,
         refetchType: 'active',
       }),

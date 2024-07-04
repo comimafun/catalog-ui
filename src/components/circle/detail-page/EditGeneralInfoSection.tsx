@@ -1,11 +1,12 @@
 import EachPageLayout from '@/components/general/EachPageLayout';
 import Spin from '@/components/general/Spin';
 import Uploader from '@/components/general/Uploader';
-import { ACCEPTED_IMAGE_TYPES } from '@/constants/common';
+import { ACCEPTED_IMAGE_TYPES_SET, MEGABYTE } from '@/constants/common';
 import { useGetCircleBySlug } from '@/hooks/circle/useGetCircleBySlug';
 import { useUpdateCircle } from '@/hooks/circle/useUpdateCircle';
 import ChevronUpIcon from '@/icons/ChevronUpIcon';
 import ImageIcon from '@/icons/ImageIcon';
+import { uploadService } from '@/services/upload';
 import {
   EditGeneralInfoPayload,
   editGeneralInfoPayload,
@@ -14,6 +15,7 @@ import {
 import { prettifyError } from '@/utils/helper';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Input, Button } from '@nextui-org/react';
+import Image from 'next/image';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { FormProvider, Controller, useForm } from 'react-hook-form';
@@ -21,6 +23,7 @@ import toast from 'react-hot-toast';
 
 function EditGeneralInfoSection() {
   const [initialized, setInitialized] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const { data, isLoading, error } = useGetCircleBySlug();
   const router = useRouter();
   const form = useForm<EditGeneralInfoPayload>({
@@ -54,7 +57,7 @@ function EditGeneralInfoSection() {
         <h1 className="text-xl font-bold">Edit General Info</h1>
       </div>
       <section className="w-full rounded-lg border border-neutral-950 p-4">
-        <Spin spinning={isPending}>
+        <Spin spinning={isPending || isUploading}>
           <FormProvider {...form}>
             <form
               className="flex flex-col gap-2"
@@ -77,21 +80,74 @@ function EditGeneralInfoSection() {
                 }
               })}
             >
-              <Uploader
-                accept={ACCEPTED_IMAGE_TYPES.join(',')}
-                className="mx-auto flex max-w-[200px] flex-col items-center justify-center"
-                isInvalid={!!form.formState.errors.file}
-                errorMessage={String(form.formState.errors.file?.message)}
-                {...register('file')}
-              >
-                <div className="flex h-24 w-24 items-center justify-center rounded-full bg-slate-500 transition-all hover:shadow-2xl">
-                  <ImageIcon
-                    width={16}
-                    height={16}
-                    className="text-neutral-200"
-                  />
-                </div>
-              </Uploader>
+              <Controller
+                control={control}
+                name="picture_url"
+                render={({ field }) => {
+                  return (
+                    <Uploader
+                      accept={Array.from(ACCEPTED_IMAGE_TYPES_SET).join(',')}
+                      className="mx-auto flex max-w-[200px] flex-col items-center justify-center"
+                      name={field.name}
+                      onBlur={field.onBlur}
+                      ref={field.ref}
+                      customRequest={async (files) => {
+                        const file = files?.[0];
+                        if (!file) return;
+                        try {
+                          setIsUploading(true);
+                          const file = files?.[0];
+                          if (!file) return;
+
+                          if (file.size > 1 * MEGABYTE) {
+                            toast.error('Max file size is 1MB');
+                            return;
+                          }
+
+                          if (!ACCEPTED_IMAGE_TYPES_SET.has(file.type)) {
+                            toast.error(
+                              'File type must be' +
+                                Array.from(ACCEPTED_IMAGE_TYPES_SET).join(', '),
+                            );
+                            return;
+                          }
+
+                          const { data } = await uploadService.uploadImage({
+                            file,
+                            type: 'profiles',
+                          });
+                          field.onChange(data);
+                        } catch (error) {
+                          toast.error(prettifyError(error as Error));
+                        } finally {
+                          setIsUploading(false);
+                        }
+                      }}
+                    >
+                      {field.value ? (
+                        <div className="relative h-24 w-24 overflow-hidden rounded-full">
+                          <div className="absolute inset-0 rounded-full transition-all hover:bg-slate-500/50" />
+                          <Image
+                            width={96}
+                            height={96}
+                            alt={`Picuter Profile of` + data?.name}
+                            src={field.value}
+                            className="object-cover"
+                          />
+                        </div>
+                      ) : (
+                        <div className="flex h-24 w-24 items-center justify-center rounded-full bg-slate-500 transition-all hover:shadow-2xl">
+                          <ImageIcon
+                            width={16}
+                            height={16}
+                            className="text-neutral-200"
+                          />
+                        </div>
+                      )}
+                    </Uploader>
+                  );
+                }}
+              />
 
               <Controller
                 control={control}

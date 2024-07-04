@@ -1,5 +1,6 @@
 import { useSession } from '@/components/providers/SessionProvider';
 import { circleService } from '@/services/circle';
+import { FetchContext } from '@/utils/fetch-wrapper';
 import {
   queryOptions,
   UndefinedInitialDataOptions,
@@ -18,11 +19,15 @@ type PickedOptions = Partial<
   >
 >;
 
-export const getCircleBySlugOptions = (slug: string, options: Options) => {
+export const getCircleBySlugOptions = (
+  c: FetchContext,
+  slug: string,
+  options: Options,
+) => {
   return queryOptions({
     queryKey: ['/v1/circle/[slug]', slug],
     queryFn: async () => {
-      return (await circleService.getCircleBySlug(null, slug)).data;
+      return (await circleService.getCircleBySlug(c, slug)).data;
     },
     retry: 1,
     refetchOnWindowFocus: false,
@@ -43,7 +48,7 @@ export const useGetCircleBySlug = (options?: {
   } else {
     slug = router.query.circleSlug as string;
   }
-  return useQuery(getCircleBySlugOptions(slug, options?.options ?? {}));
+  return useQuery(getCircleBySlugOptions(null, slug, options?.options ?? {}));
 };
 
 export const useIsMyCircle = () => {

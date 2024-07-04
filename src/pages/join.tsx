@@ -105,10 +105,6 @@ function JoinPage() {
                               toast.error('File type must be' + acceptedTypes);
                               return;
                             }
-                            const formData = new FormData();
-
-                            formData.append('file', file);
-                            formData.append('type', 'circles');
 
                             const { data } = await uploadService.uploadImage({
                               file,

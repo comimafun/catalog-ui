@@ -14,6 +14,7 @@ import { usePublishMyCircle } from '@/hooks/circle/usePublishMyCircle';
 import { prettifyError } from '@/utils/helper';
 import toast from 'react-hot-toast';
 import LinkIcon from '@/icons/LinkIcon';
+import Image from 'next/image';
 
 const PublishSwitcher = () => {
   const [localPubllished, setLocalPubllished] = useState(false);
@@ -67,7 +68,19 @@ function GeneralInfoSection() {
   return (
     <div className="flex items-center justify-between gap-4">
       <div className="flex items-center gap-4">
-        <div className="min-h-[112px] min-w-[112px] rounded-full bg-slate-500"></div>
+        {data?.picture_url ? (
+          <div className="h-[112px] w-[112px] overflow-hidden rounded-full border border-neutral-100 shadow-lg">
+            <Image
+              width={112}
+              height={112}
+              src={data?.picture_url}
+              alt={`Picture of ` + data?.name}
+              className="object-cover"
+            />
+          </div>
+        ) : (
+          <div className="min-h-[112px] min-w-[112px] rounded-full bg-slate-500"></div>
+        )}
 
         <div className="flex flex-col gap-2.5">
           <h1 className="text-2xl font-bold">{data?.name}</h1>

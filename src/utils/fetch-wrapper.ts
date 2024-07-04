@@ -5,6 +5,8 @@ import { newTokenResponse } from '@/types/auth';
 import { z } from 'zod';
 
 const TOKEN_NEED_TO_REFRESH = new Set(['TOKEN_INVALID', 'TOKEN_EXPIRED']);
+let refreshPromise: Promise<Response> | unknown = null;
+const clearRefreshPromise = () => (refreshPromise = null);
 
 /**
  * Parses the error message and returns the error object if possible.
@@ -111,15 +113,24 @@ export const fetchInstance = async <T>(
     const err = parseError(errObj);
 
     if (err && res.status === 401 && TOKEN_NEED_TO_REFRESH.has(err.error)) {
-      const refreshing = await fetch(baseURL + '/v1/auth/refresh', {
-        ...config,
-        method: 'GET',
-        body: undefined,
-        headers: {
-          ...config.headers,
-          'Content-Type': 'application/json',
-        },
-      });
+      const refresh = () =>
+        fetch(baseURL + '/v1/auth/refresh', {
+          ...config,
+          method: 'GET',
+          body: undefined,
+          headers: {
+            ...config.headers,
+            'Content-Type': 'application/json',
+          },
+        });
+
+      /**
+       * If multiple requests are made at the same time, only one refresh request is made.
+       */
+      if (!refreshPromise) {
+        refreshPromise = refresh().finally(clearRefreshPromise);
+      }
+      const refreshing = (await refreshPromise) as Response;
 
       if (!refreshing.ok) {
         const refreshError = await refreshing.text();
