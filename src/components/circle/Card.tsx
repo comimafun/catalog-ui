@@ -21,15 +21,16 @@ function CircleCard(circle: CircleCard) {
           pathname: '/[circleSlug]',
           query: { circleSlug: circle.slug },
         }}
+        className="flex h-full w-full flex-col"
       >
-        <div className="relative flex h-[273px] w-full items-center justify-center overflow-hidden border-b border-neutral-900">
+        <div className="relative flex aspect-[7/10] min-h-[262px] w-full items-center justify-center overflow-hidden border-b border-neutral-900 md:min-h-[273px]">
           <CircleBookmarkButton id={circle.id} bookmarked={circle.bookmarked} />
           {circle.cover_picture_url ? (
             <Image
               height={273}
               width={192}
               src={circle.cover_picture_url}
-              alt={`Circle cut of` + circle.name}
+              alt={`Circle cut of ` + circle.name}
               quality={60}
               loading="lazy"
               className="h-full w-full object-cover"
@@ -38,7 +39,7 @@ function CircleCard(circle: CircleCard) {
             <NoImage />
           )}
         </div>
-        <div className="w-full space-y-1.5 p-2 font-medium">
+        <div className="h-full w-full space-y-1.5 p-2 font-medium">
           <p className="break-all text-base font-semibold">{circle.name}</p>
           {circle.fandom.length > 0 && (
             <p className="text-xs">

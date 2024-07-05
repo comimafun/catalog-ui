@@ -126,6 +126,7 @@ export const fetchInstance = async <T>(
 
       /**
        * If multiple requests are made at the same time, only one refresh request is made.
+       * Wait for `refreshing` for all multiple request
        */
       if (!refreshPromise) {
         refreshPromise = refresh().finally(clearRefreshPromise);

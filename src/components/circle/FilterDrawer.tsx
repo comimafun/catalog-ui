@@ -370,10 +370,10 @@ const FilterDrawer = () => {
         <FormProvider {...filterForm}>
           <form
             className="flex flex-col gap-3"
-            onSubmit={filterForm.handleSubmit((val) => {
-              Object.entries(val).forEach(([key, val]) => {
-                if (val.length !== 0) {
-                  router.query[key] = val as string | string[];
+            onSubmit={filterForm.handleSubmit((formData) => {
+              Object.entries(formData).forEach(([key, values]) => {
+                if (values?.length !== 0 || typeof values !== 'undefined') {
+                  router.query[key] = values as string | string[];
                 } else {
                   delete router.query[key];
                 }

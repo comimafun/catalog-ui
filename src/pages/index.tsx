@@ -15,7 +15,9 @@ const FilterDrawer = dynamic(() => import('@/components/circle/FilterDrawer'), {
 
 const GridWrapper = ({ children }: { children: React.ReactNode }) => {
   return (
-    <ul className="grid gap-3 xs:grid-cols-2 sm:grid-cols-3">{children}</ul>
+    <ul className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3">
+      {children}
+    </ul>
   );
 };
 
