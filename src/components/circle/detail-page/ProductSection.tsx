@@ -1,3 +1,4 @@
+import ExtendedImage from '@/components/general/ExtendedImage';
 import {
   useGetCircleBySlug,
   useIsMyCircle,
@@ -15,7 +16,6 @@ import {
   ModalContent,
   useDisclosure,
 } from '@nextui-org/react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { Fragment, ReactNode, useRef, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -88,7 +88,7 @@ const ProductList = ({ products }: { products: Products }) => {
                   <XCircleIcon width={24} height={24} />
                 </button>
                 {!!selected && (
-                  <Image
+                  <ExtendedImage
                     alt={selected.name}
                     src={selected.image_url}
                     loading="lazy"
@@ -118,13 +118,14 @@ const ProductList = ({ products }: { products: Products }) => {
           return (
             <SwiperSlide className="" key={x.id}>
               <div className="relative flex max-h-[400px] w-auto items-center justify-center">
-                <Image
+                <ExtendedImage
                   alt={x.name}
                   src={x.image_url}
                   width={400}
                   height={400}
                   loading="lazy"
                   className="h-full w-full object-contain"
+                  placeholder="empty"
                 />
 
                 <button
