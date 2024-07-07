@@ -14,7 +14,7 @@ function Spin({
   indicatorLoading?: React.ReactNode;
 }) {
   return (
-    <div className="relative min-h-full min-w-full">
+    <div className="relative h-full">
       {spinning && (
         <div
           className={classNames(

@@ -4,9 +4,9 @@ import {
   getCirclesResponse,
   getFandomResponse,
   getOneCircleResponse,
-  getProductResponse,
+  getOneProductResponse,
+  getProductsResponse,
   onboardCircleResponse,
-  productEntity,
   type FandomQueryParams,
   type GetCircleQueryParams,
   type OnboardingPayload,
@@ -68,6 +68,51 @@ export const circleService = {
   },
   getProductsByCircleID: async (circleID: number) => {
     const res = await fetchInstance(null, `/v1/circle/${circleID}/product`);
-    return getProductResponse.parse(res);
+    return getProductsResponse.parse(res);
+  },
+  postAddProductByCircleID: async (
+    circleID: number,
+    payload: {
+      name: string;
+      image_url: string;
+    },
+  ) => {
+    const res = await fetchInstance(null, `/v1/circle/${circleID}/product`, {
+      body: payload,
+      method: 'POST',
+    });
+    return getOneProductResponse.parse(res);
+  },
+  deleteOneProductByCircleIDProductID: async ({
+    circleID,
+    productID,
+  }: {
+    circleID: number;
+    productID: number;
+  }) => {
+    return fetchInstance(null, `/v1/circle/${circleID}/product/${productID}`, {
+      method: 'DELETE',
+    });
+  },
+  putUpdateOneProductByCircleIDProductID: async ({
+    circleID,
+    payload,
+  }: {
+    circleID: number;
+    payload: {
+      id: number;
+      name: string;
+      image_url: string;
+    };
+  }) => {
+    const res = await fetchInstance(
+      null,
+      `/v1/circle/${circleID}/product/${payload.id}`,
+      {
+        body: payload,
+        method: 'PUT',
+      },
+    );
+    return getOneProductResponse.parse(res);
   },
 };

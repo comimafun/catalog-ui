@@ -35,7 +35,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => {
           <Link
             href={{
               pathname: '/[circleSlug]/edit',
-              query: { circleSlug: data?.slug, section: 'description' },
+              query: { circleSlug: data?.slug, section: 'product' },
             }}
           >
             <Chip

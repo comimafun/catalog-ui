@@ -3,6 +3,7 @@ import EditDescriptionSection from '@/components/circle/detail-page/EditDescript
 import EditEventSection from '@/components/circle/detail-page/EditEventSection';
 import EditFandomWorkTypeSection from '@/components/circle/detail-page/EditFandomWorkTypeSection';
 import EditGeneralInfoSection from '@/components/circle/detail-page/EditGeneralInfoSection';
+import EditProducts from '@/components/circle/detail-page/EditProducts';
 import EachPageLayout from '@/components/general/EachPageLayout';
 import Spin from '@/components/general/Spin';
 import {
@@ -21,6 +22,7 @@ const STATE = [
   'description',
   'event',
   'circle_cut',
+  'product',
 ] as const;
 const AVAILABLE_STATE = new Set(STATE);
 type State = (typeof STATE)[number];
@@ -31,6 +33,7 @@ const COMPONENTS: Record<State, JSX.Element> = {
   event: <EditEventSection />,
   fandom_work_type: <EditFandomWorkTypeSection />,
   general: <EditGeneralInfoSection />,
+  product: <EditProducts />,
 };
 
 export const getServerSideProps = async (c: GetServerSidePropsContext) => {
