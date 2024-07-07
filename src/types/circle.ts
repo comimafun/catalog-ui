@@ -75,6 +75,8 @@ export const productEntity = z.object({
   image_url: z.string(),
 });
 
+export const getProductResponse = backendResponseSchema(z.array(productEntity));
+
 export const circleSchema = circleEntity.extend({
   block: circleBlockEntity.nullable(),
   bookmarked: z.boolean(),

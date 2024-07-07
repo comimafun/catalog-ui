@@ -4,7 +4,9 @@ import {
   getCirclesResponse,
   getFandomResponse,
   getOneCircleResponse,
+  getProductResponse,
   onboardCircleResponse,
+  productEntity,
   type FandomQueryParams,
   type GetCircleQueryParams,
   type OnboardingPayload,
@@ -63,5 +65,9 @@ export const circleService = {
   getAllWorkTypes: async () => {
     const res = await fetchInstance(null, '/v1/worktype/all');
     return getAllWorkTypeResponse.parse(res);
+  },
+  getProductsByCircleID: async (circleID: number) => {
+    const res = await fetchInstance(null, `/v1/circle/${circleID}/product`);
+    return getProductResponse.parse(res);
   },
 };

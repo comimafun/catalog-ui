@@ -13,6 +13,7 @@ import MainLayout from '@/components/general/Layout';
 import { Toaster } from 'react-hot-toast';
 import { SessionProvider } from '@/components/providers/SessionProvider';
 import { useRouter } from 'next/router';
+import 'swiper/css';
 
 const fontInter = Inter({
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
