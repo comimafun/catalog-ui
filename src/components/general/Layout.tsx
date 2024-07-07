@@ -18,7 +18,7 @@ const RightMenu = () => {
             <Button
               type="button"
               as={Link}
-              href={`/c/${session.circle.slug}`}
+              href={`/${session.circle.slug}`}
               size="sm"
               variant="solid"
               color="primary"
@@ -88,7 +88,7 @@ const Navbar = () => {
           <RightMenu />
         </nav>
       </div>
-      <div className="pt-[63px]" />
+      <div className="pt-[72px]" />
       <div ref={ref} className="w-full"></div>
     </>
   );
@@ -96,7 +96,7 @@ const Navbar = () => {
 
 function MainLayout({ children }: { children: ReactNode }) {
   return (
-    <main className="min-h-screen justify-between bg-slate-200">
+    <main className="min-h-screen justify-between bg-slate-200 text-sm">
       <Navbar />
 
       <div className="mx-auto w-full max-w-[640px]">{children}</div>

@@ -1,14 +1,8 @@
-import HeartIcon from '@/icons/HeartIcon';
 import StopIcon from '@/icons/StopIcon';
-import { Circle } from '@/types/circle';
-import { classNames } from '@/utils/classNames';
-import { useEffect, useState } from 'react';
-import { useSession } from '../providers/SessionProvider';
-import { useRouter } from 'next/router';
-import toast from 'react-hot-toast';
-import { prettifyError } from '@/utils/helper';
-import { useSaveUnsave } from '@/hooks/circle/useSaveUnsave';
+import type { CircleCard } from '@/types/circle';
 import Link from 'next/link';
+import CircleBookmarkButton from './CircleBookmarkButton';
+import Image from 'next/image';
 
 const NoImage = () => {
   return (
@@ -19,82 +13,33 @@ const NoImage = () => {
   );
 };
 
-const BookmarkButton = ({
-  bookmarked,
-  id,
-}: {
-  id: number;
-  bookmarked: boolean;
-}) => {
-  const [localBookmarked, setLocalBookmarked] = useState(bookmarked);
-  const router = useRouter();
-  const { session } = useSession();
-  const { save, unsave, isPending } = useSaveUnsave();
-  const handleBookmark = async () => {
-    if (!session) {
-      toast.error('You need to sign in to bookmark');
-      router.push('/sign-in');
-      return;
-    }
-
-    try {
-      if (localBookmarked) {
-        setLocalBookmarked(false);
-        await unsave(id);
-      } else {
-        setLocalBookmarked(true);
-        await save(id);
-      }
-    } catch (error) {
-      setLocalBookmarked((prev) => !prev);
-      toast.error(prettifyError(error as Error));
-    }
-  };
-
-  useEffect(() => {
-    if (bookmarked !== localBookmarked) setLocalBookmarked(bookmarked);
-  }, [bookmarked]);
-
-  return (
-    <button
-      className="group absolute right-4 top-4 active:scale-80"
-      type="button"
-      onClick={(e) => {
-        e.stopPropagation();
-        e.preventDefault();
-
-        if (isPending) return;
-        handleBookmark();
-      }}
-      disabled={isPending}
-    >
-      <HeartIcon
-        height={24}
-        width={24}
-        className={classNames(
-          'transition-all delay-200 group-hover:text-pink-500 group-active:scale-80',
-          localBookmarked ? 'text-pink-500' : '',
-        )}
-        fill={localBookmarked ? 'currentColor' : 'none'}
-      />
-    </button>
-  );
-};
-
-function CircleCard(circle: Circle) {
+function CircleCard(circle: CircleCard) {
   return (
     <li className="flex flex-col overflow-hidden rounded-lg border border-neutral-950 shadow-md">
       <Link
         href={{
-          pathname: '/c/[slug]',
-          query: { slug: circle.slug },
+          pathname: '/[circleSlug]',
+          query: { circleSlug: circle.slug },
         }}
+        className="flex h-full w-full flex-col"
       >
-        <div className="relative flex h-[273px] w-full items-center justify-center">
-          <BookmarkButton id={circle.id} bookmarked={circle.bookmarked} />
-          <NoImage />
+        <div className="relative flex aspect-[7/10] min-h-[262px] w-full items-center justify-center overflow-hidden border-b border-neutral-900 md:min-h-[273px]">
+          <CircleBookmarkButton id={circle.id} bookmarked={circle.bookmarked} />
+          {circle.cover_picture_url ? (
+            <Image
+              height={273}
+              width={192}
+              src={circle.cover_picture_url}
+              alt={`Circle cut of ` + circle.name}
+              quality={60}
+              loading="lazy"
+              className="h-full w-full object-cover"
+            />
+          ) : (
+            <NoImage />
+          )}
         </div>
-        <div className="w-full space-y-1.5 p-2 font-medium">
+        <div className="h-full w-full space-y-1.5 p-2 font-medium">
           <p className="break-all text-base font-semibold">{circle.name}</p>
           {circle.fandom.length > 0 && (
             <p className="text-xs">

@@ -42,7 +42,10 @@ export default function App({
       </div>
       <QueryClientProvider client={queryClient}>
         <HydrationBoundary state={pageProps.dehydratedState}>
-          <ReactQueryDevtools initialIsOpen={false} />
+          <ReactQueryDevtools
+            buttonPosition="bottom-left"
+            initialIsOpen={false}
+          />
           <NextUIProvider navigate={router.push}>
             <SessionProvider>
               <MainLayout>

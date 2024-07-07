@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 
 export const useGetWorkType = () => {
   return useQuery({
-    queryKey: ['/api/v1/worktype/all'],
+    queryKey: ['/v1/worktype/all'],
     queryFn: async () => {
       return (await circleService.getAllWorkTypes()).data;
     },

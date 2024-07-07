@@ -1,8 +1,10 @@
 import { ZodError } from 'zod';
-import { parseError } from './client';
 import nookies from 'nookies';
+import { parseError } from './fetch-wrapper';
+import { Image, ResizeOptions } from 'image-js';
 
 export const prettifyError = (error: Error | null) => {
+  console.error(error);
   if (error instanceof ZodError) {
     const fields = Object.entries(error.flatten().fieldErrors).map(
       ([field, err]) => {
@@ -29,5 +31,26 @@ export const setAccessToken = (accessToken: string, _expires: string) => {
   nookies.set(null, 'access_token', accessToken, {
     // expires: new Date(expires),
     path: '/',
+  });
+};
+
+export const downSizeForCoverImage = async (
+  file: File,
+  resizeOptions?: ResizeOptions,
+  quality?: number,
+) => {
+  const buffer = await file.arrayBuffer();
+  const image = await Image.load(buffer);
+  const resizedBlob = await image
+    .resize({
+      preserveAspectRatio: true,
+      interpolation: 'nearestNeighbor',
+      ...resizeOptions,
+    })
+    .toBlob(file.type, quality ?? 0.75);
+
+  return new File([resizedBlob], file.name, {
+    type: file.type,
+    lastModified: Date.now(),
   });
 };

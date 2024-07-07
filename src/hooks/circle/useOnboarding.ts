@@ -21,9 +21,9 @@ export const useOnboarding = () => {
       setAccessToken(refresh.access_token, refresh.access_token_expired_at);
       toast.success('Circle created, redirecting to your page');
       router.push({
-        pathname: '/c/[slug]',
+        pathname: '/[circleSlug]',
         query: {
-          slug: data.slug,
+          circleSlug: data.slug,
         },
       });
     } catch (error) {

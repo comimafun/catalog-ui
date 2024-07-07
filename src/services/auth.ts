@@ -1,24 +1,24 @@
 import { newTokenResponse, selfResponse } from '@/types/auth';
-import { client } from '@/utils/client';
+import { fetchInstance } from '@/utils/fetch-wrapper';
 
 const authService = {
   googleCallback: async (code: string) => {
-    const res = await client('/api/v1/auth/google/callback', {
+    const res = await fetchInstance(null, '/v1/auth/google/callback', {
       method: 'POST',
       body: { code },
     });
     return newTokenResponse.parse(res);
   },
   getSelf: async () => {
-    const res = await client('/api/v1/auth/self');
+    const res = await fetchInstance(null, '/v1/auth/self');
     return selfResponse.parse(res).data;
   },
   postLogout: () =>
-    client('/api/v1/auth/logout', {
+    fetchInstance(null, '/v1/auth/logout', {
       method: 'POST',
     }),
   getRefreshToken: async () => {
-    const res = await client('/api/v1/auth/refresh');
+    const res = await fetchInstance(null, '/v1/auth/refresh');
     return newTokenResponse.parse(res);
   },
 };

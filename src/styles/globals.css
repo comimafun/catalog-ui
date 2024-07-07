@@ -7,6 +7,9 @@ body,
 #__next,
 #font-root {
   font-family: var(--font-inter), sans-serif !important;
-  font-size: 14px;
   color: rgb(10 10 10);
 }
+
+/* .ProseMirror-focused {
+  outline: none;
+} */
