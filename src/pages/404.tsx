@@ -12,6 +12,7 @@ function NotFoundPage() {
         width={400}
         height={500}
         alt="NotFound 404 by SAWARATSUKI"
+        loading="lazy"
       />
 
       <p className="text-center font-semibold">
