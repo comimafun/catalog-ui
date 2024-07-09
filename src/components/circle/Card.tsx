@@ -2,7 +2,7 @@ import StopIcon from '@/icons/StopIcon';
 import type { CircleCard } from '@/types/circle';
 import Link from 'next/link';
 import CircleBookmarkButton from './CircleBookmarkButton';
-import Image from 'next/image';
+import ExtendedImage from '../general/ExtendedImage';
 
 const NoImage = () => {
   return (
@@ -26,7 +26,7 @@ function CircleCard(circle: CircleCard) {
         <div className="relative flex aspect-[7/10] min-h-[262px] w-full items-center justify-center overflow-hidden border-b border-neutral-900 md:min-h-[273px]">
           <CircleBookmarkButton id={circle.id} bookmarked={circle.bookmarked} />
           {circle.cover_picture_url ? (
-            <Image
+            <ExtendedImage
               height={273}
               width={192}
               src={circle.cover_picture_url}

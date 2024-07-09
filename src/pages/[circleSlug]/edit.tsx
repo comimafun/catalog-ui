@@ -3,6 +3,7 @@ import EditDescriptionSection from '@/components/circle/detail-page/EditDescript
 import EditEventSection from '@/components/circle/detail-page/EditEventSection';
 import EditFandomWorkTypeSection from '@/components/circle/detail-page/EditFandomWorkTypeSection';
 import EditGeneralInfoSection from '@/components/circle/detail-page/EditGeneralInfoSection';
+import EditProducts from '@/components/circle/detail-page/EditProducts';
 import EachPageLayout from '@/components/general/EachPageLayout';
 import Spin from '@/components/general/Spin';
 import {
@@ -15,17 +16,29 @@ import { useRouter } from 'next/router';
 import { Fragment, useEffect } from 'react';
 import toast from 'react-hot-toast';
 
-const AVAILABLE_STATE = new Set([
+const STATE = [
   'general',
   'fandom_work_type',
   'description',
   'event',
   'circle_cut',
-]);
+  'product',
+] as const;
+const AVAILABLE_STATE = new Set(STATE);
+type State = (typeof STATE)[number];
+
+const COMPONENTS: Record<State, JSX.Element> = {
+  circle_cut: <EditCircleCutSection />,
+  description: <EditDescriptionSection />,
+  event: <EditEventSection />,
+  fandom_work_type: <EditFandomWorkTypeSection />,
+  general: <EditGeneralInfoSection />,
+  product: <EditProducts />,
+};
 
 export const getServerSideProps = async (c: GetServerSidePropsContext) => {
   const { section } = c.query;
-  if (!section || !AVAILABLE_STATE.has(section as string)) {
+  if (!section || !AVAILABLE_STATE.has(section as State)) {
     return {
       notFound: true,
     };
@@ -73,14 +86,9 @@ function CircleEditPage() {
 
   return (
     <Fragment>
-      {router.query.section === 'general' && <EditGeneralInfoSection />}
-      {router.query.section === 'fandom_work_type' && (
-        <EditFandomWorkTypeSection />
-      )}
-
-      {router.query.section === 'description' && <EditDescriptionSection />}
-      {router.query.section === 'event' && <EditEventSection />}
-      {router.query.section === 'circle_cut' && <EditCircleCutSection />}
+      {!!COMPONENTS[router.query.section as State]
+        ? COMPONENTS[router.query.section as State]
+        : null}
     </Fragment>
   );
 }

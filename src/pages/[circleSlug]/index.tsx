@@ -12,6 +12,7 @@ import FandomWorkTypeSection from '@/components/circle/detail-page/FandomWorkTyp
 import DescriptionSection from '@/components/circle/detail-page/DescriptionSection';
 import EventSection from '@/components/circle/detail-page/EventSection';
 import CircleCutSection from '@/components/circle/detail-page/CircleCutSection';
+import ProductSection from '@/components/circle/detail-page/ProductSection';
 
 export const getServerSideProps = async (c: GetServerSidePropsContext) => {
   const circleSlug = c.query.circleSlug as string;
@@ -52,6 +53,9 @@ function CirclePage() {
       </SectionPartitionWrapper>
       <SectionPartitionWrapper>
         <FandomWorkTypeSection />
+      </SectionPartitionWrapper>
+      <SectionPartitionWrapper>
+        <ProductSection />
       </SectionPartitionWrapper>
       <SectionPartitionWrapper>
         <DescriptionSection />
