@@ -337,11 +337,15 @@ function EditProducts() {
                     circleID: data.id,
                     ...payload,
                   });
+
+                  toast.success('Works updated ✅');
                 } else {
                   await addMutation.mutateAsync({
                     circleID: data.id,
                     ...payload,
                   });
+
+                  toast.success('Works added ✅');
                 }
 
                 form.reset({

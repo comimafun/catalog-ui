@@ -48,7 +48,7 @@ function CircleBookmarkButton({
   return (
     <button
       className={classNames(
-        'group absolute right-4 top-4 active:scale-80',
+        'group absolute right-4 top-4 z-[1] active:scale-80',
         className,
       )}
       type="button"
