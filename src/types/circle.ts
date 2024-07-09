@@ -69,18 +69,6 @@ export const circleEntity = z.object({
   event_id: z.number().nullable(),
 });
 
-export const productEntity = z.object({
-  id: z.number(),
-  name: z.string(),
-  image_url: z.string(),
-});
-
-export const getProductsResponse = backendResponseSchema(
-  z.array(productEntity),
-);
-
-export const getOneProductResponse = backendResponseSchema(productEntity);
-
 export const circleSchema = circleEntity.extend({
   block: circleBlockEntity.nullable(),
   bookmarked: z.boolean(),

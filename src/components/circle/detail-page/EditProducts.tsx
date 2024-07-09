@@ -13,9 +13,9 @@ import EditIcon from '@/icons/EditIcon';
 import ImageIcon from '@/icons/ImageIcon';
 import TrashIcon from '@/icons/TrashIcon';
 import XCircleIcon from '@/icons/XCircleIcon';
-import { circleService } from '@/services/circle';
+import { productService } from '@/services/product';
 import { uploadService } from '@/services/upload';
-import { productEntity } from '@/types/circle';
+import { productEntity } from '@/types/product';
 import { prettifyError } from '@/utils/helper';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -63,7 +63,7 @@ const useUpdateProduct = () => {
       ...payload
     }: FormValues & { circleID: number }) => {
       const { data } =
-        await circleService.putUpdateOneProductByCircleIDProductID({
+        await productService.putUpdateOneProductByCircleIDProductID({
           circleID,
           payload: {
             name: payload.name,
@@ -118,7 +118,7 @@ const useAddProduct = () => {
       circleID,
       ...payload
     }: FormValues & { circleID: number }) => {
-      const { data } = await circleService.postAddProductByCircleID(
+      const { data } = await productService.postAddProductByCircleID(
         circleID,
         payload,
       );
@@ -156,6 +156,13 @@ const useAddProduct = () => {
           context.previousData,
         );
       }
+    },
+
+    onSuccess: (_, payload) => {
+      queryClient.invalidateQueries({
+        queryKey: getProductsOptions({ circleID: payload.circleID }).queryKey,
+        refetchType: 'active',
+      });
     },
   });
 };
@@ -206,7 +213,7 @@ const ProductList = () => {
                   <Button
                     onPress={async () => {
                       try {
-                        await circleService.deleteOneProductByCircleIDProductID(
+                        await productService.deleteOneProductByCircleIDProductID(
                           {
                             circleID: data?.id as number,
                             productID: deleteSelected?.id as number,

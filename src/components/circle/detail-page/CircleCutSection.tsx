@@ -1,9 +1,9 @@
+import ExtendedImage from '@/components/general/ExtendedImage';
 import {
   useGetCircleBySlug,
   useIsMyCircle,
 } from '@/hooks/circle/useGetCircleBySlug';
 import { Accordion, AccordionItem, Button } from '@nextui-org/react';
-import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
 
@@ -22,7 +22,7 @@ function CircleCutSection() {
         <div className="flex flex-col items-center justify-center gap-4">
           {data?.cover_picture_url ? (
             <div className="flex aspect-[7/10] w-auto items-center justify-center overflow-hidden rounded-lg border border-neutral-100 shadow-lg md:h-[500px]">
-              <Image
+              <ExtendedImage
                 width={140}
                 height={200}
                 src={data.cover_picture_url}

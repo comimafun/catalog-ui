@@ -1,8 +1,8 @@
-import { circleService } from '@/services/circle';
+import { productService } from '@/services/product';
 import { UndefinedInitialDataOptions, useQuery } from '@tanstack/react-query';
 
 type QueryFnData = Awaited<
-  ReturnType<typeof circleService.getProductsByCircleID>
+  ReturnType<typeof productService.getProductsByCircleID>
 >['data'];
 type Options = Omit<UndefinedInitialDataOptions<QueryFnData>, 'queryKey'>;
 type PickedOptions = Partial<Options>;
@@ -18,7 +18,7 @@ export const getProductsOptions = (
   return {
     queryKey: ['/v1/circle/[circleID]/product', { circleID }],
     queryFn: async () => {
-      const res = await circleService.getProductsByCircleID(circleID);
+      const res = await productService.getProductsByCircleID(circleID);
       return res.data;
     },
     refetchOnMount: false,

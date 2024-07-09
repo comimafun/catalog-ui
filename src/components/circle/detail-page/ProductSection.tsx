@@ -7,7 +7,7 @@ import { useGetProducts } from '@/hooks/circle/useGetProducts';
 import EditIcon from '@/icons/EditIcon';
 import SearchIcon from '@/icons/SearchIcon';
 import XCircleIcon from '@/icons/XCircleIcon';
-import { productEntity } from '@/types/circle';
+import { productEntity } from '@/types/product';
 import { classNames } from '@/utils/classNames';
 import {
   Chip,
