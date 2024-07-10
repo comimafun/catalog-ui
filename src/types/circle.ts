@@ -2,6 +2,8 @@ import { z } from 'zod';
 import {
   backendResponsePagination,
   backendResponseSchema,
+  blockString,
+  dayEnum,
   optionalUrl,
   trimmedString,
   varchar255,
@@ -47,11 +49,8 @@ export const circleBlockEntity = z.object({
   name: z.string(),
 });
 
-export const dayEnum = z.enum(['first', 'second', 'both']);
-
 export const circleEntity = z.object({
   id: z.number(),
-  batch: z.number().nullable(),
   created_at: z.string(),
   updated_at: z.string(),
   day: dayEnum.nullable(),
@@ -100,18 +99,6 @@ export const onboardingPayloadSchema = z.object({
   facebook_url: optionalUrl,
 });
 
-const blockString = trimmedString.refine(
-  (x) => {
-    const split = x.split('-');
-    const prefix = split[0];
-    const postfix = split[1];
-    return split.length === 2 || (prefix.length <= 2 && postfix.length <= 8);
-  },
-  {
-    message: 'Invalid block format',
-  },
-);
-
 export const editGeneralInfoPayload = onboardingPayloadSchema.extend({
   block: blockString.optional(),
   file:
@@ -150,13 +137,7 @@ export const getAllWorkTypeResponse = backendResponseSchema(
 
 export const updateCirclePayload = z.object({
   name: varchar255.optional(),
-  circle_block: blockString.optional(),
-  /**
-   * TODO: HTML string validation
-   */
   description: z.string().optional(),
-  batch: z.number().optional(),
-  day: dayEnum.or(z.literal('')).optional(),
   url: optionalUrl.optional(),
   facebook_url: optionalUrl.optional(),
   twitter_url: optionalUrl.optional(),
@@ -164,7 +145,6 @@ export const updateCirclePayload = z.object({
   picture_url: optionalUrl.optional(),
   fandom_ids: z.array(z.number()).optional(),
   work_type_ids: z.array(z.number()).optional(),
-  event_id: z.number().optional(),
   cover_picture_url: optionalUrl.optional(),
 });
 

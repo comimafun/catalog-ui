@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { backendResponsePagination } from './common';
+import { backendResponsePagination, blockString, dayEnum } from './common';
 
 export const eventEntity = z.object({
   id: z.number(),
@@ -11,3 +11,11 @@ export const eventEntity = z.object({
 });
 
 export const getEventPaginationSchema = backendResponsePagination(eventEntity);
+
+export const updateAttendingEventBody = z.object({
+  circle_block: blockString.optional(),
+  day: dayEnum.or(z.literal('')).nullish(),
+  event_id: z.number(),
+});
+
+export type UpdateAttendingEventBody = z.infer<typeof updateAttendingEventBody>;
