@@ -5,6 +5,7 @@ import { ReactNode, useRef } from 'react';
 import { useSession } from '../providers/SessionProvider';
 import { Button } from '@nextui-org/react';
 import { useLogout } from '@/hooks/auth/useLogout';
+import BookIcon from '@/icons/BookIcon';
 
 const RightMenu = () => {
   const { session } = useSession();
@@ -76,13 +77,21 @@ const Navbar = () => {
     <>
       <div
         className={classNames(
-          'fixed z-10 mx-auto w-full bg-white transition-all',
-          isInView ? 'shadow-none' : 'shadow-lg',
+          'fixed z-10 mx-auto w-full transition-all',
+          isInView ? 'bg-white shadow-none' : 'bg-white/70 shadow-lg',
         )}
       >
-        <nav className="mx-auto flex w-full max-w-[640px] items-center justify-between bg-white px-4 py-5">
-          <Link href="/" className="font-bold">
-            LOGO
+        <nav
+          className={classNames(
+            'mx-auto flex w-full max-w-[640px] items-center justify-between px-4 py-5',
+            isInView ? 'bg-white' : 'bg-white/70',
+          )}
+        >
+          <Link
+            href="/"
+            className="flex items-center gap-2 rounded p-1.5 font-extrabold text-[#5E17EB] ring-1 ring-[#5E17EB] transition-all hover:ring-2"
+          >
+            <BookIcon width={16} height={16} /> <div>innercatalog</div>
           </Link>
 
           <RightMenu />
