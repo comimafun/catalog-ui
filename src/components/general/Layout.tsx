@@ -87,12 +87,25 @@ const Navbar = () => {
             isInView ? 'bg-white' : 'bg-white/70',
           )}
         >
-          <Link
-            href="/"
-            className="flex items-center gap-2 rounded p-1.5 font-extrabold text-[#5E17EB] ring-1 ring-[#5E17EB] transition-all hover:ring-2"
-          >
-            <BookIcon width={16} height={16} /> <div>innercatalog</div>
-          </Link>
+          <div className="flex items-center gap-8">
+            <Link
+              href="/"
+              className="flex items-center gap-2 rounded p-1.5 font-extrabold text-[#5E17EB] ring-1 ring-[#5E17EB] transition-all hover:ring-2"
+            >
+              <BookIcon width={16} height={16} /> <div>innercatalog</div>
+            </Link>
+
+            <ul>
+              <li>
+                <Link
+                  className="font-medium underline-offset-8 transition-all hover:font-semibold hover:underline"
+                  href="/about"
+                >
+                  About
+                </Link>
+              </li>
+            </ul>
+          </div>
 
           <RightMenu />
         </nav>

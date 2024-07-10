@@ -43,7 +43,7 @@ function CirclePage() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="min-h-[calc(100vh-63px-141px)] space-y-4">
       <SectionPartitionWrapper>
         <GeneralInfoSection />
       </SectionPartitionWrapper>
