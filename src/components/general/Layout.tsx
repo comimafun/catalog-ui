@@ -103,12 +103,48 @@ const Navbar = () => {
   );
 };
 
+const Footer = () => {
+  return (
+    <footer className="mx-auto w-full border-t border-neutral-200 bg-white">
+      <div className="mx-auto flex w-full max-w-[640px] flex-col px-4 py-5">
+        <Link
+          href="/"
+          className="flex w-min items-center gap-2 rounded p-1.5 font-extrabold text-[#5E17EB] ring-1 ring-[#5E17EB] transition-all hover:ring-2"
+        >
+          <BookIcon width={16} height={16} /> <div>innercatalog</div>
+        </Link>
+        <p className="mt-2 text-base">
+          Alternative website to share your works before con.
+        </p>
+
+        <div className="mt-4 flex justify-between">
+          <ul className="flex">
+            <li>
+              <Link className="font-bold" href="/about">
+                About
+              </Link>
+            </li>
+          </ul>
+
+          <div>
+            Created by{' '}
+            <a target="_blank" href="https://github.com/althafdaa">
+              @varkased
+            </a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+};
+
 function MainLayout({ children }: { children: ReactNode }) {
   return (
     <main className="min-h-screen justify-between bg-slate-200 text-sm">
       <Navbar />
 
       <div className="mx-auto w-full max-w-[640px]">{children}</div>
+      <Footer />
     </main>
   );
 }
