@@ -13,7 +13,9 @@ import MainLayout from '@/components/general/Layout';
 import { Toaster } from 'react-hot-toast';
 import { SessionProvider } from '@/components/providers/SessionProvider';
 import { useRouter } from 'next/router';
+import { DefaultSeo } from 'next-seo';
 import 'swiper/css';
+import { DEFAULT_SEO } from '@/constants/seo';
 
 const fontInter = Inter({
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
@@ -50,6 +52,7 @@ export default function App({
           <NextUIProvider navigate={router.push}>
             <SessionProvider>
               <MainLayout>
+                <DefaultSeo {...DEFAULT_SEO} />
                 <Component {...pageProps} />
                 <Toaster />
               </MainLayout>
