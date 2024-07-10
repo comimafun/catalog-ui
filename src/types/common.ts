@@ -41,3 +41,17 @@ export type CommonStoreSetter<T extends Record<string, unknown>> = {
 };
 
 export type SVGS = JSX.IntrinsicElements['svg'];
+
+export const blockString = trimmedString.refine(
+  (x) => {
+    const split = x.split('-');
+    const prefix = split[0];
+    const postfix = split[1];
+    return split.length === 2 || (prefix.length <= 2 && postfix.length <= 8);
+  },
+  {
+    message: 'Invalid block format',
+  },
+);
+
+export const dayEnum = z.enum(['first', 'second', 'both']);

@@ -18,6 +18,7 @@ function CircleCutSection() {
           base: 'relative w-full border border-neutral-200 bg-white shadow px-4',
         }}
         title={<h2 className="text-xl font-semibold">Circle Cut</h2>}
+        textValue="circle-cut"
       >
         <div className="flex flex-col items-center justify-center gap-4">
           {data?.cover_picture_url ? (

@@ -1,9 +1,11 @@
 import EachPageLayout from '@/components/general/EachPageLayout';
 import { useGetCircleBySlug } from '@/hooks/circle/useGetCircleBySlug';
-import { useUpdateCircle } from '@/hooks/circle/useUpdateCircle';
+import { useUpdateEventByCircleID } from '@/hooks/circle/useUpdateEventByCircleID';
 import { useGetEvents } from '@/hooks/event/useGetEvent';
 import ChevronUpIcon from '@/icons/ChevronUpIcon';
-import { dayEnum } from '@/types/circle';
+import XCircleIcon from '@/icons/XCircleIcon';
+import { eventService } from '@/services/event';
+import { dayEnum } from '@/types/common';
 import { eventEntity } from '@/types/event';
 import { prettifyError } from '@/utils/helper';
 import { time } from '@/utils/time';
@@ -30,7 +32,7 @@ import { z } from 'zod';
 
 const editEventSchema = z.object({
   event: eventEntity,
-  day: dayEnum.nullish(),
+  day: dayEnum.or(z.literal('')).nullish(),
   block: z
     .string()
     .trim()
@@ -75,7 +77,6 @@ type EditEventForm = z.infer<typeof editEventSchema>;
 const ConfirmationButton = () => {
   const { isOpen, onOpenChange } = useDisclosure();
   const { data: circle } = useGetCircleBySlug();
-  const updateEvent = useUpdateCircle();
   const router = useRouter();
   return (
     <>
@@ -120,14 +121,9 @@ const ConfirmationButton = () => {
                     onClick={async () => {
                       if (!circle) return;
                       try {
-                        await updateEvent.mutateAsync({
-                          circleID: circle.id,
-                          payload: {
-                            circle_block: '',
-                            event_id: 0,
-                            day: '',
-                          },
-                        });
+                        await eventService.deleteAttendingEventByCircleID(
+                          circle.id,
+                        );
                         toast.success('Successfully reset attending event');
                         router.push({
                           pathname: '/[circleSlug]',
@@ -163,7 +159,7 @@ function EditEventSection() {
   const form = useForm<EditEventForm>({
     resolver: zodResolver(editEventSchema),
   });
-  const updateEvent = useUpdateCircle();
+  const updateEvent = useUpdateEventByCircleID();
 
   useEffect(() => {
     if (initalized || !circle) return;
@@ -200,8 +196,8 @@ function EditEventSection() {
                 await updateEvent.mutateAsync({
                   circleID: circle.id,
                   payload: {
-                    circle_block: val.block ?? undefined,
-                    day: val.day ?? undefined,
+                    circle_block: val.block ?? '',
+                    day: val.day ?? null,
                     event_id: val.event.id,
                   },
                 });
@@ -287,18 +283,29 @@ function EditEventSection() {
               render={({ field }) => {
                 const { disabled, value, ...fieldProps } = field;
                 return (
-                  <RadioGroup
-                    isDisabled={disabled}
-                    value={value ?? undefined}
-                    {...fieldProps}
-                    orientation="horizontal"
-                    label="Attending Day"
-                    size="sm"
-                  >
-                    <Radio value="first">First Day</Radio>
-                    <Radio value="second">Second Day</Radio>
-                    <Radio value="both">Both Days</Radio>
-                  </RadioGroup>
+                  <div className="flex items-center gap-1">
+                    <RadioGroup
+                      isDisabled={disabled}
+                      value={value ?? undefined}
+                      {...fieldProps}
+                      orientation="horizontal"
+                      label="Attending Day"
+                      size="sm"
+                    >
+                      <Radio value="first">First Day</Radio>
+                      <Radio value="second">Second Day</Radio>
+                      <Radio value="both">Both Days</Radio>
+                    </RadioGroup>
+                    <button
+                      className="mt-auto text-red-500"
+                      onClick={() => {
+                        field.onChange('');
+                      }}
+                      type="button"
+                    >
+                      <XCircleIcon width={20} height={20} />
+                    </button>
+                  </div>
                 );
               }}
             />
