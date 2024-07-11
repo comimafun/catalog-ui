@@ -8,6 +8,7 @@ import FilterIcon from '@/icons/FilterIcon';
 import { useDrawerFilterStore } from '@/store/circle';
 import dynamic from 'next/dynamic';
 import EachPageLayout from '@/components/general/EachPageLayout';
+import Link from 'next/link';
 
 const FilterDrawer = dynamic(() => import('@/components/circle/FilterDrawer'), {
   ssr: false,
@@ -38,6 +39,23 @@ const CircleListGrid = () => {
     return (
       <div className="flex h-full w-full items-center justify-center">
         <p>{err}</p>
+      </div>
+    );
+  }
+
+  if (data.length === 0) {
+    return (
+      <div className="flex h-full w-full flex-col items-center justify-center gap-3">
+        <p className="text-base font-semibold">Sorry, no circle yet</p>
+        <p>Sign up yours?🥹</p>
+        <Button
+          color="primary"
+          className="font-semibold"
+          as={Link}
+          href="/join"
+        >
+          Join
+        </Button>
       </div>
     );
   }
