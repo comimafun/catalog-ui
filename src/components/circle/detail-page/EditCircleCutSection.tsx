@@ -1,4 +1,5 @@
 import EachPageLayout from '@/components/general/EachPageLayout';
+import ExtendedImage from '@/components/general/ExtendedImage';
 import Spin from '@/components/general/Spin';
 import Uploader from '@/components/general/Uploader';
 import { ACCEPTED_IMAGE_TYPES_SET, MEGABYTE } from '@/constants/common';
@@ -10,7 +11,6 @@ import TrashIcon from '@/icons/TrashIcon';
 import { uploadService } from '@/services/upload';
 import { downSizeForCoverImage, prettifyError } from '@/utils/helper';
 import { Button } from '@nextui-org/react';
-import Image from 'next/image';
 import { useRouter } from 'next/router';
 import React, { Fragment, useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -138,7 +138,7 @@ function EditCircleCutSection() {
                       </div>
                       {field.value ? (
                         <div className="w-auto overflow-hidden rounded-lg border border-neutral-100 shadow-lg md:h-[500px]">
-                          <Image
+                          <ExtendedImage
                             width={140}
                             height={200}
                             src={field.value}

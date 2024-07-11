@@ -7,6 +7,33 @@ import { Button } from '@nextui-org/react';
 import { useLogout } from '@/hooks/auth/useLogout';
 import BookIcon from '@/icons/BookIcon';
 
+const Logo = () => {
+  return (
+    <Link
+      href="/"
+      className="group relative flex w-min items-center overflow-hidden rounded p-1.5 font-extrabold text-[#5E17EB] ring-1 ring-[#5E17EB] transition-all hover:ring-2"
+    >
+      <div
+        className={classNames(
+          'absolute rounded-full bg-primary blur transition-all',
+          'h-3 w-3 group-hover:h-5 group-hover:w-4',
+          '-left-1 -top-1 group-hover:left-0 group-hover:top-0',
+        )}
+      />
+      <div
+        className={classNames(
+          'absolute rounded-full bg-pink-500 blur transition-all',
+          'h-3 w-3 group-hover:h-5 group-hover:w-4',
+          '-bottom-1 -right-1 group-hover:bottom-0 group-hover:right-0',
+        )}
+      />
+      <span className="relative z-[1] flex items-center justify-center gap-2">
+        <BookIcon width={16} height={16} /> <div>innercatalog</div>
+      </span>
+    </Link>
+  );
+};
+
 const RightMenu = () => {
   const { session } = useSession();
   const { logout, isPending } = useLogout();
@@ -88,12 +115,7 @@ const Navbar = () => {
           )}
         >
           <div className="flex items-center gap-8">
-            <Link
-              href="/"
-              className="flex items-center gap-2 rounded p-1.5 font-extrabold text-[#5E17EB] ring-1 ring-[#5E17EB] transition-all hover:ring-2"
-            >
-              <BookIcon width={16} height={16} /> <div>innercatalog</div>
-            </Link>
+            <Logo />
 
             <ul>
               <li>
@@ -120,12 +142,7 @@ const Footer = () => {
   return (
     <footer className="mx-auto w-full border-t border-neutral-200 bg-white">
       <div className="mx-auto flex w-full max-w-[640px] flex-col px-4 py-5">
-        <Link
-          href="/"
-          className="flex w-min items-center gap-2 rounded p-1.5 font-extrabold text-[#5E17EB] ring-1 ring-[#5E17EB] transition-all hover:ring-2"
-        >
-          <BookIcon width={16} height={16} /> <div>innercatalog</div>
-        </Link>
+        <Logo />
         <p className="mt-2 text-base">
           Alternative website to share your works before con.
         </p>

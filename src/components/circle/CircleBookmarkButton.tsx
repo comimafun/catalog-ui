@@ -23,7 +23,12 @@ function CircleBookmarkButton({
   const handleBookmark = async () => {
     if (!session) {
       toast.error('You need to sign in to bookmark');
-      router.push('/sign-in');
+      router.push({
+        pathname: '/sign-in',
+        query: {
+          return_url: router.asPath,
+        },
+      });
       return;
     }
 

@@ -52,8 +52,6 @@ function CircleCard(circle: CircleCard) {
               Work Type: {circle.work_type.map((x) => x.name).join(', ')}
             </p>
           )}
-
-          <p className="text-xs">Day: {circle.day ?? 'TBA'}</p>
         </div>
       </Link>
     </li>
