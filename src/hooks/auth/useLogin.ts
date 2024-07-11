@@ -24,7 +24,7 @@ export const useLogin = () => {
         const self = await authService.getSelf();
         queryClient.setQueryData(['/v1/auth/self'], self);
 
-        toast.success('Welcome to ComimaFun!');
+        toast.success('Welcome to Inner Catalog!❤️');
         if (router.query.return_url) {
           router.push(router.query.return_url as string);
         } else {

@@ -66,7 +66,9 @@ function SignInPage() {
   return (
     <EachPageLayout className="flex items-center justify-center">
       <div className="rounded-lg border border-neutral-950 p-4 shadow-md">
-        <h1 className="text-center text-xl font-bold">Sign In to Comimafun</h1>
+        <h1 className="text-center text-xl font-bold">
+          Sign In to Inner Catalog
+        </h1>
         <p className="font-medium">
           Discover and share your circles with the world.
         </p>
