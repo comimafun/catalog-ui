@@ -1,4 +1,5 @@
 import EachPageLayout from '@/components/general/EachPageLayout';
+import ExtendedImage from '@/components/general/ExtendedImage';
 import Spin from '@/components/general/Spin';
 import Uploader from '@/components/general/Uploader';
 import { ACCEPTED_IMAGE_TYPES_SET, MEGABYTE } from '@/constants/common';
@@ -15,7 +16,6 @@ import {
 import { prettifyError } from '@/utils/helper';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Input, Button } from '@nextui-org/react';
-import Image from 'next/image';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { FormProvider, Controller, useForm } from 'react-hook-form';
@@ -127,7 +127,7 @@ function EditGeneralInfoSection() {
                       {field.value ? (
                         <div className="relative h-24 w-24 overflow-hidden rounded-full">
                           <div className="absolute inset-0 rounded-full transition-all hover:bg-slate-500/50" />
-                          <Image
+                          <ExtendedImage
                             width={96}
                             height={96}
                             alt={`Picuter Profile of` + data?.name}

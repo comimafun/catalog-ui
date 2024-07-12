@@ -6,6 +6,7 @@ import EditIcon from '@/icons/EditIcon';
 import { Chip } from '@nextui-org/react';
 import Link from 'next/link';
 import React from 'react';
+import EditButton from './EditButton';
 
 function FandomWorkTypeSection() {
   const { data } = useGetCircleBySlug();
@@ -26,12 +27,7 @@ function FandomWorkTypeSection() {
               query: { circleSlug: data?.slug, section: 'fandom_work_type' },
             }}
           >
-            <Chip
-              color="warning"
-              endContent={<EditIcon width={14} height={14} />}
-            >
-              <span className="font-semibold">Edit</span>
-            </Chip>
+            <EditButton />
           </Link>
         </div>
 
@@ -66,12 +62,7 @@ function FandomWorkTypeSection() {
               query: { circleSlug: data?.slug, section: 'fandom_work_type' },
             }}
           >
-            <Chip
-              color="warning"
-              endContent={<EditIcon width={14} height={14} />}
-            >
-              <span className="font-semibold">Edit</span>
-            </Chip>
+            <EditButton />
           </Link>
         )}
       </div>

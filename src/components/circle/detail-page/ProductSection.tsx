@@ -4,13 +4,11 @@ import {
   useIsMyCircle,
 } from '@/hooks/circle/useGetCircleBySlug';
 import { useGetProducts } from '@/hooks/circle/useGetProducts';
-import EditIcon from '@/icons/EditIcon';
 import SearchIcon from '@/icons/SearchIcon';
 import XCircleIcon from '@/icons/XCircleIcon';
 import { productEntity } from '@/types/product';
 import { classNames } from '@/utils/classNames';
 import {
-  Chip,
   Modal,
   ModalBody,
   ModalContent,
@@ -21,6 +19,7 @@ import { Fragment, ReactNode, useRef, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Swiper as SwiperTypes } from 'swiper/types';
 import { z } from 'zod';
+import EditButton from './EditButton';
 
 const Wrapper = ({ children }: { children: ReactNode }) => {
   const { isAllowed } = useIsMyCircle();
@@ -38,12 +37,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => {
               query: { circleSlug: data?.slug, section: 'product' },
             }}
           >
-            <Chip
-              color="warning"
-              endContent={<EditIcon width={14} height={14} />}
-            >
-              <span className="font-semibold">Edit</span>
-            </Chip>
+            <EditButton />
           </Link>
         )}
       </div>

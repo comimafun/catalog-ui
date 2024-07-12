@@ -41,14 +41,15 @@ const Logo = (props: Omit<ComponentProps<typeof Link>, 'href'>) => {
 const RightMenu = () => {
   const { session } = useSession();
   const { logout, isPending } = useLogout();
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
 
+  const close = () => setOpen(false);
   return (
     <>
       <Drawer open={open} onOpenChange={setOpen} direction="top">
         <DrawerContent className="bottom-[none] top-0 mt-0 rounded-b p-4">
           <div className="flex w-full items-center justify-between">
-            <Logo />{' '}
+            <Logo onClick={close} />{' '}
             <button type="button" onClick={() => setOpen(false)}>
               <XMarkIcon className="text-slate-300" width={32} height={32} />
             </button>
@@ -56,7 +57,9 @@ const RightMenu = () => {
           <h1 className="mt-4 font-bold">Links</h1>
           <ul className="mt-2">
             <li>
-              <Link href="/about">About</Link>
+              <Link onClick={close} href="/about">
+                About
+              </Link>
             </li>
           </ul>
           <hr className="my-2" />
@@ -74,6 +77,7 @@ const RightMenu = () => {
                     variant="solid"
                     color="primary"
                     className="w-full"
+                    onClick={close}
                   >
                     Your circle
                   </Button>
@@ -86,6 +90,7 @@ const RightMenu = () => {
                     variant="solid"
                     color="primary"
                     className="w-full"
+                    onClick={close}
                   >
                     Create your circle
                   </Button>
@@ -112,6 +117,7 @@ const RightMenu = () => {
                 type="button"
                 variant="flat"
                 typeof="button"
+                onClick={close}
               >
                 Sign In
               </Button>

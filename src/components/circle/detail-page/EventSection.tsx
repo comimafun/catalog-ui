@@ -2,11 +2,9 @@ import {
   useGetCircleBySlug,
   useIsMyCircle,
 } from '@/hooks/circle/useGetCircleBySlug';
-import EditIcon from '@/icons/EditIcon';
 import { time } from '@/utils/time';
-import { Chip } from '@nextui-org/react';
 import Link from 'next/link';
-import React from 'react';
+import EditButton from './EditButton';
 
 const Header = () => {
   const { data } = useGetCircleBySlug();
@@ -24,12 +22,7 @@ const Header = () => {
               query: { circleSlug: data?.slug, section: 'event' },
             }}
           >
-            <Chip
-              color="warning"
-              endContent={<EditIcon width={14} height={14} />}
-            >
-              <span className="font-semibold">Edit</span>
-            </Chip>
+            <EditButton />
           </Link>
         )}
       </div>

@@ -3,12 +3,10 @@ import {
   useGetCircleBySlug,
   useIsMyCircle,
 } from '@/hooks/circle/useGetCircleBySlug';
-import EditIcon from '@/icons/EditIcon';
 import { classNames } from '@/utils/classNames';
-import { Chip } from '@nextui-org/react';
 import { sanitize } from 'isomorphic-dompurify';
 import Link from 'next/link';
-import React from 'react';
+import EditButton from './EditButton';
 
 function DescriptionSection() {
   const { data } = useGetCircleBySlug();
@@ -30,12 +28,7 @@ function DescriptionSection() {
                 query: { circleSlug: data?.slug, section: 'description' },
               }}
             >
-              <Chip
-                color="warning"
-                endContent={<EditIcon width={14} height={14} />}
-              >
-                <span className="font-semibold">Edit</span>
-              </Chip>
+              <EditButton />
             </Link>
           )}
         </div>
@@ -65,12 +58,7 @@ function DescriptionSection() {
               query: { circleSlug: data?.slug, section: 'description' },
             }}
           >
-            <Chip
-              color="warning"
-              endContent={<EditIcon width={14} height={14} />}
-            >
-              <span className="font-semibold">Edit</span>
-            </Chip>
+            <EditButton />
           </Link>
         )}
       </div>

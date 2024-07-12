@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import CircleBookmarkButton from '../CircleBookmarkButton';
 import {
   useGetCircleBySlug,
@@ -8,17 +8,19 @@ import TwitterIcon from '@/icons/socmed/TwitterIcon';
 import InstagramIcon from '@/icons/socmed/InstagramIcon';
 import FacebookIcon from '@/icons/socmed/FacebookIcon';
 import Link from 'next/link';
-import { Chip, Switch } from '@nextui-org/react';
-import EditIcon from '@/icons/EditIcon';
+import { Switch } from '@nextui-org/react';
 import { usePublishMyCircle } from '@/hooks/circle/usePublishMyCircle';
 import { prettifyError } from '@/utils/helper';
 import toast from 'react-hot-toast';
 import LinkIcon from '@/icons/LinkIcon';
-import Image from 'next/image';
+import ExtendedImage from '@/components/general/ExtendedImage';
+import EditButton from './EditButton';
 
 const PublishSwitcher = () => {
-  const [localPubllished, setLocalPubllished] = useState(false);
   const { data, refetch } = useGetCircleBySlug();
+  const [localPubllished, setLocalPubllished] = useState(
+    data?.published ?? false,
+  );
   const { mutateAsync, isPending } = usePublishMyCircle();
   const { isNotAllowed } = useIsMyCircle();
 
@@ -50,13 +52,16 @@ const PublishSwitcher = () => {
   if (isNotAllowed) return;
 
   return (
-    <Switch
-      onClick={handlePublishUnpublish}
-      isDisabled={isPending}
-      isSelected={localPubllished}
-    >
-      <span className="hidden sm:inline"> Publish</span>
-    </Switch>
+    <div className="flex items-center gap-2 rounded-lg border border-warning bg-slate-50 px-2 py-1">
+      <span className="text-xs font-semibold">Publish</span>
+      <Switch
+        onClick={handlePublishUnpublish}
+        isDisabled={isPending}
+        isSelected={localPubllished}
+        color="warning"
+        size="sm"
+      ></Switch>
+    </div>
   );
 };
 
@@ -66,24 +71,24 @@ function GeneralInfoSection() {
   const isAnyUrlExist =
     data?.url || data?.twitter_url || data?.instagram_url || data?.facebook_url;
   return (
-    <div className="flex items-center justify-between gap-4">
+    <div className="flex flex-col gap-4">
       <div className="flex items-center gap-4">
         {data?.picture_url ? (
-          <div className="h-[112px] w-[112px] overflow-hidden rounded-full border border-neutral-100 shadow-lg">
-            <Image
+          <div className="h-16 min-h-16 w-16 min-w-16 overflow-hidden rounded-full border border-neutral-100 shadow-lg sm:min-h-[112px] sm:min-w-[112px]">
+            <ExtendedImage
               width={112}
               height={112}
               src={data?.picture_url}
               alt={`Picture of ` + data?.name}
-              className="object-cover"
+              className="h-full w-full object-cover"
             />
           </div>
         ) : (
           <div className="min-h-[112px] min-w-[112px] rounded-full bg-slate-500"></div>
         )}
 
-        <div className="flex flex-col gap-2.5">
-          <h1 className="text-2xl font-bold">{data?.name}</h1>
+        <div className="flex flex-col gap-1.5 sm:gap-2.5">
+          <h1 className="text-xl font-bold sm:text-2xl">{data?.name}</h1>
           <ul className="flex gap-1.5">
             <div className="flex">
               <CircleBookmarkButton
@@ -143,7 +148,7 @@ function GeneralInfoSection() {
       </div>
 
       {isAllowed && (
-        <div className="flex flex-col items-end gap-1.5 self-start sm:flex-row">
+        <div className="ml-auto flex items-end gap-1.5 self-start">
           <PublishSwitcher />
           <Link
             href={{
@@ -154,12 +159,7 @@ function GeneralInfoSection() {
               },
             }}
           >
-            <Chip
-              color="warning"
-              endContent={<EditIcon width={16} height={16} />}
-            >
-              <span className="font-semibold">Edit</span>
-            </Chip>
+            <EditButton />
           </Link>
         </div>
       )}
