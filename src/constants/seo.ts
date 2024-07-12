@@ -1,6 +1,10 @@
 import { DefaultSeoProps } from 'next-seo';
 
 export const DEFAULT_SEO: DefaultSeoProps = {
+  dangerouslySetAllPagesToNoFollow:
+    process.env.NEXT_PUBLIC_APP_STAGE === 'development',
+  dangerouslySetAllPagesToNoIndex:
+    process.env.NEXT_PUBLIC_APP_STAGE === 'development',
   title: 'Inner Catalog Hub',
   description: 'Alternative website to share your works before con',
   openGraph: {

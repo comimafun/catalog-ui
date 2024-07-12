@@ -117,7 +117,7 @@ const ProductList = ({ products }: { products: Products }) => {
         {products?.map((x) => {
           return (
             <SwiperSlide className="" key={x.id}>
-              <div className="relative flex max-h-[400px] w-auto items-center justify-center">
+              <div className="relative flex max-h-[200px] w-auto items-center justify-center sm:max-h-[400px]">
                 <ExtendedImage
                   alt={x.name}
                   src={x.image_url}
@@ -138,7 +138,7 @@ const ProductList = ({ products }: { products: Products }) => {
                 >
                   <SearchIcon width={16} height={16} />
                 </button>
-                <div className="absolute left-0 top-0 max-w-[50%] rounded-br-lg bg-slate-100 px-2 py-1 font-semibold">
+                <div className="absolute left-0 top-0 max-w-[50%] rounded-br-lg bg-slate-100 px-2 py-1 text-[10px] font-semibold md:text-sm">
                   {x.name}
                 </div>
               </div>

@@ -15,7 +15,7 @@ const Header = () => {
   return (
     <>
       <div className="flex w-full justify-between">
-        <h2 className="text-xl font-semibold">Attending Event</h2>
+        <h2 className="text-xl font-semibold">Attending Convention</h2>
 
         {isAllowed && (
           <Link
@@ -45,7 +45,9 @@ function EventSection() {
     <>
       <Header />
       {!data?.event && isAllowed && (
-        <p className="mt-2 italic text-neutral-500">Set your next event!</p>
+        <p className="mt-2 italic text-neutral-500">
+          Set your next convention!
+        </p>
       )}
 
       {!data?.event && isNotAllowed && (

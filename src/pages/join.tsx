@@ -30,6 +30,14 @@ const useProtectRoute = () => {
   useEffect(() => {
     if (isLoading) return;
 
+    if (!isLoading && !session) {
+      router.push({
+        pathname: '/sign-in',
+        query: { return_url: '/join' },
+      });
+      return;
+    }
+
     if (!!session?.circle) {
       toast.error('You are already in a circle');
       router.push('/');

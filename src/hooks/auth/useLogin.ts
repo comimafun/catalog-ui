@@ -9,6 +9,7 @@ import toast from 'react-hot-toast';
 export const useLogin = () => {
   const queryClient = useQueryClient();
   const router = useRouter();
+
   const signIn = useGoogleLogin({
     flow: 'auth-code',
     ux_mode: 'popup',
@@ -23,8 +24,12 @@ export const useLogin = () => {
         const self = await authService.getSelf();
         queryClient.setQueryData(['/v1/auth/self'], self);
 
-        toast.success('Welcome to ComimaFun!');
-        router.push('/');
+        toast.success('Welcome to Inner Catalog!❤️');
+        if (router.query.return_url) {
+          router.push(router.query.return_url as string);
+        } else {
+          router.push('/');
+        }
       } catch (error) {
         const msg = prettifyError(error as Error);
         toast.error(msg);

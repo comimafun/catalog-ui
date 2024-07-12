@@ -8,6 +8,8 @@ import FilterIcon from '@/icons/FilterIcon';
 import { useDrawerFilterStore } from '@/store/circle';
 import dynamic from 'next/dynamic';
 import EachPageLayout from '@/components/general/EachPageLayout';
+import Link from 'next/link';
+import MegaphoneIcon from '@/icons/MegaphoneIcon';
 
 const FilterDrawer = dynamic(() => import('@/components/circle/FilterDrawer'), {
   ssr: false,
@@ -32,12 +34,31 @@ const CircleListGrid = () => {
     hasNextPage,
   } = useGetCirclesInfinite(params);
 
+  const loading = isLoading || isFetchingNextPage;
+
   if (error) {
     const err = prettifyError(error);
 
     return (
       <div className="flex h-full w-full items-center justify-center">
         <p>{err}</p>
+      </div>
+    );
+  }
+
+  if (data.length === 0 && !loading) {
+    return (
+      <div className="flex h-full w-full flex-col items-center justify-center gap-3">
+        <p className="text-base font-semibold">Sorry, no circle yet</p>
+        <p>Sign up yours?🥹</p>
+        <Button
+          color="primary"
+          className="font-semibold"
+          as={Link}
+          href="/join"
+        >
+          Join
+        </Button>
       </div>
     );
   }
@@ -49,7 +70,7 @@ const CircleListGrid = () => {
           return <CircleCard {...circle} key={circle.id} />;
         })}
 
-        {(isLoading || isFetchingNextPage) &&
+        {loading &&
           new Array(12).fill(0).map((_, index) => {
             return (
               <li
@@ -74,11 +95,32 @@ const CircleListGrid = () => {
   );
 };
 
+const Banner = () => {
+  return (
+    <Link
+      href="/"
+      className="relative flex h-48 w-full items-center justify-center overflow-hidden rounded-lg bg-slate-100 ring-1 ring-primary"
+    >
+      <div className="absolute -left-10 -top-10 h-[120px] w-[120px] rounded-full bg-primary blur-3xl" />
+      <div className="absolute -bottom-10 -right-10 h-[120px] w-[120px] rounded-full bg-pink-500 blur-3xl" />
+
+      <div className="relative z-[1] flex items-center justify-center">
+        <MegaphoneIcon className="h-20 w-20" />{' '}
+        <h2 className="text-xl font-bold sm:text-3xl">
+          PUT YOUR CIRCLE HERE
+          <br />
+          FOR FREE
+        </h2>
+      </div>
+    </Link>
+  );
+};
+
 export default function Home() {
   const setOpen = useDrawerFilterStore((state) => state.setDrawerFilterIsOpen);
   return (
     <EachPageLayout className="pb-20">
-      <div className="h-48 w-full rounded-lg bg-slate-400"></div>
+      <Banner />
       <div className="my-6 flex w-full items-center gap-2">
         <SearchInput />
         <button
