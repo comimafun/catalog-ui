@@ -2,7 +2,6 @@ import {
   useGetCircleBySlug,
   useIsMyCircle,
 } from '@/hooks/circle/useGetCircleBySlug';
-import EditIcon from '@/icons/EditIcon';
 import { Chip } from '@nextui-org/react';
 import Link from 'next/link';
 import React from 'react';
