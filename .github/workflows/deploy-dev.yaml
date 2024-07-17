@@ -23,6 +23,11 @@ jobs:
           key: ${{ runner.os }}-buildx-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-buildx-
+
+      - name: Create .env file
+        run: |
+          echo "${{ secrets.ENV_DEVELOPMENT }}" > .env
+
       - name: Login to Google Cloud
         uses: google-github-actions/auth@v2
         with:
