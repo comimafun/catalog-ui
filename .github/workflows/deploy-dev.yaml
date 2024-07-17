@@ -4,9 +4,8 @@ on:
   push:
     branches:
       - dev
-      - COM-49
 
-jobs:
+      jobs:
   build:
     runs-on: ubuntu-latest
     steps:
