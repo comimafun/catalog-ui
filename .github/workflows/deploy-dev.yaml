@@ -53,4 +53,4 @@ jobs:
           image: ${{ vars.DOCKER_REGISTRY_LOCATION }}/${{ secrets.GOOGLE_PROJECT }}/inner-catalog/catalog-ui:dev-${{ github.run_id }}
           region: asia-southeast2
 
-          flags: '--allow-unauthenticated --port=8080 --memory=256Mi --cpu=1 --min-instances=0 --max-instances=1 --cpu-throttling'
+          flags: '--allow-unauthenticated --port=3000 --memory=256Mi --cpu=1 --min-instances=0 --max-instances=1 --cpu-throttling'
