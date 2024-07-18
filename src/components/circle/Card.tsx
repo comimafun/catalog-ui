@@ -21,6 +21,7 @@ function CircleCard(circle: CircleCard) {
           pathname: '/[circleSlug]',
           query: { circleSlug: circle.slug },
         }}
+        shallow
         className="flex h-full w-full flex-col"
       >
         <div className="relative flex aspect-[7/10] min-h-[262px] w-full items-center justify-center overflow-hidden border-b border-neutral-900 md:min-h-[273px]">

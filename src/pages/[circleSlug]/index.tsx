@@ -31,7 +31,7 @@ export const getServerSideProps = async (c: GetServerSidePropsContext) => {
 };
 
 function CirclePage() {
-  const { error } = useGetCircleBySlug();
+  const { error, isPending } = useGetCircleBySlug();
 
   if (error) {
     const errMsg = prettifyError(error);
@@ -39,6 +39,18 @@ function CirclePage() {
       <EachPageLayout className="flex items-center justify-center">
         <p>{errMsg}</p>
       </EachPageLayout>
+    );
+  }
+
+  if (isPending) {
+    return (
+      <div className="min-h-[calc(100vh-63px-141px)] space-y-4">
+        <SectionPartitionWrapper className="h-[132px] animate-pulse-faster bg-slate-300"></SectionPartitionWrapper>
+        <SectionPartitionWrapper className="h-[132px] animate-pulse-faster bg-slate-300"></SectionPartitionWrapper>
+        <SectionPartitionWrapper className="h-[132px] animate-pulse-faster bg-slate-300"></SectionPartitionWrapper>
+        <SectionPartitionWrapper className="h-[132px] animate-pulse-faster bg-slate-300"></SectionPartitionWrapper>
+        <SectionPartitionWrapper className="h-[132px] animate-pulse-faster bg-slate-300"></SectionPartitionWrapper>
+      </div>
     );
   }
 
