@@ -203,23 +203,7 @@ const LinkMenu = () => {
         </button>
       </PopoverTrigger>
       <PopoverContent className="p-0">
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            if (!link) {
-              editor.chain().focus().extendMarkRange('link').unsetLink().run();
-              return;
-            }
-            // update link
-            editor
-              .chain()
-              .focus()
-              .extendMarkRange('link')
-              .setLink({ href: link })
-              .run();
-          }}
-          className="flex gap-1"
-        >
+        <form className="flex gap-1">
           <input
             type="text"
             className="rounded border border-neutral-500 p-1 px-2"
@@ -229,7 +213,25 @@ const LinkMenu = () => {
           />
           <button
             className="rounded border border-neutral-500 p-1"
-            type="submit"
+            type="button"
+            onClick={() => {
+              if (!link) {
+                editor
+                  .chain()
+                  .focus()
+                  .extendMarkRange('link')
+                  .unsetLink()
+                  .run();
+                return;
+              }
+              // update link
+              editor
+                .chain()
+                .focus()
+                .extendMarkRange('link')
+                .setLink({ href: link })
+                .run();
+            }}
           >
             {editor.isActive('link') ? 'Update' : 'Add'}
           </button>

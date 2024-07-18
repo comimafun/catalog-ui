@@ -10,6 +10,7 @@ import dynamic from 'next/dynamic';
 import EachPageLayout from '@/components/general/EachPageLayout';
 import Link from 'next/link';
 import MegaphoneIcon from '@/icons/MegaphoneIcon';
+import { classNames } from '@/utils/classNames';
 
 const FilterDrawer = dynamic(() => import('@/components/circle/FilterDrawer'), {
   ssr: false,
@@ -25,6 +26,7 @@ const GridWrapper = ({ children }: { children: React.ReactNode }) => {
 
 const CircleListGrid = () => {
   const params = useParseCircleQueryToParams();
+
   const {
     result: data,
     isLoading,
@@ -32,7 +34,7 @@ const CircleListGrid = () => {
     isFetchingNextPage,
     fetchNextPage,
     hasNextPage,
-  } = useGetCirclesInfinite(params);
+  } = useGetCirclesInfinite(params.filter);
 
   const loading = isLoading || isFetchingNextPage;
 
@@ -118,6 +120,7 @@ const Banner = () => {
 
 export default function Home() {
   const setOpen = useDrawerFilterStore((state) => state.setDrawerFilterIsOpen);
+  const { isActive } = useParseCircleQueryToParams();
   return (
     <EachPageLayout className="pb-20">
       <Banner />
@@ -125,7 +128,12 @@ export default function Home() {
         <SearchInput />
         <button
           type="button"
-          className="flex h-[36px] items-center justify-center rounded-medium border-medium border-default-200 bg-white px-4 transition-all active:scale-90"
+          className={classNames(
+            'flex h-10 items-center justify-center rounded-medium border-medium bg-white px-4 transition-all active:scale-90',
+            isActive
+              ? 'border-white bg-primary text-white'
+              : '!border-default-200',
+          )}
           onClick={() => setOpen(true)}
         >
           <FilterIcon width={16} height={16} />

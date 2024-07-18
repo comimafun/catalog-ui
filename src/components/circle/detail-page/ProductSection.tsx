@@ -99,7 +99,7 @@ const ProductList = ({ products }: { products: Products }) => {
         slidesPerView={1.5}
         spaceBetween={24}
         centeredSlides
-        loop
+        loop={products?.length > 2}
         onSwiper={(e) => {
           swiperRef.current = e;
         }}
@@ -110,7 +110,7 @@ const ProductList = ({ products }: { products: Products }) => {
       >
         {products?.map((x) => {
           return (
-            <SwiperSlide className="" key={x.id}>
+            <SwiperSlide key={x.id}>
               <div className="relative flex max-h-[200px] w-auto items-center justify-center sm:max-h-[400px]">
                 <ExtendedImage
                   alt={x.name}
@@ -141,7 +141,7 @@ const ProductList = ({ products }: { products: Products }) => {
         })}
       </Swiper>
 
-      {!!swiperRef.current && (
+      {!!swiperRef.current && products.length > 1 && (
         <div className="flex w-full items-center justify-center gap-1.5">
           {swiperRef.current.slides.map((_, i) => {
             return (
