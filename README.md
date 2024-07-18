@@ -33,7 +33,7 @@ This is an alternatives from `comifuro` catalog but not solely for comifuro. I w
 pnpm install
 ```
 
-6. Makesure (catalog-api)[https://github.com/comimafun/catalog-api] is already setup and running locally
+6. Makesure [catalog-api](https://github.com/comimafun/catalog-api) is already setup and running locally
 
 7. Run the application
 
@@ -44,7 +44,7 @@ pnpm run dev
 ## Environment
 
 - dev - development environment [https://dev.innercatalog.com](https://dev.innercatalog.com)
-- prod - production environment [https://innercatalog.com](https://innercatalog.com) (SOON)
+- prod - production environment [https://innercatalog.com](https://innercatalog.com) (later la if i have money)
 
 ## ETC
 
