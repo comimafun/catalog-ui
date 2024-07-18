@@ -33,7 +33,9 @@ This is an alternatives from `comifuro` catalog but not solely for comifuro. I w
 pnpm install
 ```
 
-6. Run the application
+6. Makesure (catalog-api)[https://github.com/comimafun/catalog-api] is already setup and running locally
+
+7. Run the application
 
 ```bash
 pnpm run dev
