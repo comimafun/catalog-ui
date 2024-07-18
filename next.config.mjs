@@ -14,6 +14,10 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'pub-3edbda22ada445d086b21416d66c81c1.r2.dev',
       },
+      {
+        protocol: 'https',
+        hostname: 'cdn.innercatalog.com',
+      },
     ],
   },
 };

@@ -1,40 +1,58 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Project catalog-ui 📚
+
+Nextjs application for `Inner Catalog`
+
+## Description
+
+Inner Catalog is a platform for sharing and discovering works/doujin/comic/illustration from various creators before convention.
+
+This is an alternatives from `comifuro` catalog but not solely for comifuro. I would gradually add more convention to the list based on your suggestion.
+
+## Community
+
+- Just use github discusson for now
+- Should i make a discord server?
 
 ## Getting Started
 
-First, run the development server:
+### Requirements
+
+- Node v20.9.0
+- pnpm v9.2.0
+- Google Client ID (for Google OAuth2)
+
+### Installation
+
+1. Fork the repository
+2. Clone the repository from your fork
+3. Create `.env` file in the root dir based on `.env.example`
+4. Setting `.next.config.mjs` add your own `images.remotePatterns`
+5. Install dependencies
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+6. Makesure [catalog-api](https://github.com/comimafun/catalog-api) is already setup and running locally
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+7. Run the application
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+```bash
+pnpm run dev
+```
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+## Environment
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+- dev - development environment [https://dev.innercatalog.com](https://dev.innercatalog.com)
+- prod - production environment [https://innercatalog.com](https://innercatalog.com) (later la if i have money)
 
-## Learn More
+## ETC
 
-To learn more about Next.js, take a look at the following resources:
+Thank you so much for visiting my repository 🥹. If you think this web is useful or have feedback, please let me know im active on discord (@pandakas) and twitter ([@varkased](https://x.com/varkased))
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+If you have feedback about design sense, you might notice the design
+itself is shit and out of place. I have like 0 design sense so please
+spare me 😭
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+But if there's any UI/UX student out there that wanted to use this
+as their studycase, let me know and id make it real 😉
