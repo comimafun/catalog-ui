@@ -24,8 +24,8 @@ import toast from 'react-hot-toast';
 import { prettifyError } from '@/utils/helper';
 import { uploadService } from '@/services/upload';
 import { create } from 'zustand';
-import { CommonStoreSetter } from '@/types/common';
 import Spin from '../Spin';
+import { CommonStoreSetter } from '@/types/common';
 
 type EditorStore = {
   isLoading: boolean;
