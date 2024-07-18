@@ -1,24 +1,18 @@
 import EachPageLayout from '@/components/general/EachPageLayout';
 import Spin from '@/components/general/Spin';
-import Uploader from '@/components/general/Uploader';
 import { useSession } from '@/components/providers/SessionProvider';
-import { ACCEPTED_IMAGE_TYPES_SET, MEGABYTE } from '@/constants/common';
 import { useOnboarding } from '@/hooks/circle/useOnboarding';
-import ImageIcon from '@/icons/ImageIcon';
 import MegaphoneIcon from '@/icons/MegaphoneIcon';
-import { uploadService } from '@/services/upload';
 import { onboardingPayloadSchema } from '@/types/circle';
-import { prettifyError } from '@/utils/helper';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button, Input } from '@nextui-org/react';
-import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { Controller, FormProvider, useForm } from 'react-hook-form';
+import { FormProvider, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { z } from 'zod';
-
-const acceptedTypes = Array.from(ACCEPTED_IMAGE_TYPES_SET).join(', ');
+import nookies from 'nookies';
+import { GetServerSidePropsContext } from 'next';
 
 const joinSchema = onboardingPayloadSchema;
 
@@ -43,6 +37,23 @@ const useProtectRoute = () => {
       router.push('/');
     }
   }, [isLoading, session?.circle?.id]);
+};
+
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
+  const { access_token, refresh_token } = nookies.get(ctx);
+
+  if (!access_token && !refresh_token) {
+    return {
+      redirect: {
+        destination: '/sign-in?return_url=/join',
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
 };
 
 function JoinPage() {
