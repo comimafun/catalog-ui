@@ -5,7 +5,7 @@ export const DEFAULT_SEO: DefaultSeoProps = {
     process.env.NEXT_PUBLIC_APP_STAGE === 'development',
   dangerouslySetAllPagesToNoIndex:
     process.env.NEXT_PUBLIC_APP_STAGE === 'development',
-  title: 'Inner Catalog Hub',
+  title: 'Share your works | Inner Catalog',
   description: 'Alternative website to share your works before con',
   openGraph: {
     type: 'website',
