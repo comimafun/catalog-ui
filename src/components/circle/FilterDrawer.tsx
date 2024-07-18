@@ -1,13 +1,11 @@
 import { useDebounce } from '@/hooks/common/useDebounce';
 import { useDrawerFilterStore } from '@/store/circle';
-import { circlesQueryParamsClient } from '@/types/circle';
 import {
   Controller,
   FormProvider,
   useForm,
   useFormContext,
 } from 'react-hook-form';
-import { z } from 'zod';
 import { Drawer, DrawerContent } from '../general/Drawer';
 import {
   Button,
@@ -23,14 +21,9 @@ import { motion } from 'framer-motion';
 import { useGetWorkType } from '@/hooks/circle/useGetWorkType';
 import { prettifyError } from '@/utils/helper';
 import { useRouter } from 'next/router';
+import { useEffect } from 'react';
+import { CircleFilterWithNoSearch } from '@/types/circle';
 import { useParseCircleQueryToParams } from '@/hooks/circle/useParseClientQueryToParams';
-import { useEffect, useState } from 'react';
-
-const circleFilterWithNoSearch = circlesQueryParamsClient.omit({
-  search: true,
-});
-
-type CircleFilterWithNoSearch = z.infer<typeof circleFilterWithNoSearch>;
 
 const WorkTypeSection = () => {
   const filterForm = useFormContext<CircleFilterWithNoSearch>();
@@ -314,26 +307,20 @@ const FilterDrawer = () => {
   );
   const reset = useDrawerFilterStore((state) => state.reset);
   const router = useRouter();
-  const { filter: params } = useParseCircleQueryToParams();
-  const [initalized, setInitalized] = useState(false);
 
-  const filterForm = useForm<CircleFilterWithNoSearch>({
-    defaultValues: {
-      fandom_id: [],
-      work_type_id: [],
-    },
-  });
+  const { filter } = useParseCircleQueryToParams();
+
+  const filterForm = useForm<CircleFilterWithNoSearch>();
 
   useEffect(() => {
-    if (initalized) return;
-
-    filterForm.reset({
-      day: params.day,
-      fandom_id: params.fandom_id,
-      work_type_id: params.work_type_id,
-    });
-    setInitalized(true);
-  }, [params.day, params.fandom_id, params.work_type_id]);
+    if (open) {
+      filterForm.reset({
+        day: filter.day,
+        fandom_id: filter.fandom_id,
+        work_type_id: filter.work_type_id,
+      });
+    }
+  }, [open]);
 
   return (
     <Drawer

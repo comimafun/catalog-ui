@@ -158,3 +158,8 @@ export const updateFandomSchema = z.object({
 });
 
 export type UpdateFandomSchema = z.infer<typeof updateFandomSchema>;
+
+const circleFilterWithNoSearch = circlesQueryParamsClient.omit({
+  search: true,
+});
+export type CircleFilterWithNoSearch = z.infer<typeof circleFilterWithNoSearch>;
