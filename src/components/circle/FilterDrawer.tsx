@@ -314,7 +314,7 @@ const FilterDrawer = () => {
   );
   const reset = useDrawerFilterStore((state) => state.reset);
   const router = useRouter();
-  const params = useParseCircleQueryToParams();
+  const { filter: params } = useParseCircleQueryToParams();
   const [initalized, setInitalized] = useState(false);
 
   const filterForm = useForm<CircleFilterWithNoSearch>({
@@ -372,7 +372,10 @@ const FilterDrawer = () => {
             className="flex flex-col gap-3"
             onSubmit={filterForm.handleSubmit((formData) => {
               Object.entries(formData).forEach(([key, values]) => {
-                if (values?.length !== 0 || typeof values !== 'undefined') {
+                if (
+                  !!values &&
+                  (values?.length !== 0 || typeof values !== 'undefined')
+                ) {
                   router.query[key] = values as string | string[];
                 } else {
                   delete router.query[key];

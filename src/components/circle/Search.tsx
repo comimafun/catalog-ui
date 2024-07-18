@@ -6,7 +6,7 @@ import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
 function SearchInput() {
-  const params = useParseCircleQueryToParams();
+  const { filter: params } = useParseCircleQueryToParams();
 
   const searchForm = useForm<{ search: string }>({
     mode: 'onSubmit',
