@@ -51,6 +51,19 @@ const updateWorkTypesSchema = z.object({
 type UpdateFandomsSchema = z.infer<typeof updateFandomsSchema>;
 type UpdateWorkTypesSchema = z.infer<typeof updateWorkTypesSchema>;
 
+const Skeletons = () => (
+  <ul className="mt-4 grid grid-cols-2 gap-2.5">
+    {new Array(20).fill(0).map((_, i) => {
+      return (
+        <li
+          className="h-6 w-full animate-pulse-faster rounded bg-slate-200"
+          key={i}
+        ></li>
+      );
+    })}
+  </ul>
+);
+
 const WorkTypeSection = () => {
   const form = useFormContext<UpdateWorkTypesSchema>();
   const { data: circle } = useGetCircleBySlug();
@@ -199,7 +212,11 @@ const FandomSection = () => {
     (s) => s.setFandomLocalSearch,
   );
   const { data } = useGetCircleBySlug();
-  const { data: fandoms } = useGetFandom({ limit: 20, page: 1, search });
+  const { data: fandoms, isLoading } = useGetFandom({
+    limit: 20,
+    page: 1,
+    search,
+  });
   const createFandom = usePostFandom();
   const form = useFormContext<UpdateFandomsSchema>();
   const updateFandom = useUpdateCircle();
@@ -258,77 +275,83 @@ const FandomSection = () => {
 
         <SearchFandom />
 
-        <Controller
-          control={form.control}
-          name="fandom"
-          render={({ field }) => {
-            if ((fandoms?.length ?? 0) === 0) {
-              return (
-                <div className="flex w-full items-center justify-center gap-1 bg-primary-50 px-2 py-1">
-                  <p>
-                    No fandom found. Add <b>{search}</b> fandom?
-                  </p>
-                  <button
-                    className="rounded-[61px] bg-success-500 px-2 py-0.5 font-medium text-white transition-all hover:bg-success-700 active:scale-90"
-                    type="button"
-                    onClick={async () => {
-                      if (field.value.length >= 5) {
-                        toast.error('You can only select up to 5 fandoms');
-                        return;
-                      }
-                      if (!search.trim()) {
-                        toast.error('Name cannot be empty');
-                        return;
-                      }
-                      try {
-                        const name = z
-                          .string()
-                          .min(1)
-                          .max(255)
-                          .trim()
-                          .parse(search);
-                        const { data } = await createFandom.mutateAsync(name);
-                        setSearch('');
-                        setLocalSearch('');
-                        field.onChange([...field.value, data]);
-                      } catch (error) {
-                        toast.error(prettifyError(error as Error));
-                      }
-                    }}
-                  >
-                    Add
-                  </button>
-                </div>
-              );
-            }
-
-            return (
-              <ul className="mt-4 grid grid-cols-2 gap-1">
-                {fandoms?.map((fandom) => {
-                  const isChecked = field.value.some((x) => x.id === fandom.id);
-                  return (
-                    <Checkbox
-                      isDisabled={field.value.length >= 5 && !isChecked}
-                      onChange={() => {
-                        const newFandom = isChecked
-                          ? field.value.filter((x) => x.id !== fandom.id)
-                          : [...field.value, fandom];
-                        field.onChange(newFandom);
-                      }}
-                      key={fandom.id}
-                      isSelected={isChecked}
-                      classNames={{
-                        label: 'text-sm',
+        {isLoading ? (
+          <Skeletons />
+        ) : (
+          <Controller
+            control={form.control}
+            name="fandom"
+            render={({ field }) => {
+              if ((fandoms?.length ?? 0) === 0) {
+                return (
+                  <div className="flex w-full items-center justify-center gap-1 bg-primary-50 px-2 py-1">
+                    <p>
+                      No fandom found. Add <b>{search}</b> fandom?
+                    </p>
+                    <button
+                      className="rounded-[61px] bg-success-500 px-2 py-0.5 font-medium text-white transition-all hover:bg-success-700 active:scale-90"
+                      type="button"
+                      onClick={async () => {
+                        if (field.value.length >= 5) {
+                          toast.error('You can only select up to 5 fandoms');
+                          return;
+                        }
+                        if (!search.trim()) {
+                          toast.error('Name cannot be empty');
+                          return;
+                        }
+                        try {
+                          const name = z
+                            .string()
+                            .min(1)
+                            .max(255)
+                            .trim()
+                            .parse(search);
+                          const { data } = await createFandom.mutateAsync(name);
+                          setSearch('');
+                          setLocalSearch('');
+                          field.onChange([...field.value, data]);
+                        } catch (error) {
+                          toast.error(prettifyError(error as Error));
+                        }
                       }}
                     >
-                      {fandom.name}
-                    </Checkbox>
-                  );
-                })}
-              </ul>
-            );
-          }}
-        />
+                      Add
+                    </button>
+                  </div>
+                );
+              }
+
+              return (
+                <ul className="mt-4 grid grid-cols-2 gap-2.5">
+                  {fandoms?.map((fandom) => {
+                    const isChecked = field.value.some(
+                      (x) => x.id === fandom.id,
+                    );
+                    return (
+                      <Checkbox
+                        isDisabled={field.value.length >= 5 && !isChecked}
+                        onChange={() => {
+                          const newFandom = isChecked
+                            ? field.value.filter((x) => x.id !== fandom.id)
+                            : [...field.value, fandom];
+                          field.onChange(newFandom);
+                        }}
+                        key={fandom.id}
+                        isSelected={isChecked}
+                        classNames={{
+                          label: 'text-sm',
+                        }}
+                      >
+                        {fandom.name}
+                      </Checkbox>
+                    );
+                  })}
+                </ul>
+              );
+            }}
+          />
+        )}
 
         <Controller
           control={form.control}
