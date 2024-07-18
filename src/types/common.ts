@@ -40,6 +40,14 @@ export type CommonStoreSetter<T extends Record<string, unknown>> = {
   [K in keyof T as `set${Capitalize<string & K>}`]: (value: T[K]) => void;
 };
 
+export type CommonStoreSetterWithPreviousSetter<
+  T extends Record<string, unknown>,
+> = {
+  [K in keyof T as `set${Capitalize<string & K>}`]: (
+    fn: (prev: T[K]) => T[K],
+  ) => void | ((value: T[K]) => void);
+};
+
 export type SVGS = JSX.IntrinsicElements['svg'];
 
 export const blockString = trimmedString.refine(

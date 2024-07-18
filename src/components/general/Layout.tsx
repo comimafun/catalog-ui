@@ -1,135 +1,26 @@
 import { classNames } from '@/utils/classNames';
 import { useInView } from 'framer-motion';
 import Link from 'next/link';
-import { ComponentProps, Fragment, ReactNode, useRef, useState } from 'react';
+import { ReactNode, useRef } from 'react';
 import { useSession } from '../providers/SessionProvider';
 import { Button } from '@nextui-org/react';
 import { useLogout } from '@/hooks/auth/useLogout';
-import BookIcon from '@/icons/BookIcon';
 import HamburgerIcon from '@/icons/HamburgerIcon';
-import { Drawer, DrawerContent } from './Drawer';
-import XMarkIcon from '@/icons/XMarkIcon';
+import { useLayoutStore } from '@/store/layout';
+import Logo from './Logo';
+import dynamic from 'next/dynamic';
 
-const Logo = (props: Omit<ComponentProps<typeof Link>, 'href'>) => {
-  return (
-    <Link
-      href="/"
-      className="group relative flex w-min items-center overflow-hidden rounded p-1.5 font-extrabold text-[#5E17EB] ring-1 ring-[#5E17EB] transition-all hover:ring-2"
-      {...props}
-    >
-      <div
-        className={classNames(
-          'absolute rounded-full bg-primary blur transition-all group-hover:bg-pink-500',
-          'h-3 w-3 group-hover:h-5 group-hover:w-4',
-          '-left-1 -top-1 group-hover:-left-2 group-hover:-top-2',
-        )}
-      />
-      <div
-        className={classNames(
-          'absolute rounded-full bg-pink-500 blur transition-all group-hover:bg-primary',
-          'h-3 w-3 group-hover:h-5 group-hover:w-4',
-          '-bottom-1 -right-1 group-hover:-bottom-2 group-hover:-right-2',
-        )}
-      />
-      <span className="relative z-[1] flex items-center justify-center gap-2">
-        <BookIcon width={16} height={16} /> <div>innercatalog</div>
-      </span>
-    </Link>
-  );
-};
+const MenuDrawer = dynamic(() => import('./MenuDrawer'), { ssr: false });
 
 const RightMenu = () => {
   const { session } = useSession();
   const { logout, isPending } = useLogout();
-  const [open, setOpen] = useState(false);
+  const toggle = useLayoutStore((state) => state.toggleMenuDrawer);
 
-  const close = () => setOpen(false);
   return (
     <>
-      <Drawer open={open} onOpenChange={setOpen} direction="top">
-        <DrawerContent className="bottom-[none] top-0 mt-0 rounded-b p-4">
-          <div className="flex w-full items-center justify-between">
-            <Logo onClick={close} />{' '}
-            <button type="button" onClick={() => setOpen(false)}>
-              <XMarkIcon className="text-slate-300" width={32} height={32} />
-            </button>
-          </div>
-          <h1 className="mt-4 font-bold">Links</h1>
-          <ul className="mt-2">
-            <li>
-              <Link onClick={close} href="/about">
-                About
-              </Link>
-            </li>
-          </ul>
-          <hr className="my-2" />
-
-          <div className="flex w-full gap-2">
-            {session ? (
-              <Fragment>
-                {' '}
-                {!!session.circle ? (
-                  <Button
-                    type="button"
-                    as={Link}
-                    href={`/${session.circle.slug}`}
-                    size="sm"
-                    variant="solid"
-                    color="primary"
-                    className="w-full"
-                    onClick={close}
-                  >
-                    Your circle
-                  </Button>
-                ) : (
-                  <Button
-                    type="button"
-                    as={Link}
-                    href="/join"
-                    size="sm"
-                    variant="solid"
-                    color="primary"
-                    className="w-full"
-                    onClick={close}
-                  >
-                    Create your circle
-                  </Button>
-                )}
-                <Button
-                  className="w-full font-medium"
-                  color="secondary"
-                  size="sm"
-                  type="button"
-                  variant="flat"
-                  isLoading={isPending}
-                  onPress={logout}
-                >
-                  Logout
-                </Button>
-              </Fragment>
-            ) : (
-              <Button
-                className="w-full font-semibold"
-                href="/sign-in"
-                as={Link}
-                color="primary"
-                size="sm"
-                type="button"
-                variant="flat"
-                typeof="button"
-                onClick={close}
-              >
-                Sign In
-              </Button>
-            )}
-          </div>
-        </DrawerContent>
-      </Drawer>
-      <button
-        className="sm:hidden"
-        onClick={() => setOpen((prev) => !prev)}
-        type="button"
-      >
+      <MenuDrawer />
+      <button className="sm:hidden" onClick={() => toggle()} type="button">
         <HamburgerIcon width={32} height={32} />
       </button>
       <div className="hidden gap-3 sm:flex">

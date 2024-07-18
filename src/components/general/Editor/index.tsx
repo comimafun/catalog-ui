@@ -24,14 +24,14 @@ import toast from 'react-hot-toast';
 import { prettifyError } from '@/utils/helper';
 import { uploadService } from '@/services/upload';
 import { create } from 'zustand';
-import { CommonStoreSetter } from '@/types/common';
+import { CommonStoreSetterSaved } from '@/types/common';
 import Spin from '../Spin';
 
 type EditorStore = {
   isLoading: boolean;
 };
 
-type EditorStoreSetter = CommonStoreSetter<EditorStore>;
+type EditorStoreSetter = CommonStoreSetterSaved<EditorStore>;
 
 const useEditorStore = create<EditorStore & EditorStoreSetter>((set) => ({
   isLoading: false,
