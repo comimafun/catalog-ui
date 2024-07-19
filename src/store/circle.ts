@@ -1,4 +1,5 @@
 import { CommonStoreSetter } from '@/types/common';
+import { Product } from '@/types/product';
 import { create } from 'zustand';
 
 type DrawerState = {
@@ -55,3 +56,23 @@ export const useEditFandomWorkTypeStore = create<
     set({ fandomLocalSearch: localSearch }),
   reset: () => set(EditFandomInitialState),
 }));
+
+type CirclePageStore = {
+  selectedProduct: Product | null;
+};
+
+type CirclePageAction = CommonStoreSetter<CirclePageStore> & {
+  reset: () => void;
+};
+
+const circlePageInitialState: CirclePageStore = {
+  selectedProduct: null,
+};
+
+export const useCirclePageStore = create<CirclePageStore & CirclePageAction>(
+  (set) => ({
+    ...circlePageInitialState,
+    setSelectedProduct: (product) => set({ selectedProduct: product }),
+    reset: () => set(circlePageInitialState),
+  }),
+);

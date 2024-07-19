@@ -6,7 +6,7 @@ import {
 import { useGetProducts } from '@/hooks/circle/useGetProducts';
 import SearchIcon from '@/icons/SearchIcon';
 import XCircleIcon from '@/icons/XCircleIcon';
-import { productEntity } from '@/types/product';
+import { Product } from '@/types/product';
 import { classNames } from '@/utils/classNames';
 import {
   Modal,
@@ -15,11 +15,12 @@ import {
   useDisclosure,
 } from '@nextui-org/react';
 import Link from 'next/link';
-import { Fragment, ReactNode, useRef, useState } from 'react';
+import { Fragment, ReactNode, useEffect, useRef, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Swiper as SwiperTypes } from 'swiper/types';
-import { z } from 'zod';
 import EditButton from './EditButton';
+import { useRouter } from 'next/router';
+import { useCirclePageStore } from '@/store/circle';
 
 const Wrapper = ({ children }: { children: ReactNode }) => {
   const { isAllowed } = useIsMyCircle();
@@ -47,21 +48,59 @@ const Wrapper = ({ children }: { children: ReactNode }) => {
   );
 };
 
-const productsSchema = z.array(productEntity);
-type Products = z.infer<typeof productsSchema>;
-
-const ProductList = ({ products }: { products: Products }) => {
+const ProductList = ({ products }: { products: Array<Product> }) => {
   const swiperRef = useRef<SwiperTypes | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
-  const [selected, setSelected] = useState<Products[number] | undefined>();
-  const { isOpen, onOpenChange } = useDisclosure();
+  const setProduct = useCirclePageStore((state) => state.setSelectedProduct);
+  const product = useCirclePageStore((state) => state.selectedProduct);
+  const { onOpenChange } = useDisclosure();
+  const router = useRouter();
+  const isWorkIDExist = !!router.query.work_id;
+
+  const deleteWorkID = () => {
+    delete router.query.work_id;
+    router.replace({ query: router.query }, undefined, {
+      shallow: true,
+    });
+  };
+
+  useEffect(() => {
+    if (!isWorkIDExist) return;
+    if (products.length === 0) {
+      deleteWorkID();
+      return;
+    }
+
+    const workID = Number(router.query.work_id);
+    if (isNaN(workID)) {
+      deleteWorkID();
+      return;
+    }
+
+    const productExist = products.find(
+      (x) => x.id === Number(router.query.work_id),
+    );
+    if (!productExist) {
+      deleteWorkID();
+    } else {
+      setProduct(productExist);
+    }
+  }, [isWorkIDExist, products]);
+
+  useEffect(() => {
+    return () => {
+      setProduct(null);
+    };
+  }, []);
+
   return (
     <div className="space-y-2">
       <Modal
-        isOpen={!!selected && isOpen}
+        isOpen={isWorkIDExist && !!product}
         onOpenChange={(open) => {
           if (!open) {
-            setSelected(undefined);
+            deleteWorkID();
+            setProduct(null);
           }
           onOpenChange();
         }}
@@ -81,10 +120,10 @@ const ProductList = ({ products }: { products: Products }) => {
                 >
                   <XCircleIcon width={24} height={24} />
                 </button>
-                {!!selected && (
+                {!!product && (
                   <ExtendedImage
-                    alt={selected.name}
-                    src={selected.image_url}
+                    alt={product.name}
+                    src={product.image_url}
                     loading="lazy"
                     fill
                     className="h-full w-full object-contain"
@@ -126,7 +165,11 @@ const ProductList = ({ products }: { products: Products }) => {
                   type="button"
                   className="absolute bottom-4 right-4 rounded-xl bg-slate-100 p-2 transition-all hover:bg-slate-500 hover:text-white"
                   onClick={() => {
-                    setSelected(x);
+                    router.query.work_id = String(x.id);
+                    router.push({ query: router.query }, undefined, {
+                      shallow: true,
+                    });
+                    setProduct(x);
                     onOpenChange();
                   }}
                 >
