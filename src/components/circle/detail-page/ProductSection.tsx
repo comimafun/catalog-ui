@@ -77,13 +77,11 @@ const ProductList = ({ products }: { products: Array<Product> }) => {
       return;
     }
 
-    const productExist = products.find(
-      (x) => x.id === Number(router.query.work_id),
-    );
-    if (!productExist) {
+    const found = products.find((x) => x.id === Number(router.query.work_id));
+    if (!found) {
       deleteWorkID();
     } else {
-      setProduct(productExist);
+      setProduct(found);
     }
   }, [isWorkIDExist, products]);
 
