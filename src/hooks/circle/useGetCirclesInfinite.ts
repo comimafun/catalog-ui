@@ -20,6 +20,7 @@ export const getCirclesOptions = (
       if (last.metadata.has_next_page) return last.metadata.page + 1;
       return undefined;
     },
+    refetchOnWindowFocus: false,
   });
 };
 

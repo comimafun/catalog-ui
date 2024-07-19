@@ -1,6 +1,11 @@
 import CircleCard from '@/components/circle/Card';
 import SearchInput from '@/components/circle/Search';
-import { Button } from '@nextui-org/react';
+import {
+  Button,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@nextui-org/react';
 import { prettifyError } from '@/utils/helper';
 import { useGetCirclesInfinite } from '@/hooks/circle/useGetCirclesInfinite';
 import { useParseCircleQueryToParams } from '@/hooks/circle/useParseClientQueryToParams';
@@ -118,13 +123,44 @@ const Banner = () => {
   );
 };
 
+const WarningDev = () => {
+  return (
+    <Popover placement="top">
+      <PopoverTrigger>
+        <button
+          type="button"
+          className="flex h-6 w-6 items-center justify-center rounded-full bg-warning-200"
+        >
+          <div className="text-sm font-bold">!</div>
+        </button>
+      </PopoverTrigger>
+      <PopoverContent className="bg-warning-50 px-4 py-2">
+        <p className="max-w-[640px] text-xs sm:text-sm">
+          Hi, since this is a development version all registered circles will be
+          automatically showed up here. So, please don&quot;t put any sensitive
+          information. <br />
+          Later on it would only show circle with{' '}
+          <span className="font-medium">
+            <i>publish</i>
+          </span>{' '}
+          status. <br /> Thank you for your understanding.
+        </p>
+      </PopoverContent>
+    </Popover>
+  );
+};
+
 export default function Home() {
   const setOpen = useDrawerFilterStore((state) => state.setDrawerFilterIsOpen);
   const { isActive } = useParseCircleQueryToParams();
   return (
     <EachPageLayout className="pb-20">
       <Banner />
-      <div className="my-6 flex w-full items-center gap-2">
+      <div className="mt-6 flex items-center gap-2">
+        <h1 className="text-xl font-bold">Discover Circles</h1>
+        <WarningDev />
+      </div>
+      <div className="mb-6 mt-2 flex w-full items-center gap-2">
         <SearchInput />
         <button
           type="button"

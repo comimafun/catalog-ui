@@ -1,13 +1,16 @@
+import { useSession } from '@/components/providers/SessionProvider';
 import { circleService } from '@/services/circle';
 import { GetCircleQueryParamsClient } from '@/types/circle';
 import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/react-query';
 
-export const getCirclesOptions = (
+export const getBookmarkedCirclesOptions = (
   params: Partial<GetCircleQueryParamsClient>,
+  options?: Partial<{
+    enabled: boolean;
+  }>,
 ) => {
   return infiniteQueryOptions({
-    initialPageParam: 1,
-    queryKey: ['/v1/circle', params],
+    queryKey: ['/v1/circle/bookmarked', params],
     queryFn: async ({ pageParam = 1 }) => {
       const res = await circleService.getBookmarkedCircles({
         ...params,
@@ -20,13 +23,19 @@ export const getCirclesOptions = (
       if (last.metadata.has_next_page) return last.metadata.page + 1;
       return undefined;
     },
+    refetchOnWindowFocus: false,
+    initialPageParam: 1,
+    ...options,
   });
 };
 
 export const useGetBookmarkedCirclesInfinite = (
   params: Partial<GetCircleQueryParamsClient>,
 ) => {
-  const res = useInfiniteQuery(getCirclesOptions(params));
+  const { session } = useSession();
+  const res = useInfiniteQuery(
+    getBookmarkedCirclesOptions(params, { enabled: !!session }),
+  );
   const result = res.data?.pages.flatMap((page) => page.data) ?? [];
 
   return {
