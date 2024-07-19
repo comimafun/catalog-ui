@@ -95,7 +95,7 @@ const Navbar = () => {
       >
         <nav
           className={classNames(
-            'mx-auto flex w-full max-w-[640px] items-center justify-between px-4 py-5',
+            'mx-auto flex w-full max-w-[1440px] items-center justify-between px-4 py-5',
             isInView ? 'bg-white' : 'bg-white/70',
           )}
         >
@@ -126,7 +126,7 @@ const Navbar = () => {
 const Footer = () => {
   return (
     <footer className="mx-auto w-full border-t border-neutral-200 bg-white">
-      <div className="mx-auto flex w-full max-w-[640px] flex-col px-4 py-5">
+      <div className="mx-auto flex w-full max-w-[1440px] flex-col px-4 py-5">
         <Logo />
         <p className="mt-2 text-base">
           Alternative website to share your works before con.

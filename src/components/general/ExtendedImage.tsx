@@ -14,6 +14,9 @@ function ExtendedImage({ onLoad, ...props }: Props) {
           setIsLoading(false);
           onLoad?.(e);
         }}
+        onError={() => {
+          setIsLoading(false);
+        }}
         {...props}
       />
     </Spin>
