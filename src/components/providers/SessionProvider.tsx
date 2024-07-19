@@ -1,4 +1,4 @@
-import { useGetSelf } from '@/hooks/auth/useAuth';
+import { useGetSelf } from '@/hooks/auth/useGetSelf';
 import { getCircleBySlugOptions } from '@/hooks/circle/useGetCircleBySlug';
 import { getCirclesOptions } from '@/hooks/circle/useGetCirclesInfinite';
 import { SelfResponse } from '@/types/auth';
