@@ -7,6 +7,8 @@ export const productEntity = z.object({
   image_url: z.string(),
 });
 
+export type Product = z.infer<typeof productEntity>;
+
 export const getProductsResponse = backendResponseSchema(
   z.array(productEntity),
 );
