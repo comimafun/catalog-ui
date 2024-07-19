@@ -15,7 +15,7 @@ import TrashIcon from '@/icons/TrashIcon';
 import XCircleIcon from '@/icons/XCircleIcon';
 import { productService } from '@/services/product';
 import { uploadService } from '@/services/upload';
-import { productEntity } from '@/types/product';
+import { Product } from '@/types/product';
 import { prettifyError } from '@/utils/helper';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -38,8 +38,6 @@ import {
 } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { z } from 'zod';
-
-type Product = z.infer<typeof productEntity>;
 
 const schema = z.object({
   id: z.number().min(1).optional(),
