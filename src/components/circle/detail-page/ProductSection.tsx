@@ -159,20 +159,22 @@ const ProductList = ({ products }: { products: Array<Product> }) => {
                   placeholder="empty"
                 />
 
-                <button
-                  type="button"
+                <Link
+                  href={{
+                    query: {
+                      ...router.query,
+                      work_id: x.id,
+                    },
+                  }}
                   className="absolute bottom-4 right-4 rounded-xl bg-slate-100 p-2 transition-all hover:bg-slate-500 hover:text-white"
                   onClick={() => {
-                    router.query.work_id = String(x.id);
-                    router.push({ query: router.query }, undefined, {
-                      shallow: true,
-                    });
                     setProduct(x);
                     onOpenChange();
                   }}
+                  shallow
                 >
                   <SearchIcon width={16} height={16} />
-                </button>
+                </Link>
                 <div className="absolute left-0 top-0 max-w-[50%] rounded-br-lg bg-slate-100 px-2 py-1 text-[10px] font-semibold md:text-sm">
                   {x.name}
                 </div>
