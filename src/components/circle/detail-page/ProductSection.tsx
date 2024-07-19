@@ -15,12 +15,12 @@ import {
   useDisclosure,
 } from '@nextui-org/react';
 import Link from 'next/link';
-import { Fragment, ReactNode, useEffect, useRef, useState } from 'react';
+import { Fragment, ReactNode, useEffect, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Swiper as SwiperTypes } from 'swiper/types';
 import EditButton from './EditButton';
 import { useRouter } from 'next/router';
 import { useCirclePageStore } from '@/store/circle';
+import { Autoplay } from 'swiper/modules';
 
 const Wrapper = ({ children }: { children: ReactNode }) => {
   const { isAllowed } = useIsMyCircle();
@@ -48,12 +48,15 @@ const Wrapper = ({ children }: { children: ReactNode }) => {
   );
 };
 
-const ProductList = ({ products }: { products: Array<Product> }) => {
-  const swiperRef = useRef<SwiperTypes | null>(null);
-  const [activeIndex, setActiveIndex] = useState(0);
-  const setProduct = useCirclePageStore((state) => state.setSelectedProduct);
+const ModalImageViewer = ({
+  products,
+  onOpenChange,
+}: {
+  products: Array<Product>;
+  onOpenChange: () => void;
+}) => {
   const product = useCirclePageStore((state) => state.selectedProduct);
-  const { onOpenChange } = useDisclosure();
+  const setProduct = useCirclePageStore((state) => state.setSelectedProduct);
   const router = useRouter();
   const isWorkIDExist = !!router.query.work_id;
 
@@ -85,6 +88,55 @@ const ProductList = ({ products }: { products: Array<Product> }) => {
     }
   }, [isWorkIDExist, products]);
 
+  return (
+    <Modal
+      isOpen={isWorkIDExist && !!product}
+      onOpenChange={(open) => {
+        if (!open) {
+          deleteWorkID();
+          setProduct(null);
+        }
+        onOpenChange();
+      }}
+      size="full"
+      placement="center"
+      hideCloseButton
+      className="bg-transparent"
+    >
+      <ModalContent>
+        {(onClose) => {
+          return (
+            <ModalBody className="relative">
+              <button
+                type="button"
+                onClick={onClose}
+                className="absolute right-4 top-4 z-[1] rounded-full bg-slate-100/50 p-1 transition-colors hover:bg-slate-500 hover:text-white"
+              >
+                <XCircleIcon width={24} height={24} />
+              </button>
+              {!!product && (
+                <ExtendedImage
+                  alt={product.name}
+                  src={product.image_url}
+                  loading="lazy"
+                  fill
+                  className="h-full w-full object-contain"
+                />
+              )}
+            </ModalBody>
+          );
+        }}
+      </ModalContent>
+    </Modal>
+  );
+};
+
+const ProductList = ({ products }: { products: Array<Product> }) => {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const setProduct = useCirclePageStore((state) => state.setSelectedProduct);
+  const { onOpenChange } = useDisclosure();
+  const router = useRouter();
+
   useEffect(() => {
     return () => {
       setProduct(null);
@@ -93,57 +145,20 @@ const ProductList = ({ products }: { products: Array<Product> }) => {
 
   return (
     <div className="space-y-2">
-      <Modal
-        isOpen={isWorkIDExist && !!product}
-        onOpenChange={(open) => {
-          if (!open) {
-            deleteWorkID();
-            setProduct(null);
-          }
-          onOpenChange();
-        }}
-        size="full"
-        placement="center"
-        hideCloseButton
-        className="bg-transparent"
-      >
-        <ModalContent>
-          {(onClose) => {
-            return (
-              <ModalBody className="relative">
-                <button
-                  type="button"
-                  onClick={onClose}
-                  className="absolute right-4 top-4 z-[1] rounded-full bg-slate-100/50 p-1 transition-colors hover:bg-slate-500 hover:text-white"
-                >
-                  <XCircleIcon width={24} height={24} />
-                </button>
-                {!!product && (
-                  <ExtendedImage
-                    alt={product.name}
-                    src={product.image_url}
-                    loading="lazy"
-                    fill
-                    className="h-full w-full object-contain"
-                  />
-                )}
-              </ModalBody>
-            );
-          }}
-        </ModalContent>
-      </Modal>
+      <ModalImageViewer onOpenChange={onOpenChange} products={products} />
       <Swiper
         slidesPerView={1.5}
         spaceBetween={24}
         centeredSlides
-        loop={products?.length > 2}
-        onSwiper={(e) => {
-          swiperRef.current = e;
-        }}
         onSlideChange={(e) => {
           setActiveIndex(e.realIndex);
         }}
         wrapperClass="min-w-0"
+        modules={[Autoplay]}
+        autoplay={{
+          delay: 5000,
+        }}
+        initialSlide={1}
       >
         {products?.map((x) => {
           return (
@@ -184,9 +199,9 @@ const ProductList = ({ products }: { products: Array<Product> }) => {
         })}
       </Swiper>
 
-      {!!swiperRef.current && products.length > 1 && (
+      {products.length > 1 && (
         <div className="flex w-full items-center justify-center gap-1.5">
-          {swiperRef.current.slides.map((_, i) => {
+          {products.map((_, i) => {
             return (
               <div
                 className={classNames(

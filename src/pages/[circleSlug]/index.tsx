@@ -19,9 +19,16 @@ import { NextSeo } from 'next-seo';
 export const getServerSideProps = async (c: GetServerSidePropsContext) => {
   const circleSlug = c.query.circleSlug as string;
   const queryClient = new QueryClient();
-  await queryClient.prefetchQuery(
-    getCircleBySlugOptions(c, circleSlug, { retry: 0 }),
-  );
+
+  try {
+    await queryClient.fetchQuery(
+      getCircleBySlugOptions(c, circleSlug, { retry: 0, throwOnError: true }),
+    );
+  } catch (error) {
+    return {
+      notFound: true,
+    };
+  }
 
   const dehydratedState = dehydrate(queryClient);
 
