@@ -9,3 +9,16 @@ export const ACCEPTED_IMAGE_TYPES = [
 ];
 
 export const ACCEPTED_IMAGE_TYPES_SET = new Set(ACCEPTED_IMAGE_TYPES);
+
+export const MAIN_NAV_LINKS = [
+  {
+    name: 'Bookmark',
+    href: '/bookmark',
+    key: 'bookmark',
+  },
+  {
+    name: 'About',
+    href: '/about',
+    key: 'about',
+  },
+] as const;

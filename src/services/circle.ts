@@ -18,6 +18,12 @@ export const circleService = {
     const res = await fetchInstance(null, '/v1/circle', { params: params });
     return getCirclesResponse.parse(res);
   },
+  getBookmarkedCircles: async (params: GetCircleQueryParams) => {
+    const res = await fetchInstance(null, '/v1/circle/bookmarked', {
+      params: params,
+    });
+    return getCirclesResponse.parse(res);
+  },
   getCircleBySlug: async (c: FetchContext, slug: string) => {
     const res = await fetchInstance(c, `/v1/circle/${slug}`);
     return getOneCircleResponse.parse(res);

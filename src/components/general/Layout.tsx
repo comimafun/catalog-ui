@@ -9,6 +9,7 @@ import HamburgerIcon from '@/icons/HamburgerIcon';
 import { useLayoutStore } from '@/store/layout';
 import Logo from './Logo';
 import dynamic from 'next/dynamic';
+import { MAIN_NAV_LINKS } from '@/constants/common';
 
 const MenuDrawer = dynamic(() => import('./MenuDrawer'), { ssr: false });
 
@@ -102,15 +103,17 @@ const Navbar = () => {
           <div className="flex items-center gap-8">
             <Logo />
 
-            <ul className="hidden sm:block">
-              <li>
-                <Link
-                  className="font-medium underline-offset-8 transition-all hover:font-semibold hover:underline"
-                  href="/about"
-                >
-                  About
-                </Link>
-              </li>
+            <ul className="hidden space-x-4 sm:flex">
+              {MAIN_NAV_LINKS.map((link) => (
+                <li key={link.key}>
+                  <Link
+                    className="font-medium underline-offset-8 transition-all hover:font-semibold hover:underline"
+                    href={link.href}
+                  >
+                    {link.name}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
