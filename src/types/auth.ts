@@ -28,7 +28,6 @@ export const selfResponse = backendResponseSchema(
     user: userEntity,
     circle: circleEntity.nullable(),
     access_token_expired_at: z.string(),
-    refresh_token_expired_at: z.string(),
   }),
 );
 
