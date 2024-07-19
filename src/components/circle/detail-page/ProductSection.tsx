@@ -64,6 +64,7 @@ const ModalImageViewer = ({
     delete router.query.work_id;
     router.replace({ query: router.query }, undefined, {
       shallow: true,
+      scroll: false,
     });
   };
 
@@ -187,6 +188,7 @@ const ProductList = ({ products }: { products: Array<Product> }) => {
                     onOpenChange();
                   }}
                   shallow
+                  scroll={false}
                 >
                   <SearchIcon width={16} height={16} />
                 </Link>
