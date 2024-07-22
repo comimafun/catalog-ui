@@ -155,23 +155,23 @@ const ProductList = ({ products }: { products: Array<Product> }) => {
           setActiveIndex(e.realIndex);
         }}
         wrapperClass="min-w-0"
-        modules={[Autoplay]}
-        autoplay={{
-          delay: 5000,
-        }}
+        // modules={[Autoplay]}
+        // autoplay={{
+        //   delay: 5000,
+        // }}
         initialSlide={1}
       >
         {products?.map((x) => {
           return (
-            <SwiperSlide key={x.id}>
-              <div className="relative flex max-h-[200px] w-auto items-center justify-center sm:max-h-[400px]">
+            <SwiperSlide className="min-h-full" key={x.id}>
+              <div className="relative flex h-[400px] max-h-[200px] w-full max-w-[400px] items-center justify-center sm:max-h-[400px]">
                 <ExtendedImage
                   alt={x.name}
                   src={x.image_url}
                   width={400}
                   height={400}
                   loading="lazy"
-                  className="h-full w-full object-contain"
+                  className="h-full w-full object-cover"
                   placeholder="empty"
                 />
 

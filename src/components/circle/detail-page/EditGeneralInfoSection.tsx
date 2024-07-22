@@ -11,11 +11,12 @@ import { uploadService } from '@/services/upload';
 import {
   EditGeneralInfoPayload,
   editGeneralInfoPayload,
+  ratingEnum,
   updateCirclePayload,
 } from '@/types/circle';
 import { prettifyError } from '@/utils/helper';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Input, Button } from '@nextui-org/react';
+import { Input, Button, Select, SelectItem } from '@nextui-org/react';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { FormProvider, Controller, useForm } from 'react-hook-form';
@@ -42,6 +43,7 @@ function EditGeneralInfoSection() {
       instagram_url: data.instagram_url ?? '',
       facebook_url: data.facebook_url ?? '',
       picture_url: data.picture_url ?? '',
+      rating: data.rating ?? undefined,
     });
     setInitialized(true);
   }, [initialized, data, error, isLoading]);
@@ -167,6 +169,48 @@ function EditGeneralInfoSection() {
                       }
                       {...field}
                     />
+                  );
+                }}
+              />
+
+              <Controller
+                control={form.control}
+                name="rating"
+                render={({ field, formState }) => {
+                  return (
+                    <Select
+                      color="primary"
+                      variant="underlined"
+                      classNames={{
+                        listbox: 'p-0',
+                        popoverContent: 'p-0',
+                      }}
+                      placeholder="Select your group rating"
+                      label="Rating"
+                      isLoading={isLoading}
+                      name={field.name}
+                      ref={field.ref}
+                      onBlur={field.onBlur}
+                      isDisabled={field.disabled}
+                      value={field.value}
+                      selectedKeys={new Set([field.value])}
+                      isInvalid={!!formState.errors[field.name]}
+                      errorMessage={formState.errors[field.name]?.message}
+                      selectionMode="single"
+                    >
+                      {ratingEnum.map((id) => {
+                        return (
+                          <SelectItem
+                            key={id}
+                            value={id}
+                            textValue={id}
+                            onPress={() => field.onChange(id)}
+                          >
+                            {id}
+                          </SelectItem>
+                        );
+                      })}
+                    </Select>
                   );
                 }}
               />

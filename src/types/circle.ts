@@ -11,6 +11,11 @@ import {
 import { ACCEPTED_IMAGE_TYPES, FIVE_MB } from '@/constants/common';
 import { eventEntity } from './event';
 
+export const ratingEnum = ['GA', 'PG', 'M'] as const;
+export const ratingEnumSchema = z.enum(ratingEnum, {
+  message: 'Rating is required',
+});
+
 export const circlesQueryParamsClient = z.object({
   search: trimmedString.optional(),
   work_type_id: z
@@ -66,6 +71,7 @@ export const circleEntity = z.object({
   published: z.boolean(),
   verified: z.boolean(),
   event_id: z.number().nullable(),
+  rating: ratingEnumSchema.nullable(),
 });
 
 export const circleSchema = circleEntity.extend({
@@ -92,6 +98,7 @@ export const onboardingPayloadSchema = z.object({
     .trim()
     .min(1, { message: 'Name is required' })
     .max(255, { message: 'Name is too long' }),
+  rating: ratingEnumSchema,
   url: optionalUrl,
   picture_url: optionalUrl,
   twitter_url: optionalUrl,
@@ -146,6 +153,7 @@ export const updateCirclePayload = z.object({
   fandom_ids: z.array(z.number()).optional(),
   work_type_ids: z.array(z.number()).optional(),
   cover_picture_url: optionalUrl.optional(),
+  rating: ratingEnumSchema.optional(),
 });
 
 export type UpdateCirclePayload = z.infer<typeof updateCirclePayload>;

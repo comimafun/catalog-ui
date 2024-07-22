@@ -15,6 +15,7 @@ import toast from 'react-hot-toast';
 import LinkIcon from '@/icons/LinkIcon';
 import ExtendedImage from '@/components/general/ExtendedImage';
 import EditButton from './EditButton';
+import { RATING_METADATA } from '@/constants/common';
 
 const PublishSwitcher = () => {
   const { data, refetch } = useGetCircleBySlug();
@@ -87,7 +88,7 @@ function GeneralInfoSection() {
           <div className="min-h-[112px] min-w-[112px] rounded-full bg-slate-500"></div>
         )}
 
-        <div className="flex flex-col gap-1.5 sm:gap-2.5">
+        <div className="flex flex-col gap-1.5">
           <h1 className="text-xl font-bold sm:text-2xl">{data?.name}</h1>
           <ul className="flex gap-1.5">
             <div className="flex">
@@ -144,6 +145,11 @@ function GeneralInfoSection() {
               </a>
             )}
           </ul>
+          {!!data?.rating && (
+            <div className="font-medium">
+              Rating: {RATING_METADATA[data.rating]}
+            </div>
+          )}
         </div>
       </div>
 
