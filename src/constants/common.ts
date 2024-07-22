@@ -22,3 +22,9 @@ export const MAIN_NAV_LINKS = [
     key: 'about',
   },
 ] as const;
+
+export const RATING_METADATA = {
+  M: 'Mature',
+  PG: 'Parental Guidance',
+  GA: 'General',
+};

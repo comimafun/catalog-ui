@@ -3,12 +3,12 @@ import Spin from '@/components/general/Spin';
 import { useSession } from '@/components/providers/SessionProvider';
 import { useOnboarding } from '@/hooks/circle/useOnboarding';
 import MegaphoneIcon from '@/icons/MegaphoneIcon';
-import { onboardingPayloadSchema } from '@/types/circle';
+import { onboardingPayloadSchema, ratingEnum } from '@/types/circle';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Button, Input } from '@nextui-org/react';
+import { Button, Input, Select, SelectItem } from '@nextui-org/react';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
+import { Controller, FormProvider, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { z } from 'zod';
 import nookies from 'nookies';
@@ -107,7 +107,54 @@ function JoinPage() {
                   {...form.register('name')}
                 />
 
-                <div className="grid grid-cols-2 gap-3">
+                <Controller
+                  control={form.control}
+                  name="rating"
+                  render={({ field, formState }) => {
+                    return (
+                      <Select
+                        color="primary"
+                        variant="underlined"
+                        items={ratingEnum.map((x) => ({
+                          id: x,
+                          name: x,
+                        }))}
+                        classNames={{
+                          listbox: 'p-0',
+                          popoverContent: 'p-0',
+                        }}
+                        placeholder="Select your group rating"
+                        label="Rating"
+                        isLoading={isLoading}
+                        name={field.name}
+                        ref={field.ref}
+                        onBlur={field.onBlur}
+                        isDisabled={field.disabled}
+                        value={field.value}
+                        selectedKeys={new Set([field.value])}
+                        isInvalid={!!formState.errors[field.name]}
+                        errorMessage={formState.errors[field.name]?.message}
+                      >
+                        {({ id }) => {
+                          return (
+                            <SelectItem
+                              key={id}
+                              value={id}
+                              textValue={id}
+                              onPress={() => {
+                                field.onChange(id);
+                              }}
+                            >
+                              {id}
+                            </SelectItem>
+                          );
+                        }}
+                      </Select>
+                    );
+                  }}
+                />
+
+                <div className="grid grid-cols-1 gap-3 xs:grid-cols-2">
                   <Input
                     label="Circle URL (Optional)"
                     placeholder="Enter valid url"
