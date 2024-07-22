@@ -155,10 +155,10 @@ const ProductList = ({ products }: { products: Array<Product> }) => {
           setActiveIndex(e.realIndex);
         }}
         wrapperClass="min-w-0"
-        // modules={[Autoplay]}
-        // autoplay={{
-        //   delay: 5000,
-        // }}
+        modules={[Autoplay]}
+        autoplay={{
+          delay: 5000,
+        }}
         initialSlide={1}
       >
         {products?.map((x) => {
