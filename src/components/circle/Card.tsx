@@ -42,6 +42,9 @@ function CircleCard(circle: CircleCard) {
         </div>
         <div className="h-full w-full space-y-1.5 p-2 font-medium">
           <p className="break-all text-base font-semibold">{circle.name}</p>
+          {!!circle.rating && (
+            <div className="text-xs">Rated: {circle.rating}</div>
+          )}
           {circle.fandom.length > 0 && (
             <p className="text-xs">
               Fandom: {circle.fandom.map((x) => x.name).join(', ')}
