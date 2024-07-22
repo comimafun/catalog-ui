@@ -326,7 +326,7 @@ const ImageMenu = () => {
           }
           const { data } = await uploadService.uploadImage({
             file,
-            type: 'profiles',
+            type: 'descriptions',
           });
 
           editor.chain().focus().setImage({ src: data, alt: file.name }).run();

@@ -10,7 +10,7 @@ export const uploadService = {
     type,
   }: {
     file: File;
-    type: 'covers' | 'products' | 'profiles';
+    type: 'covers' | 'products' | 'profiles' | 'descriptions';
   }) => {
     const formData = new FormData();
     formData.append('file', file);
