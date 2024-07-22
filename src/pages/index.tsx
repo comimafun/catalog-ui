@@ -16,6 +16,8 @@ import EachPageLayout from '@/components/general/EachPageLayout';
 import Link from 'next/link';
 import MegaphoneIcon from '@/icons/MegaphoneIcon';
 import { classNames } from '@/utils/classNames';
+import TVIcon from '@/icons/TVIcon';
+import { useSession } from '@/components/providers/SessionProvider';
 
 const FilterDrawer = dynamic(() => import('@/components/circle/FilterDrawer'), {
   ssr: false,
@@ -113,10 +115,10 @@ const Banner = () => {
 
       <div className="relative z-[1] flex items-center justify-center">
         <MegaphoneIcon className="h-20 w-20" />{' '}
-        <h2 className="text-xl font-bold sm:text-3xl">
-          PUT YOUR CIRCLE HERE
+        <h2 className="text-center text-xl font-bold sm:text-3xl">
+          INVITE AND
           <br />
-          FOR FREE
+          GET DISPLAYED (SOON)
         </h2>
       </div>
     </Link>
@@ -150,12 +152,29 @@ const WarningDev = () => {
   );
 };
 
+const JoinAsCircleCTA = () => {
+  const { session } = useSession();
+  if (!!session?.circle) return null;
+
+  return (
+    <Link
+      href={{
+        pathname: '/join',
+      }}
+      className="mt-4 flex min-w-full items-center justify-center gap-1.5 rounded-lg bg-danger py-2 text-center font-bold text-white transition-all hover:bg-primary-50 hover:text-neutral-900 active:scale-90"
+    >
+      Register your own circle here! <TVIcon className="h-5 w-5" />
+    </Link>
+  );
+};
+
 export default function Home() {
   const setOpen = useDrawerFilterStore((state) => state.setDrawerFilterIsOpen);
   const { isActive } = useParseCircleQueryToParams();
   return (
     <EachPageLayout className="pb-20">
       <Banner />
+      <JoinAsCircleCTA />
       <div className="mt-6 flex items-center gap-2">
         <h1 className="text-xl font-bold">Discover Circles</h1>
         <WarningDev />
