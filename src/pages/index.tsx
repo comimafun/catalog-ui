@@ -5,6 +5,8 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
+  Radio,
+  RadioGroup,
 } from '@nextui-org/react';
 import { prettifyError } from '@/utils/helper';
 import { useGetCirclesInfinite } from '@/hooks/circle/useGetCirclesInfinite';
@@ -18,6 +20,8 @@ import MegaphoneIcon from '@/icons/MegaphoneIcon';
 import { classNames } from '@/utils/classNames';
 import TVIcon from '@/icons/TVIcon';
 import { useSession } from '@/components/providers/SessionProvider';
+import { useGetEvents } from '@/hooks/event/useGetEvent';
+import { useRouter } from 'next/router';
 
 const FilterDrawer = dynamic(() => import('@/components/circle/FilterDrawer'), {
   ssr: false,
@@ -168,6 +172,55 @@ const JoinAsCircleCTA = () => {
   );
 };
 
+const EventChipsFilter = () => {
+  const { data, error } = useGetEvents(
+    { limit: 2, page: 1 },
+    { staleTime: Infinity },
+  );
+  const router = useRouter();
+  if (!data || data.length === 0 || error) return null;
+  return (
+    <div className="my-4 flex w-full">
+      <ul className="flex gap-2">
+        {data.map((ev) => {
+          const isSelected = router.query.event === ev.slug;
+          return (
+            <li key={ev.id}>
+              <Link
+                type="button"
+                className={classNames(
+                  'border-[1.5px] border-neutral-200 bg-slate-50 px-2 py-1 font-medium text-neutral-500 transition-all active:scale-90',
+
+                  isSelected
+                    ? 'rounded-lg border-neutral-500 bg-primary font-semibold text-white'
+                    : 'rounded-[50px] hover:bg-slate-200',
+                )}
+                href={{
+                  query: (() => {
+                    const copy = { ...router.query };
+                    if (isSelected) {
+                      delete copy.event;
+                      return copy;
+                    } else {
+                      return {
+                        ...copy,
+                        event: ev.slug,
+                      };
+                    }
+                  })(),
+                }}
+                shallow
+              >
+                {ev.name}
+              </Link>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  );
+};
+
 export default function Home() {
   const setOpen = useDrawerFilterStore((state) => state.setDrawerFilterIsOpen);
   const { isActive } = useParseCircleQueryToParams();
@@ -179,7 +232,7 @@ export default function Home() {
         <h1 className="text-xl font-bold">Discover Circles</h1>
         <WarningDev />
       </div>
-      <div className="mb-6 mt-2 flex w-full items-center gap-2">
+      <div className="my-2 flex w-full items-center gap-2">
         <SearchInput />
         <button
           type="button"
@@ -195,6 +248,8 @@ export default function Home() {
         </button>
         <FilterDrawer />
       </div>
+      <EventChipsFilter />
+
       <CircleListGrid />
     </EachPageLayout>
   );

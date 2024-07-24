@@ -11,7 +11,7 @@ import { uploadService } from '@/services/upload';
 import {
   EditGeneralInfoPayload,
   editGeneralInfoPayload,
-  ratingEnum,
+  RATING_ENUM,
   updateCirclePayload,
 } from '@/types/circle';
 import { prettifyError } from '@/utils/helper';
@@ -198,7 +198,7 @@ function EditGeneralInfoSection() {
                       errorMessage={formState.errors[field.name]?.message}
                       selectionMode="single"
                     >
-                      {ratingEnum.map((id) => {
+                      {RATING_ENUM.map((id) => {
                         return (
                           <SelectItem
                             key={id}

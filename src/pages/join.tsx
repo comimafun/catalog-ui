@@ -3,7 +3,7 @@ import Spin from '@/components/general/Spin';
 import { useSession } from '@/components/providers/SessionProvider';
 import { useOnboarding } from '@/hooks/circle/useOnboarding';
 import MegaphoneIcon from '@/icons/MegaphoneIcon';
-import { onboardingPayloadSchema, ratingEnum } from '@/types/circle';
+import { onboardingPayloadSchema, RATING_ENUM } from '@/types/circle';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button, Input, Select, SelectItem } from '@nextui-org/react';
 import { useRouter } from 'next/router';
@@ -115,7 +115,7 @@ function JoinPage() {
                       <Select
                         color="primary"
                         variant="underlined"
-                        items={ratingEnum.map((x) => ({
+                        items={RATING_ENUM.map((x) => ({
                           id: x,
                           name: x,
                         }))}

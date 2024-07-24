@@ -10,6 +10,8 @@ export const CIRCLE_FILTER_CLIENT_PARAMS_INITIAL_VALUE: GetCircleQueryParamsClie
     fandom_id: [],
     work_type_id: [],
     search: '',
+    rating: [],
+    event: '',
   };
 
 export const useParseCircleQueryToParams = () => {
@@ -21,7 +23,7 @@ export const useParseCircleQueryToParams = () => {
   }
 
   const isActive = Object.entries(params).some(([key, values]) => {
-    return key !== 'search' && values.length > 0;
+    return key !== 'search' && key !== 'event' && values.length > 0;
   });
   return {
     filter: params,
