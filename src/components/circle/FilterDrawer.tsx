@@ -22,7 +22,7 @@ import { useGetWorkType } from '@/hooks/circle/useGetWorkType';
 import { prettifyError } from '@/utils/helper';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
-import { CircleFilterWithNoSearch } from '@/types/circle';
+import { CircleFilterWithNoSearch, RATING_ENUM } from '@/types/circle';
 import { useParseCircleQueryToParams } from '@/hooks/circle/useParseClientQueryToParams';
 
 const WorkTypeSection = () => {
@@ -224,25 +224,54 @@ const MainFilter = () => {
     (state) => state.setDrawerFilterStep,
   );
   const filterForm = useFormContext<CircleFilterWithNoSearch>();
+  const { filter } = useParseCircleQueryToParams();
 
   return (
     <>
+      {!!filter.event && (
+        <Controller
+          control={filterForm.control}
+          name="day"
+          render={({ field: { disabled, onChange, ...fields } }) => {
+            return (
+              <RadioGroup
+                label={<div className="font-medium">Day</div>}
+                orientation="horizontal"
+                isDisabled={disabled}
+                {...fields}
+                onValueChange={(a) => onChange(a)}
+              >
+                <Radio value="first">First Day</Radio>
+                <Radio value="second">Second Day</Radio>
+                <Radio value="both">Both Days</Radio>
+              </RadioGroup>
+            );
+          }}
+        />
+      )}
+
       <Controller
         control={filterForm.control}
-        name="day"
-        render={({ field: { disabled, onChange, ...fields } }) => {
+        name="rating"
+        render={({ field }) => {
           return (
-            <RadioGroup
-              label={<div className="font-medium">Day</div>}
-              orientation="horizontal"
-              isDisabled={disabled}
-              {...fields}
-              onValueChange={(a) => onChange(a)}
+            <CheckboxGroup
+              name={field.name}
+              ref={field.ref}
+              value={(field?.value ?? []).map(String)}
+              onChange={(val) => field.onChange(val)}
+              label={<div className="font-medium">Rating</div>}
             >
-              <Radio value="first">First Day</Radio>
-              <Radio value="second">Second Day</Radio>
-              <Radio value="both">Both Days</Radio>
-            </RadioGroup>
+              <div className="flex gap-2">
+                {RATING_ENUM.map((x) => {
+                  return (
+                    <Checkbox key={x} value={x}>
+                      {x}
+                    </Checkbox>
+                  );
+                })}
+              </div>
+            </CheckboxGroup>
           );
         }}
       />
@@ -318,6 +347,7 @@ const FilterDrawer = () => {
         day: filter.day,
         fandom_id: filter.fandom_id,
         work_type_id: filter.work_type_id,
+        rating: filter.rating,
       });
     }
   }, [open]);
@@ -343,6 +373,7 @@ const FilterDrawer = () => {
                     day: '',
                     fandom_id: [],
                     work_type_id: [],
+                    rating: [],
                   },
                   {
                     keepTouched: true,

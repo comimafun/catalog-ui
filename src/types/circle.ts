@@ -11,8 +11,8 @@ import {
 import { ACCEPTED_IMAGE_TYPES, FIVE_MB } from '@/constants/common';
 import { eventEntity } from './event';
 
-export const ratingEnum = ['GA', 'PG', 'M'] as const;
-export const ratingEnumSchema = z.enum(ratingEnum, {
+export const RATING_ENUM = ['GA', 'PG', 'M'] as const;
+export const ratingEnumSchema = z.enum(RATING_ENUM, {
   message: 'Rating is required',
 });
 
@@ -31,6 +31,12 @@ export const circlesQueryParamsClient = z.object({
     .or(z.literal(''))
     .default('')
     .optional(),
+  rating: z
+    .array(ratingEnumSchema)
+    .or(ratingEnumSchema.transform((x) => [x]))
+    .default([]),
+
+  event: trimmedString.optional(),
 });
 
 export type GetCircleQueryParamsClient = z.infer<
@@ -82,15 +88,28 @@ export const circleSchema = circleEntity.extend({
   event: eventEntity.nullable(),
 });
 
-const circles = circleSchema.omit({ event: true });
-
-export type CircleCard = z.infer<typeof circles>;
+export type CircleCard = z.infer<typeof circlePaginationSchema>;
 
 export const onboardCircleResponse = backendResponseSchema(circleEntity);
 export const getOneCircleResponse = backendResponseSchema(
   circleSchema.omit({ event_id: true }),
 );
-export const getCirclesResponse = backendResponsePagination(circles);
+
+export const circlePaginationSchema = circleEntity
+  .omit({ description: true })
+  .extend({
+    block: circleBlockEntity.nullable(),
+    bookmarked: z.boolean(),
+    work_type: z.array(fandomWorkTypeBaseEntity),
+    fandom: z.array(fandomWorkTypeBaseEntity),
+    event: eventEntity
+      .omit({ description: true, ended_at: true, started_at: true })
+      .nullable(),
+  });
+
+export const getCirclesResponse = backendResponsePagination(
+  circlePaginationSchema,
+);
 
 export const onboardingPayloadSchema = z.object({
   name: z

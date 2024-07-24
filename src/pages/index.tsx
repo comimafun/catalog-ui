@@ -18,6 +18,9 @@ import MegaphoneIcon from '@/icons/MegaphoneIcon';
 import { classNames } from '@/utils/classNames';
 import TVIcon from '@/icons/TVIcon';
 import { useSession } from '@/components/providers/SessionProvider';
+import { useGetEvents } from '@/hooks/event/useGetEvent';
+import { useRouter } from 'next/router';
+import XMarkIcon from '@/icons/XMarkIcon';
 
 const FilterDrawer = dynamic(() => import('@/components/circle/FilterDrawer'), {
   ssr: false,
@@ -168,6 +171,63 @@ const JoinAsCircleCTA = () => {
   );
 };
 
+const EventChipsFilter = () => {
+  const { data, error } = useGetEvents(
+    { limit: 2, page: 1 },
+    { staleTime: Infinity },
+  );
+  const router = useRouter();
+  const { filter } = useParseCircleQueryToParams();
+  if (!data || data.length === 0 || error) return null;
+  return (
+    <ul className="mb-4 mt-0 flex h-full w-full max-w-full items-center gap-2 overflow-x-auto overflow-y-hidden">
+      {data.map((ev) => {
+        const isSelected = router.query.event === ev.slug;
+        return (
+          <Link
+            className={classNames(
+              'whitespace-nowrap border-[1.5px] border-neutral-200 bg-slate-50 px-3 py-1 font-medium text-neutral-500 transition-all active:scale-90',
+
+              isSelected
+                ? 'rounded-[50px] border-neutral-500 bg-primary font-semibold text-white'
+                : 'rounded-lg hover:bg-slate-200',
+            )}
+            key={ev.id}
+            href={{
+              query: {
+                ...router.query,
+                event: ev.slug,
+              },
+            }}
+            shallow
+          >
+            <li> {ev.name}</li>
+          </Link>
+        );
+      })}
+      {!!router.query.event && (
+        <button
+          className="rounded-full p-0.5 transition-all delay-200 hover:bg-danger hover:text-white active:scale-90"
+          type="button"
+          onClick={() => {
+            if (!!filter.day) delete router.query.day;
+            delete router.query.event;
+            router.push(
+              {
+                query: router.query,
+              },
+              undefined,
+              { shallow: true },
+            );
+          }}
+        >
+          <XMarkIcon width={16} height={16} />
+        </button>
+      )}
+    </ul>
+  );
+};
+
 export default function Home() {
   const setOpen = useDrawerFilterStore((state) => state.setDrawerFilterIsOpen);
   const { isActive } = useParseCircleQueryToParams();
@@ -179,7 +239,7 @@ export default function Home() {
         <h1 className="text-xl font-bold">Discover Circles</h1>
         <WarningDev />
       </div>
-      <div className="mb-6 mt-2 flex w-full items-center gap-2">
+      <div className="mb-4 mt-2 flex w-full items-center gap-2">
         <SearchInput />
         <button
           type="button"
@@ -195,6 +255,8 @@ export default function Home() {
         </button>
         <FilterDrawer />
       </div>
+      <EventChipsFilter />
+
       <CircleListGrid />
     </EachPageLayout>
   );
