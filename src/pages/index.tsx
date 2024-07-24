@@ -5,8 +5,6 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-  Radio,
-  RadioGroup,
 } from '@nextui-org/react';
 import { prettifyError } from '@/utils/helper';
 import { useGetCirclesInfinite } from '@/hooks/circle/useGetCirclesInfinite';
