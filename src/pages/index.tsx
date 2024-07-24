@@ -181,7 +181,7 @@ const EventChipsFilter = () => {
   if (!data || data.length === 0 || error) return null;
   return (
     <div className="my-4 flex w-full">
-      <ul className="flex gap-2">
+      <ul className="flex w-full max-w-full gap-2 overflow-x-auto">
         {data.map((ev) => {
           const isSelected = router.query.event === ev.slug;
           return (
@@ -189,7 +189,7 @@ const EventChipsFilter = () => {
               <Link
                 type="button"
                 className={classNames(
-                  'border-[1.5px] border-neutral-200 bg-slate-50 px-2 py-1 font-medium text-neutral-500 transition-all active:scale-90',
+                  'whitespace-nowrap border-[1.5px] border-neutral-200 bg-slate-50 px-2 py-1 font-medium text-neutral-500 transition-all active:scale-90',
 
                   isSelected
                     ? 'rounded-lg border-neutral-500 bg-primary font-semibold text-white'
