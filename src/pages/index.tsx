@@ -20,6 +20,7 @@ import TVIcon from '@/icons/TVIcon';
 import { useSession } from '@/components/providers/SessionProvider';
 import { useGetEvents } from '@/hooks/event/useGetEvent';
 import { useRouter } from 'next/router';
+import XMarkIcon from '@/icons/XMarkIcon';
 
 const FilterDrawer = dynamic(() => import('@/components/circle/FilterDrawer'), {
   ssr: false,
@@ -179,7 +180,7 @@ const EventChipsFilter = () => {
   const { filter } = useParseCircleQueryToParams();
   if (!data || data.length === 0 || error) return null;
   return (
-    <ul className="my-4 flex h-full w-full max-w-full gap-2 overflow-x-auto overflow-y-hidden">
+    <ul className="mb-4 mt-0 flex h-full w-full max-w-full items-center gap-2 overflow-x-auto overflow-y-hidden">
       {data.map((ev) => {
         const isSelected = router.query.event === ev.slug;
         return (
@@ -193,19 +194,10 @@ const EventChipsFilter = () => {
             )}
             key={ev.id}
             href={{
-              query: (() => {
-                const copy = { ...router.query };
-                if (isSelected) {
-                  if (!!filter.day) delete copy.day;
-                  delete copy.event;
-                  return copy;
-                } else {
-                  return {
-                    ...copy,
-                    event: ev.slug,
-                  };
-                }
-              })(),
+              query: {
+                ...router.query,
+                event: ev.slug,
+              },
             }}
             shallow
           >
@@ -213,6 +205,25 @@ const EventChipsFilter = () => {
           </Link>
         );
       })}
+      {!!router.query.event && (
+        <button
+          className="rounded-full p-0.5 transition-all delay-200 hover:bg-danger hover:text-white active:scale-90"
+          type="button"
+          onClick={() => {
+            if (!!filter.day) delete router.query.day;
+            delete router.query.event;
+            router.push(
+              {
+                query: router.query,
+              },
+              undefined,
+              { shallow: true },
+            );
+          }}
+        >
+          <XMarkIcon width={16} height={16} />
+        </button>
+      )}
     </ul>
   );
 };
@@ -228,7 +239,7 @@ export default function Home() {
         <h1 className="text-xl font-bold">Discover Circles</h1>
         <WarningDev />
       </div>
-      <div className="my-2 flex w-full items-center gap-2">
+      <div className="mb-4 mt-2 flex w-full items-center gap-2">
         <SearchInput />
         <button
           type="button"
