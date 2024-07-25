@@ -7,7 +7,7 @@ import { onboardingPayloadSchema, RATING_ENUM } from '@/types/circle';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button, Input, Select, SelectItem } from '@nextui-org/react';
 import { useRouter } from 'next/router';
-import { use, useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { z } from 'zod';
