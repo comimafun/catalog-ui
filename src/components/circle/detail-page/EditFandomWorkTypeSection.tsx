@@ -131,7 +131,7 @@ const WorkTypeSection = () => {
               return <p>No work type found</p>;
             }
             return (
-              <ul className="grid grid-cols-2">
+              <ul className="grid grid-cols-2 gap-2.5">
                 {workTypes?.map((type) => {
                   const isSelected = field.value.some((x) => x.id === type.id);
                   return (

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import CircleBookmarkButton from '../CircleBookmarkButton';
 import {
+  getCircleBySlugOptions,
   useGetCircleBySlug,
   useIsMyCircle,
 } from '@/hooks/circle/useGetCircleBySlug';
@@ -8,7 +9,12 @@ import TwitterIcon from '@/icons/socmed/TwitterIcon';
 import InstagramIcon from '@/icons/socmed/InstagramIcon';
 import FacebookIcon from '@/icons/socmed/FacebookIcon';
 import Link from 'next/link';
-import { Switch } from '@nextui-org/react';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  Switch,
+} from '@nextui-org/react';
 import { usePublishMyCircle } from '@/hooks/circle/usePublishMyCircle';
 import { prettifyError } from '@/utils/helper';
 import toast from 'react-hot-toast';
@@ -16,12 +22,14 @@ import LinkIcon from '@/icons/LinkIcon';
 import ExtendedImage from '@/components/general/ExtendedImage';
 import EditButton from './EditButton';
 import { RATING_METADATA } from '@/constants/common';
+import { useQueryClient } from '@tanstack/react-query';
 
 const PublishSwitcher = () => {
-  const { data, refetch } = useGetCircleBySlug();
+  const { data } = useGetCircleBySlug();
   const [localPubllished, setLocalPubllished] = useState(
     data?.published ?? false,
   );
+  const queryClient = useQueryClient();
   const { mutateAsync, isPending } = usePublishMyCircle();
   const { isNotAllowed } = useIsMyCircle();
 
@@ -29,9 +37,24 @@ const PublishSwitcher = () => {
     if (!data) return;
     try {
       const savePrevState = localPubllished;
+      if (!savePrevState) {
+        if (
+          !data.fandom?.length ||
+          !data.work_type?.length ||
+          !data.cover_picture_url
+        ) {
+          toast.error(
+            'Fandom, work types, and circle cut is required for publishing!',
+          );
+          return;
+        }
+      }
+
       setLocalPubllished((prev) => !prev);
       await mutateAsync(data.id);
-      await refetch();
+      await queryClient.invalidateQueries({
+        queryKey: getCircleBySlugOptions(null, data.slug, {}).queryKey,
+      });
       if (savePrevState) {
         toast.success('Circle unpublished!');
       } else {
@@ -61,7 +84,23 @@ const PublishSwitcher = () => {
         isSelected={localPubllished}
         color="warning"
         size="sm"
-      ></Switch>
+      >
+        <Popover placement="top">
+          <PopoverTrigger>
+            <button
+              type="button"
+              className="flex h-6 w-6 items-center justify-center rounded-full bg-warning-200"
+            >
+              <div className="text-sm font-bold">!</div>
+            </button>
+          </PopoverTrigger>
+          <PopoverContent className="bg-warning-50 px-4 py-2">
+            <p className="max-w-[640px] text-xs sm:text-sm">
+              Fandom, work types, and circle cut is required for publishing!
+            </p>
+          </PopoverContent>
+        </Popover>
+      </Switch>
     </div>
   );
 };
