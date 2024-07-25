@@ -110,7 +110,7 @@ const CircleListGrid = () => {
 const Banner = () => {
   return (
     <Link
-      href="/"
+      href="/referral"
       className="relative flex h-48 w-full items-center justify-center overflow-hidden rounded-lg bg-slate-100 ring-1 ring-primary"
     >
       <div className="absolute -left-10 -top-10 h-[120px] w-[120px] rounded-full bg-primary blur-3xl" />
@@ -121,7 +121,7 @@ const Banner = () => {
         <h2 className="text-center text-xl font-bold sm:text-3xl">
           INVITE AND
           <br />
-          GET DISPLAYED (SOON)
+          GET DISPLAYED
         </h2>
       </div>
     </Link>
