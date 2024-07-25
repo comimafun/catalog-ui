@@ -152,6 +152,7 @@ const ReferralButton = () => {
               className="rounded border border-neutral-500 px-1 active:scale-90"
               onClick={async () => {
                 const registLink =
+                  'https://' +
                   process.env.NEXT_PUBLIC_DOMAIN +
                   '/join' +
                   '?' +

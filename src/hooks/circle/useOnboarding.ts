@@ -4,16 +4,19 @@ import { OnboardingPayload, onboardingPayloadSchema } from '@/types/circle';
 import { prettifyError, setAccessToken } from '@/utils/helper';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
+import { useState } from 'react';
 import toast from 'react-hot-toast';
 
 export const useOnboarding = () => {
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
   const { isPending, mutateAsync } = useMutation({
     mutationFn: circleService.postOnboarding,
   });
 
   const handleOnboarding = async (payload: OnboardingPayload) => {
     try {
+      setIsLoading(true);
       const { data } = await mutateAsync(
         onboardingPayloadSchema.parse(payload),
       );
@@ -27,9 +30,10 @@ export const useOnboarding = () => {
         },
       });
     } catch (error) {
+      setIsLoading(false);
       toast.error(prettifyError(error as Error));
     }
   };
 
-  return { isPending, handleOnboarding };
+  return { isPending: isPending || isLoading, handleOnboarding };
 };

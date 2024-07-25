@@ -123,6 +123,11 @@ export const onboardingPayloadSchema = z.object({
   twitter_url: optionalUrl,
   instagram_url: optionalUrl,
   facebook_url: optionalUrl,
+  referral_code: z
+    .string()
+    .trim()
+    .transform((x) => (x === '' ? undefined : x.toUpperCase()))
+    .optional(),
 });
 
 export const editGeneralInfoPayload = onboardingPayloadSchema.extend({

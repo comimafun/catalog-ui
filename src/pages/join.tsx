@@ -7,7 +7,7 @@ import { onboardingPayloadSchema, RATING_ENUM } from '@/types/circle';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button, Input, Select, SelectItem } from '@nextui-org/react';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { z } from 'zod';
@@ -41,11 +41,21 @@ const useProtectRoute = () => {
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const { access_token, refresh_token } = nookies.get(ctx);
+  const { query } = ctx;
 
   if (!access_token && !refresh_token) {
+    let return_url = '/join';
+    if (query.referral) {
+      return_url = `/join?referral=${query.referral}`;
+    }
+
+    const params = new URLSearchParams({
+      return_url,
+    }).toString();
+
     return {
       redirect: {
-        destination: '/sign-in?return_url=/join',
+        destination: '/sign-in?' + params,
         permanent: false,
       },
     };
@@ -58,8 +68,8 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
 
 function JoinPage() {
   useProtectRoute();
+  const router = useRouter();
   const { handleOnboarding, isPending } = useOnboarding();
-  const [isLoading, setIsLoading] = useState(false);
   const form = useForm<JoinSchema>({
     resolver: zodResolver(joinSchema),
     defaultValues: {
@@ -71,6 +81,12 @@ function JoinPage() {
       facebook_url: '',
     },
   });
+
+  useEffect(() => {
+    if (!!router.query.referral) {
+      form.setValue('referral_code', router.query.referral as string);
+    }
+  }, [router.query.referral]);
 
   return (
     <EachPageLayout className="flex items-center justify-center">
@@ -86,15 +102,12 @@ function JoinPage() {
         </div>
 
         <div className="mx-auto max-w-[400px] rounded-lg border border-neutral-950 p-4 shadow-md">
-          <Spin spinning={isPending || isLoading}>
+          <Spin spinning={isPending}>
             <FormProvider {...form}>
               <form
                 className="gap-3"
                 onSubmit={form.handleSubmit((val) => {
-                  setIsLoading(true);
-                  handleOnboarding(val).catch(() => {
-                    setIsLoading(false);
-                  });
+                  handleOnboarding(val);
                 })}
               >
                 <Input
@@ -125,7 +138,6 @@ function JoinPage() {
                         }}
                         placeholder="Select your group rating"
                         label="Rating"
-                        isLoading={isLoading}
                         name={field.name}
                         ref={field.ref}
                         onBlur={field.onBlur}
@@ -154,7 +166,7 @@ function JoinPage() {
                   }}
                 />
 
-                <div className="grid grid-cols-1 gap-3 xs:grid-cols-2">
+                <div className="grid grid-cols-1 gap-x-3 gap-y-6 xs:grid-cols-2">
                   <Input
                     label="Circle URL (Optional)"
                     placeholder="Enter valid url"
@@ -195,6 +207,29 @@ function JoinPage() {
                     {...form.register('facebook_url')}
                   />
                 </div>
+
+                <Controller
+                  control={form.control}
+                  name="referral_code"
+                  render={({ field, formState }) => {
+                    return (
+                      <Input
+                        label="Referral Code (Optional)"
+                        placeholder="Maybe ask your friend?"
+                        autoComplete="off"
+                        variant="underlined"
+                        isInvalid={!!formState.errors.referral_code}
+                        errorMessage={formState.errors.referral_code?.message}
+                        name={field.name}
+                        ref={field.ref}
+                        onBlur={field.onBlur}
+                        value={field.value}
+                        onChange={field.onChange}
+                      />
+                    );
+                  }}
+                />
+
                 <Button
                   fullWidth
                   className="mt-4"
