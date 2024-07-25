@@ -70,4 +70,11 @@ export const circleService = {
     const res = await fetchInstance(null, '/v1/worktype/all');
     return getAllWorkTypeResponse.parse(res);
   },
+  getReferralByCircleID: async (circleID: number) => {
+    const res = await fetchInstance<{
+      code: number;
+      data: string | null;
+    }>(null, `/v1/circle/${circleID}/referral`);
+    return res;
+  },
 };
