@@ -126,7 +126,11 @@ const ProgressBar = ({ isInView }: { isInView?: boolean }) => {
     <div
       className={classNames(
         'h-1 w-full transition-all',
-        state ? 'bg-primary' : isInView ? 'bg-white' : 'bg-white/70',
+        state
+          ? 'bg-primary'
+          : isInView
+            ? 'bg-white'
+            : 'bg-white/70 backdrop-blur-md',
       )}
       style={{
         width: state === 'start' ? '20%' : '100%',
@@ -144,7 +148,9 @@ const Navbar = () => {
       <div
         className={classNames(
           'fixed z-10 mx-auto w-full transition-all',
-          isInView ? 'bg-white shadow-none' : 'bg-white/70 shadow-lg',
+          isInView
+            ? 'bg-white shadow-none'
+            : 'bg-white/70 shadow-lg backdrop-blur-md',
         )}
       >
         <ProgressBar isInView={isInView} />
