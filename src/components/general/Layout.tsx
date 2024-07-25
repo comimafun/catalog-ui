@@ -126,10 +126,10 @@ const ProgressBar = ({ isInView }: { isInView?: boolean }) => {
     <div
       className={classNames(
         'h-1 w-full transition-all',
-        state ? 'bg-primary' : isInView ? 'bg-primary' : 'bg-primary/70',
+        state ? 'bg-primary' : isInView ? 'bg-white' : 'bg-white/70',
       )}
       style={{
-        width: state === 'start' ? '20%' : state === 'complete' ? '100%' : '0%',
+        width: state === 'start' ? '20%' : '100%',
       }}
     ></div>
   );
