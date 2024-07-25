@@ -1,7 +1,7 @@
 import { classNames } from '@/utils/classNames';
 import { useInView } from 'framer-motion';
 import Link from 'next/link';
-import { ReactNode, useRef } from 'react';
+import { ReactNode, useEffect, useRef, useState } from 'react';
 import { useSession } from '../providers/SessionProvider';
 import { Button } from '@nextui-org/react';
 import { useLogout } from '@/hooks/auth/useLogout';
@@ -10,6 +10,7 @@ import { useLayoutStore } from '@/store/layout';
 import Logo from './Logo';
 import dynamic from 'next/dynamic';
 import { MAIN_NAV_LINKS } from '@/constants/common';
+import { useRouter } from 'next/router';
 
 const MenuDrawer = dynamic(() => import('./MenuDrawer'), { ssr: false });
 
@@ -82,6 +83,58 @@ const RightMenu = () => {
   );
 };
 
+const ProgressBar = ({ isInView }: { isInView?: boolean }) => {
+  const router = useRouter();
+  const [state, setState] = useState<'' | 'start' | 'complete'>('');
+  const [prevPathname, setPrevPathname] = useState(router.pathname);
+
+  useEffect(() => {
+    const handleRouteChangeStart = (url: string) => {
+      const newPathname = url.split('?')[0];
+      if (newPathname !== prevPathname) {
+        setState('start');
+      }
+    };
+
+    const handleRouteChangeComplete = (url: string) => {
+      const newPathname = url.split('?')[0];
+      if (newPathname !== prevPathname) {
+        setState('complete');
+        setPrevPathname(newPathname);
+      }
+    };
+
+    router.events.on('routeChangeStart', handleRouteChangeStart);
+    router.events.on('routeChangeComplete', handleRouteChangeComplete);
+
+    return () => {
+      router.events.off('routeChangeStart', handleRouteChangeStart);
+      router.events.off('routeChangeComplete', handleRouteChangeComplete);
+    };
+  }, [router.events, prevPathname]);
+
+  useEffect(() => {
+    if (state === 'complete') {
+      const timer = setTimeout(() => {
+        setState('');
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [state]);
+
+  return (
+    <div
+      className={classNames(
+        'h-1 w-full transition-all',
+        state ? 'bg-primary' : isInView ? 'bg-primary' : 'bg-primary/70',
+      )}
+      style={{
+        width: state === 'start' ? '20%' : state === 'complete' ? '100%' : '0%',
+      }}
+    ></div>
+  );
+};
+
 const Navbar = () => {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref);
@@ -94,10 +147,11 @@ const Navbar = () => {
           isInView ? 'bg-white shadow-none' : 'bg-white/70 shadow-lg',
         )}
       >
+        <ProgressBar isInView={isInView} />
         <nav
           className={classNames(
             'mx-auto flex w-full max-w-[1440px] items-center justify-between px-4 py-5',
-            isInView ? 'bg-white' : 'bg-white/70',
+            isInView ? 'bg-white' : 'bg-transparent',
           )}
         >
           <div className="flex items-center gap-8">
@@ -120,7 +174,7 @@ const Navbar = () => {
           <RightMenu />
         </nav>
       </div>
-      <div className="pt-[72px]" />
+      <div className="pt-[76px]" />
       <div ref={ref} className="w-full"></div>
     </>
   );
