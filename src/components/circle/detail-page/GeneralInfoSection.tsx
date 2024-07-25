@@ -23,6 +23,7 @@ import ExtendedImage from '@/components/general/ExtendedImage';
 import EditButton from './EditButton';
 import { RATING_METADATA } from '@/constants/common';
 import { useQueryClient } from '@tanstack/react-query';
+import { useGetCircleReferral } from '@/hooks/circle/useGetCircleReferral';
 
 const PublishSwitcher = () => {
   const { data } = useGetCircleBySlug();
@@ -105,13 +106,96 @@ const PublishSwitcher = () => {
   );
 };
 
+const ReferralButton = () => {
+  const Content = () => {
+    const { data, isLoading } = useGetCircleReferral();
+
+    const render = () => {
+      if (isLoading) {
+        return (
+          <div className="h-8 w-[100px] animate-pulse-faster bg-slate-300"></div>
+        );
+      }
+
+      if (!data?.data) {
+        return (
+          <p>
+            Currently only admin can generate referral code
+            <br />
+            Please contact admin through{' '}
+            <a href="https://x.com/varkased" className="text-primary">
+              Twitter
+            </a>{' '}
+            or Discord (@pandakas) Send admin your: <br />
+            - Registered email <br />- Circle link <br />- Requested code
+            (optional)
+          </p>
+        );
+      }
+
+      return (
+        <div className="flex flex-col space-y-1">
+          <p className="font-medium">Share the code!</p>
+          <div className="flex w-full justify-end gap-2">
+            <button
+              type="button"
+              onClick={async () => {
+                await navigator.clipboard.writeText(data.data as string);
+                toast.success('Referral code copied to clipboard!');
+              }}
+              className="rounded-md bg-slate-500 px-1.5 py-0.5 font-semibold text-white active:scale-90"
+            >
+              {data.data}
+            </button>
+            <button
+              type="button"
+              className="rounded border border-neutral-500 px-1 active:scale-90"
+              onClick={async () => {
+                const registLink =
+                  process.env.NEXT_PUBLIC_DOMAIN +
+                  '/join' +
+                  '?' +
+                  'referral=' +
+                  data.data;
+
+                await navigator.clipboard.writeText(registLink);
+                toast.success('Referral link copied to clipboard!');
+              }}
+            >
+              <LinkIcon width={16} height={16} />
+            </button>
+          </div>
+        </div>
+      );
+    };
+    return (
+      <PopoverContent className="rounded-none px-4 py-2">
+        {render()}
+      </PopoverContent>
+    );
+  };
+  return (
+    <Popover placement="bottom-end">
+      <PopoverTrigger>
+        <button className="absolute right-2 top-2 flex gap-1">
+          <div className="h-2 w-2 rounded-full bg-slate-500" />
+          <div className="h-2 w-2 rounded-full bg-slate-500" />
+          <div className="h-2 w-2 rounded-full bg-slate-500" />
+        </button>
+      </PopoverTrigger>
+      <Content />
+    </Popover>
+  );
+};
+
 function GeneralInfoSection() {
   const { data } = useGetCircleBySlug();
   const { isAllowed } = useIsMyCircle();
   const isAnyUrlExist =
     data?.url || data?.twitter_url || data?.instagram_url || data?.facebook_url;
   return (
-    <div className="flex flex-col gap-4">
+    <div className="relative flex flex-col gap-4">
+      {isAllowed && <ReferralButton />}
       <div className="flex items-center gap-4">
         {data?.picture_url ? (
           <div className="h-16 min-h-16 w-16 min-w-16 overflow-hidden rounded-full border border-neutral-100 shadow-lg sm:min-h-[112px] sm:min-w-[112px]">
