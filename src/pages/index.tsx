@@ -94,14 +94,17 @@ const CircleListGrid = () => {
       </GridWrapper>
 
       {hasNextPage && (
-        <Button
-          type="button"
-          color="primary"
-          variant="shadow"
-          onPress={() => fetchNextPage()}
-        >
-          Load More
-        </Button>
+        <div className="mt-4 flex w-full justify-center">
+          <Button
+            className="mx-auto"
+            type="button"
+            color="primary"
+            variant="bordered"
+            onPress={() => fetchNextPage()}
+          >
+            Load More
+          </Button>
+        </div>
       )}
     </>
   );

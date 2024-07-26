@@ -147,7 +147,7 @@ const Navbar = () => {
     <>
       <div
         className={classNames(
-          'fixed z-10 mx-auto w-full transition-all',
+          'fixed z-[11] mx-auto w-full transition-all',
           isInView
             ? 'bg-white shadow-none'
             : 'bg-white/70 shadow-lg backdrop-blur-md',
