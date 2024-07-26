@@ -143,7 +143,7 @@ const ProgressBar = ({ isInView }: { isInView?: boolean }) => {
 const Navbar = () => {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref);
-  const { viewportRef } = useViewport();
+  const { scrollToTop } = useViewport();
 
   return (
     <>
@@ -163,13 +163,7 @@ const Navbar = () => {
           )}
         >
           <div className="flex items-center gap-8">
-            <Logo
-              onClick={() => {
-                viewportRef.current?.scrollTo({
-                  top: 0,
-                });
-              }}
-            />
+            <Logo onClick={scrollToTop} />
 
             <ul className="hidden space-x-4 sm:flex">
               {MAIN_NAV_LINKS.map((link) => (
@@ -195,10 +189,11 @@ const Navbar = () => {
 };
 
 const Footer = () => {
+  const { scrollToTop } = useViewport();
   return (
     <footer className="mx-auto w-full border-t border-neutral-200 bg-white">
       <div className="mx-auto flex w-full max-w-[1440px] flex-col px-4 py-5">
-        <Logo />
+        <Logo onClick={scrollToTop} />
         <p className="mt-2 text-base">
           Alternative website to share your works before con.
         </p>

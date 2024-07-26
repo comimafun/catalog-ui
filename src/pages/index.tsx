@@ -83,13 +83,7 @@ const CircleListGrid = () => {
   return (
     <>
       <div className="flex flex-col gap-2.5 sm:gap-3">
-        <ViewportList
-          initialIndex={0}
-          initialOffset={0}
-          ref={listRef}
-          viewportRef={viewportRef}
-          items={chunked}
-        >
+        <ViewportList ref={listRef} viewportRef={viewportRef} items={chunked}>
           {(chunk, idx) => {
             return (
               <GridWrapper key={idx}>

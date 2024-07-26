@@ -8,6 +8,7 @@ const Logo = (props: Omit<ComponentProps<typeof Link>, 'href'>) => {
     <Link
       href="/"
       className="group relative flex w-min items-center overflow-hidden rounded p-1.5 font-extrabold text-[#5E17EB] ring-1 ring-[#5E17EB] transition-all hover:ring-2"
+      scroll
       {...props}
     >
       <div

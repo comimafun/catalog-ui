@@ -1,11 +1,11 @@
-import { classNames } from '@/utils/classNames';
 import { useRouter } from 'next/router';
-import { createContext, RefObject, useContext, useRef } from 'react';
+import { createContext, Fragment, RefObject, useContext, useRef } from 'react';
 import { ViewportListRef } from 'react-viewport-list';
 
 export type ViewportContext = {
   viewportRef: RefObject<HTMLDivElement>;
   listRef: RefObject<ViewportListRef>;
+  scrollToTop: () => void;
 };
 
 const viewportContext = createContext<ViewportContext | null>(null);
@@ -18,25 +18,36 @@ export const ViewportProvider = ({
   const viewportRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<ViewportListRef>(null);
 
+  const scrollToTop = () => {
+    viewportRef.current?.scrollTo({ top: 0, behavior: 'instant' });
+  };
+
   const router = useRouter();
+  const isHomepage = router.pathname === '/';
+  const Wrapper = ({ children }: { children: React.ReactNode }) => {
+    if (!isHomepage) {
+      return <Fragment>{children}</Fragment>;
+    }
+
+    return (
+      <div ref={viewportRef} className="h-screen overflow-x-hidden">
+        {children}
+      </div>
+    );
+  };
 
   return (
-    <div
-      className={classNames(
-        'overflow-x-hidden',
-        router.pathname === '/' ? 'h-screen' : '',
-      )}
-      ref={viewportRef}
-    >
+    <Wrapper>
       <viewportContext.Provider
         value={{
           viewportRef,
           listRef,
+          scrollToTop,
         }}
       >
         {children}
       </viewportContext.Provider>
-    </div>
+    </Wrapper>
   );
 };
 
