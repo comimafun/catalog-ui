@@ -114,8 +114,8 @@ const CircleListGrid = () => {
           })}
       </GridWrapper>
 
-      {hasNextPage && (
-        <div className="mt-4 flex w-full items-center justify-center gap-1.5">
+      <div className="mt-4 flex w-full items-center justify-center gap-1.5">
+        {hasNextPage && (
           <Button
             type="button"
             color="primary"
@@ -124,10 +124,10 @@ const CircleListGrid = () => {
           >
             Load More
           </Button>
+        )}
 
-          <CircleHomepageBackToTop />
-        </div>
-      )}
+        {data.length >= 18 && <CircleHomepageBackToTop />}
+      </div>
     </>
   );
 };
