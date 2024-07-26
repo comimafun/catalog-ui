@@ -1,9 +1,11 @@
 import { classNames } from '@/utils/classNames';
 import { useRouter } from 'next/router';
 import { createContext, RefObject, useContext, useRef } from 'react';
+import { ViewportListRef } from 'react-viewport-list';
 
 export type ViewportContext = {
   viewportRef: RefObject<HTMLDivElement>;
+  listRef: RefObject<ViewportListRef>;
 };
 
 const viewportContext = createContext<ViewportContext | null>(null);
@@ -14,6 +16,7 @@ export const ViewportProvider = ({
   children: React.ReactNode;
 }) => {
   const viewportRef = useRef<HTMLDivElement>(null);
+  const listRef = useRef<ViewportListRef>(null);
 
   const router = useRouter();
 
@@ -28,6 +31,7 @@ export const ViewportProvider = ({
       <viewportContext.Provider
         value={{
           viewportRef,
+          listRef,
         }}
       >
         {children}

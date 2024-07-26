@@ -23,6 +23,7 @@ import { useRouter } from 'next/router';
 import XMarkIcon from '@/icons/XMarkIcon';
 import { ViewportList } from 'react-viewport-list';
 import { useViewport } from '@/components/providers/ViewportProvider';
+import CircleHomepageBackToTop from '@/components/general/CircleHomepageBackToTop';
 
 const FilterDrawer = dynamic(() => import('@/components/circle/FilterDrawer'), {
   ssr: false,
@@ -38,7 +39,7 @@ const GridWrapper = ({ children }: { children: React.ReactNode }) => {
 
 const CircleListGrid = () => {
   const params = useParseCircleQueryToParams();
-  const { viewportRef } = useViewport();
+  const { viewportRef, listRef } = useViewport();
 
   const {
     result: data,
@@ -82,7 +83,13 @@ const CircleListGrid = () => {
   return (
     <>
       <div className="flex flex-col gap-2.5 sm:gap-3">
-        <ViewportList viewportRef={viewportRef} items={chunked}>
+        <ViewportList
+          initialIndex={0}
+          initialOffset={0}
+          ref={listRef}
+          viewportRef={viewportRef}
+          items={chunked}
+        >
           {(chunk, idx) => {
             return (
               <GridWrapper key={idx}>
@@ -108,9 +115,8 @@ const CircleListGrid = () => {
       </GridWrapper>
 
       {hasNextPage && (
-        <div className="mt-4 flex w-full justify-center">
+        <div className="mt-4 flex w-full items-center justify-center gap-1.5">
           <Button
-            className="mx-auto"
             type="button"
             color="primary"
             variant="bordered"
@@ -118,6 +124,8 @@ const CircleListGrid = () => {
           >
             Load More
           </Button>
+
+          <CircleHomepageBackToTop />
         </div>
       )}
     </>
