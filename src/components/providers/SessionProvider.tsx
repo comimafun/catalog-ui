@@ -5,17 +5,26 @@ import { SelfResponse } from '@/types/auth';
 import { useQueryClient } from '@tanstack/react-query';
 import { parseCookies } from 'nookies';
 
-import { createContext, useContext, useEffect, useMemo } from 'react';
+import {
+  createContext,
+  RefObject,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+} from 'react';
 
 const ctx = createContext<{
   session?: SelfResponse['data'];
   isLoading?: boolean;
+  windowRef: RefObject<HTMLDivElement>;
 } | null>(null);
 
 const SessionProvider = ({ children }: { children: React.ReactNode }) => {
   const { data, isLoading } = useGetSelf();
   const accessToken = parseCookies()['access_token'];
   const queryClient = useQueryClient();
+  const windowRef = useRef<HTMLDivElement>(null);
 
   const invalidateIfAuthedQueries = async () => {
     await Promise.all([
@@ -44,11 +53,18 @@ const SessionProvider = ({ children }: { children: React.ReactNode }) => {
   }, [accessToken]);
 
   const value = useMemo(
-    () => ({ session: data, isLoading }),
+    () => ({ session: data, isLoading, windowRef }),
     [data, isLoading],
   );
 
-  return <ctx.Provider value={value}>{children}</ctx.Provider>;
+  return (
+    <div
+      className="h-screen w-screen overflow-y-auto overflow-x-hidden"
+      ref={windowRef}
+    >
+      <ctx.Provider value={value}>{children}</ctx.Provider>
+    </div>
+  );
 };
 
 export const useSession = () => {

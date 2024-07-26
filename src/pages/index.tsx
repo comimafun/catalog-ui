@@ -21,21 +21,57 @@ import { useSession } from '@/components/providers/SessionProvider';
 import { useGetEvents } from '@/hooks/event/useGetEvent';
 import { useRouter } from 'next/router';
 import XMarkIcon from '@/icons/XMarkIcon';
+import { ViewportList } from 'react-viewport-list';
 
 const FilterDrawer = dynamic(() => import('@/components/circle/FilterDrawer'), {
   ssr: false,
 });
 
-const GridWrapper = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <ul className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3">
-      {children}
-    </ul>
-  );
-};
+function slice<T>(array: Array<T>, start: number, end: number) {
+  let length = array == null ? 0 : array.length;
+  if (!length) {
+    return [];
+  }
+  start = start == null ? 0 : start;
+  end = end === undefined ? length : end;
+
+  if (start < 0) {
+    start = -start > length ? 0 : length + start;
+  }
+  end = end > length ? length : end;
+  if (end < 0) {
+    end += length;
+  }
+  length = start > end ? 0 : (end - start) >>> 0;
+  start >>>= 0;
+
+  let index = -1;
+  const result = new Array(length);
+  while (++index < length) {
+    result[index] = array[index + start];
+  }
+  return result;
+}
+
+function chunk<T>(array: Array<T>, size = 1) {
+  size = Math.max(size, 0);
+  const length = array == null ? 0 : array.length;
+  if (!length || size < 1) {
+    return [];
+  }
+  let index = 0;
+  let resIndex = 0;
+  const result = new Array(Math.ceil(length / size));
+
+  while (index < length) {
+    result[resIndex++] = slice(array, index, (index += size));
+  }
+  return result as Array<T[]>;
+}
 
 const CircleListGrid = () => {
   const params = useParseCircleQueryToParams();
+  const { windowRef } = useSession();
 
   const {
     result: data,
@@ -45,6 +81,10 @@ const CircleListGrid = () => {
     fetchNextPage,
     hasNextPage,
   } = useGetCirclesInfinite(params.filter);
+
+  // chunks data into 2
+
+  const chunked = chunk(data, 3);
 
   const loading = isLoading || isFetchingNextPage;
 
@@ -77,21 +117,30 @@ const CircleListGrid = () => {
 
   return (
     <>
-      <GridWrapper>
-        {data?.map((circle) => {
-          return <CircleCard {...circle} key={circle.id} />;
-        })}
-
-        {loading &&
-          new Array(12).fill(0).map((_, index) => {
+      <ul className="flex flex-col gap-3">
+        <ViewportList items={chunked} viewportRef={windowRef}>
+          {(ck, idx) => {
             return (
-              <li
-                className="h-[380px] w-full animate-pulse-faster rounded-lg bg-slate-400"
-                key={index}
-              ></li>
+              <div key={idx} className="grid grid-cols-3 gap-3">
+                {ck.map((circle) => {
+                  return <CircleCard {...circle} key={circle.id} />;
+                })}
+              </div>
             );
-          })}
-      </GridWrapper>
+          }}
+        </ViewportList>
+        <div className="grid grid-cols-3 gap-3">
+          {true &&
+            new Array(12).fill(0).map((_, index) => {
+              return (
+                <li
+                  className="h-[380px] w-full animate-pulse-faster rounded-lg bg-slate-400"
+                  key={index}
+                ></li>
+              );
+            })}
+        </div>
+      </ul>
 
       {hasNextPage && (
         <Button
