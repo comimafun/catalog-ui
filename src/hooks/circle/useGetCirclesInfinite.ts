@@ -21,6 +21,8 @@ export const getCirclesOptions = (
       return undefined;
     },
     refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
   });
 };
 
