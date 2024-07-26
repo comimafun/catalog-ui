@@ -36,6 +36,7 @@
     "react-dom": "^18",
     "react-hook-form": "^7.51.5",
     "react-hot-toast": "^2.4.1",
+    "react-viewport-list": "^7.1.2",
     "swiper": "^11.1.4",
     "tailwind-merge": "^2.3.0",
     "vaul": "^0.9.1",

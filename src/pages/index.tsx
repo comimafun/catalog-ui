@@ -21,6 +21,9 @@ import { useSession } from '@/components/providers/SessionProvider';
 import { useGetEvents } from '@/hooks/event/useGetEvent';
 import { useRouter } from 'next/router';
 import XMarkIcon from '@/icons/XMarkIcon';
+import { ViewportList } from 'react-viewport-list';
+import { useViewport } from '@/components/providers/ViewportProvider';
+import CircleHomepageBackToTop from '@/components/general/CircleHomepageBackToTop';
 
 const FilterDrawer = dynamic(() => import('@/components/circle/FilterDrawer'), {
   ssr: false,
@@ -36,9 +39,11 @@ const GridWrapper = ({ children }: { children: React.ReactNode }) => {
 
 const CircleListGrid = () => {
   const params = useParseCircleQueryToParams();
+  const { viewportRef, listRef } = useViewport();
 
   const {
     result: data,
+    chunked,
     isLoading,
     error,
     isFetchingNextPage,
@@ -77,11 +82,21 @@ const CircleListGrid = () => {
 
   return (
     <>
-      <GridWrapper>
-        {data?.map((circle) => {
-          return <CircleCard {...circle} key={circle.id} />;
-        })}
+      <div className="flex flex-col gap-2.5 sm:gap-3">
+        <ViewportList ref={listRef} viewportRef={viewportRef} items={chunked}>
+          {(chunk, idx) => {
+            return (
+              <GridWrapper key={idx}>
+                {chunk.map((circle) => {
+                  return <CircleCard {...circle} key={circle.id} />;
+                })}
+              </GridWrapper>
+            );
+          }}
+        </ViewportList>
+      </div>
 
+      <GridWrapper>
         {loading &&
           new Array(12).fill(0).map((_, index) => {
             return (
@@ -93,10 +108,9 @@ const CircleListGrid = () => {
           })}
       </GridWrapper>
 
-      {hasNextPage && (
-        <div className="mt-4 flex w-full justify-center">
+      <div className="mt-4 flex w-full items-center justify-center gap-1.5">
+        {hasNextPage && (
           <Button
-            className="mx-auto"
             type="button"
             color="primary"
             variant="bordered"
@@ -104,8 +118,10 @@ const CircleListGrid = () => {
           >
             Load More
           </Button>
-        </div>
-      )}
+        )}
+
+        {data.length >= 18 && <CircleHomepageBackToTop />}
+      </div>
     </>
   );
 };
