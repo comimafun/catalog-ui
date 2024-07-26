@@ -16,6 +16,7 @@ import { useRouter } from 'next/router';
 import { DefaultSeo } from 'next-seo';
 import 'swiper/css';
 import { DEFAULT_SEO } from '@/constants/seo';
+import { ViewportProvider } from '@/components/providers/ViewportProvider';
 
 const fontInter = Inter({
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
@@ -50,13 +51,15 @@ export default function App({
             initialIsOpen={false}
           />
           <NextUIProvider navigate={router.push}>
-            <SessionProvider>
-              <MainLayout>
-                <DefaultSeo {...DEFAULT_SEO} />
-                <Component {...pageProps} />
-                <Toaster />
-              </MainLayout>
-            </SessionProvider>
+            <ViewportProvider>
+              <SessionProvider>
+                <MainLayout>
+                  <DefaultSeo {...DEFAULT_SEO} />
+                  <Component {...pageProps} />
+                  <Toaster />
+                </MainLayout>
+              </SessionProvider>
+            </ViewportProvider>
           </NextUIProvider>
         </HydrationBoundary>
       </QueryClientProvider>

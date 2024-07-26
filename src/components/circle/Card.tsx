@@ -56,6 +56,17 @@ function CircleCard(circle: CircleCard) {
               Work Type: {circle.work_type.map((x) => x.name).join(', ')}
             </p>
           )}
+
+          {!!circle.event && (
+            <>
+              <p className="text-xs">Convention: {circle.event.name}</p>
+              {!!circle.day && (
+                <p className="text-xs">
+                  Day: <span className="capitalize">{circle.day}</span> day(s)
+                </p>
+              )}
+            </>
+          )}
         </div>
       </Link>
     </li>

@@ -1,6 +1,9 @@
 import { circleService } from '@/services/circle';
 import { GetCircleQueryParamsClient } from '@/types/circle';
 import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/react-query';
+import { useMediaQuery } from '../common/useMediaQuery';
+import { useMemo } from 'react';
+import { chunk } from '@/utils/helper';
 
 export const getCirclesOptions = (
   params: Partial<GetCircleQueryParamsClient>,
@@ -31,9 +34,16 @@ export const useGetCirclesInfinite = (
 ) => {
   const res = useInfiniteQuery(getCirclesOptions(params));
   const result = res.data?.pages.flatMap((page) => page.data) ?? [];
+  const isLargeScreen = useMediaQuery('(min-width: 640px)');
+
+  const chunked = useMemo(
+    () => chunk(result, isLargeScreen ? 3 : 2),
+    [isLargeScreen, result],
+  );
 
   return {
     ...res,
     result,
+    chunked,
   };
 };

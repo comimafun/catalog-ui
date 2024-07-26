@@ -21,6 +21,8 @@ import { useSession } from '@/components/providers/SessionProvider';
 import { useGetEvents } from '@/hooks/event/useGetEvent';
 import { useRouter } from 'next/router';
 import XMarkIcon from '@/icons/XMarkIcon';
+import { ViewportList } from 'react-viewport-list';
+import { useViewport } from '@/components/providers/ViewportProvider';
 
 const FilterDrawer = dynamic(() => import('@/components/circle/FilterDrawer'), {
   ssr: false,
@@ -36,9 +38,11 @@ const GridWrapper = ({ children }: { children: React.ReactNode }) => {
 
 const CircleListGrid = () => {
   const params = useParseCircleQueryToParams();
+  const { viewportRef } = useViewport();
 
   const {
     result: data,
+    chunked,
     isLoading,
     error,
     isFetchingNextPage,
@@ -77,11 +81,21 @@ const CircleListGrid = () => {
 
   return (
     <>
-      <GridWrapper>
-        {data?.map((circle) => {
-          return <CircleCard {...circle} key={circle.id} />;
-        })}
+      <div className="flex flex-col gap-2.5 sm:gap-3">
+        <ViewportList viewportRef={viewportRef} items={chunked}>
+          {(chunk, idx) => {
+            return (
+              <GridWrapper key={idx}>
+                {chunk.map((circle) => {
+                  return <CircleCard {...circle} key={circle.id} />;
+                })}
+              </GridWrapper>
+            );
+          }}
+        </ViewportList>
+      </div>
 
+      <GridWrapper>
         {loading &&
           new Array(12).fill(0).map((_, index) => {
             return (

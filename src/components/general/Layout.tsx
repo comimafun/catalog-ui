@@ -11,6 +11,7 @@ import Logo from './Logo';
 import dynamic from 'next/dynamic';
 import { MAIN_NAV_LINKS } from '@/constants/common';
 import { useRouter } from 'next/router';
+import { useViewport } from '../providers/ViewportProvider';
 
 const MenuDrawer = dynamic(() => import('./MenuDrawer'), { ssr: false });
 
@@ -142,6 +143,7 @@ const ProgressBar = ({ isInView }: { isInView?: boolean }) => {
 const Navbar = () => {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref);
+  const { viewportRef } = useViewport();
 
   return (
     <>
@@ -161,7 +163,13 @@ const Navbar = () => {
           )}
         >
           <div className="flex items-center gap-8">
-            <Logo />
+            <Logo
+              onClick={() => {
+                viewportRef.current?.scrollTo({
+                  top: 0,
+                });
+              }}
+            />
 
             <ul className="hidden space-x-4 sm:flex">
               {MAIN_NAV_LINKS.map((link) => (
