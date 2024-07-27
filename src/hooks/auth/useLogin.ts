@@ -13,7 +13,6 @@ export const useLogin = () => {
   const signIn = useGoogleLogin({
     flow: 'auth-code',
     ux_mode: 'popup',
-    redirect_uri: 'http://localhost:3000',
     onSuccess: async (response) => {
       try {
         const parsed = onSuccessGoogleSchema.parse(response);
