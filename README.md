@@ -1,8 +1,8 @@
-![logo](./public/logo.png)
-
 # Project catalog-ui 📚
 
 Nextjs web application for `Inner Catalog`
+
+![logo](./public/flat-logo.png)
 
 ## Description
 
