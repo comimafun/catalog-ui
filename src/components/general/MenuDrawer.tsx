@@ -53,6 +53,7 @@ function MenuDrawer() {
                   color="primary"
                   className="w-full"
                   onClick={close}
+                  shallow
                 >
                   Your circle
                 </Button>

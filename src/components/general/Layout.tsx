@@ -37,6 +37,7 @@ const RightMenu = () => {
                 size="sm"
                 variant="solid"
                 color="primary"
+                shallow
               >
                 Your circle
               </Button>
