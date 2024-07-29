@@ -2,11 +2,28 @@ import EachPageLayout from '@/components/general/EachPageLayout';
 import React from 'react';
 
 function AboutPage() {
+  const APP_STAGE = process.env.NEXT_PUBLIC_APP_STAGE;
   return (
     <EachPageLayout className="mb-10">
       <h1 className="my-4 text-4xl font-bold">Welcome to innercatalog</h1>
       <div className="space-y-2 text-base">
-        {' '}
+        {APP_STAGE === 'development' && (
+          <p className="rounded bg-slate-100 px-4 py-2 font-medium">
+            If you see this message, it means you are in the development mode.
+            You&apos;re free to test, create account, post and upload picutre.
+            But please be aware that the data might be deleted without notice.
+            Also check{' '}
+            <a
+              className="font-bold text-primary"
+              href="/creator"
+              target="_blank"
+              rel="noreferrer"
+            >
+              my page
+            </a>{' '}
+            to see some updates and more about this project 🥹
+          </p>
+        )}{' '}
         <p className="text-justify">
           Inner catalog is a website where individual, circles, groups to share
           their work and found each other before convention.
