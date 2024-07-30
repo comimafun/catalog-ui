@@ -9,7 +9,7 @@ function ExtendedImage({ onLoad, ...props }: Props) {
   return (
     <div className="relative h-full w-full">
       {isLoading && (
-        <div className="absolute inset-0 z-[11] flex items-center justify-center gap-1.5 bg-white/50">
+        <div className="absolute inset-0 z-[10] flex items-center justify-center gap-1.5 bg-white/50">
           <div className="h-3 w-3 animate-[bounce-higher_1s_infinite] rounded-full bg-primary" />
           <div className="h-3 w-3 animate-[bounce-higher_1s_infinite_100ms] rounded-full bg-[#5E17EB]" />
           <div className="h-3 w-3 animate-[bounce-higher_1s_infinite_250ms] rounded-full bg-red-500" />
