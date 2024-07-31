@@ -9,16 +9,25 @@ function Referral() {
   const { data } = useGetCircleBySlug({
     slug: session?.circle?.slug,
   });
+
+  const APP_STAGE = process.env.NEXT_PUBLIC_APP_STAGE;
   return (
     <EachPageLayout className="mb-10 pb-10">
       <h1 className="text-4xl font-bold">
         Hai{!!data?.name ? `, ${data.name}!` : '!'}
       </h1>
 
+      {APP_STAGE === 'development' && (
+        <div className="my-2 rounded bg-slate-100 px-4 py-2 font-medium">
+          This is a development/testing environment. And this campaign is
+          something that will work in the future if there&apos;s ever one😅. If
+          you have something in mind about this kind of campaign, also let me
+          know!
+        </div>
+      )}
+
       <div className="space-y-2 text-base">
-        <h2 className="text-2xl font-semibold">
-          Referral System (only for production)
-        </h2>
+        <h2 className="text-2xl font-semibold">Referral System</h2>
         <p>
           If you reached this page you and i might have same goal, more reach!
           <br />

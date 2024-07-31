@@ -160,14 +160,15 @@ const WarningDev = () => {
       </PopoverTrigger>
       <PopoverContent className="bg-warning-50 px-4 py-2">
         <p className="max-w-[640px] text-xs sm:text-sm">
-          Hi, since this is a development version all registered circles will be
-          automatically showed up here. So, please don&quot;t put any sensitive
+          This is a development/testing environment all registered circles will
+          be automatically showed. So, please don&quot;t put any sensitive
           information. <br />
           Later on it would only show circle with{' '}
           <span className="font-medium">
             <i>publish</i>
           </span>{' '}
-          status. <br /> Thank you for your understanding.
+          status. <br />
+          Thank you for your understanding.
         </p>
       </PopoverContent>
     </Popover>
