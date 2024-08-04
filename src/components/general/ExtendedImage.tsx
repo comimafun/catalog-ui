@@ -23,6 +23,7 @@ function ExtendedImage({ onLoad, ...props }: Props) {
         onError={() => {
           setIsLoading(false);
         }}
+        unoptimized
         {...props}
       />
     </div>
