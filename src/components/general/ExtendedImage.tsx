@@ -13,15 +13,16 @@ type GenerateSrcArgs = {
   width?: number | string;
   height?: number | string;
   quality?: number | string;
+  fill?: boolean;
 };
 
 function ExtendedImage({ onLoad, manuallyOptimize = true, ...props }: Props) {
   const [isLoading, setIsLoading] = useState(true);
 
   const generateSrc = useCallback(
-    ({ src, width, height, quality }: GenerateSrcArgs) => {
-      if (!manuallyOptimize) return props.src;
+    ({ src, width, height, quality, fill }: GenerateSrcArgs) => {
       if (!src) return '';
+      if (!manuallyOptimize || !!fill) return props.src;
 
       const BASE_URL = 'https://cdn.innercatalog.com';
       const splitted = props.src.toString().split(BASE_URL);
@@ -29,6 +30,7 @@ function ExtendedImage({ onLoad, manuallyOptimize = true, ...props }: Props) {
       if (!path) {
         return props.src;
       }
+
       const NEW_BASE = process.env.NEXT_PUBLIC_UI_BASE_URL! + '/api/image';
       const format: Record<string, number | string> = {};
       if (height) {
@@ -74,6 +76,7 @@ function ExtendedImage({ onLoad, manuallyOptimize = true, ...props }: Props) {
           width: props.width,
           height: props.height,
           quality: props.quality,
+          fill: props.fill,
         })}
       />
     </div>
