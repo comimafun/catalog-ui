@@ -11,7 +11,6 @@
     "release": "release-it"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.623.0",
     "@hookform/resolvers": "^3.6.0",
     "@nextui-org/react": "^2.4.1",
     "@react-oauth/google": "^0.12.1",
@@ -38,7 +37,6 @@
     "react-hook-form": "^7.51.5",
     "react-hot-toast": "^2.4.1",
     "react-viewport-list": "^7.1.2",
-    "sharp": "^0.33.4",
     "swiper": "^11.1.4",
     "tailwind-merge": "^2.3.0",
     "vaul": "^0.9.1",

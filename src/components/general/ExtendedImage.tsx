@@ -1,55 +1,11 @@
 /* eslint-disable jsx-a11y/alt-text */
-import { StaticImport } from 'next/dist/shared/lib/get-img-props';
 import Image from 'next/image';
-import QueryString from 'qs';
-import React, { ComponentProps, useCallback, useState } from 'react';
+import React, { ComponentProps, useState } from 'react';
 
-type Props = ComponentProps<typeof Image> & {
-  manuallyOptimize?: boolean;
-};
+type Props = ComponentProps<typeof Image>;
 
-type GenerateSrcArgs = {
-  src: string | StaticImport;
-  width?: number | string;
-  height?: number | string;
-  quality?: number | string;
-};
-
-function ExtendedImage({ onLoad, manuallyOptimize = true, ...props }: Props) {
+function ExtendedImage({ onLoad, ...props }: Props) {
   const [isLoading, setIsLoading] = useState(true);
-
-  const generateSrc = useCallback(
-    ({ src, width, height, quality }: GenerateSrcArgs) => {
-      if (!manuallyOptimize) return props.src;
-      if (!src) return '';
-
-      const BASE_URL = 'https://cdn.innercatalog.com';
-      const splitted = props.src.toString().split(BASE_URL);
-      const path = splitted[1];
-      if (!path) {
-        return props.src;
-      }
-      const NEW_BASE = process.env.NEXT_PUBLIC_UI_BASE_URL! + '/api/image';
-      const format: Record<string, number | string> = {};
-      if (height) {
-        format.height = height;
-      }
-      if (width) {
-        format.width = width;
-      }
-      if (quality) {
-        format.quality = quality;
-      }
-      format.path = path;
-      if (Object.keys(format).length > 0) {
-        const q = QueryString.stringify(format);
-        return `${NEW_BASE}?${q}`;
-      }
-      return props.src;
-    },
-    [],
-  );
-
   return (
     <div className="relative h-full w-full">
       {isLoading && (
@@ -69,12 +25,6 @@ function ExtendedImage({ onLoad, manuallyOptimize = true, ...props }: Props) {
         }}
         unoptimized
         {...props}
-        src={generateSrc({
-          src: props.src,
-          width: props.width,
-          height: props.height,
-          quality: props.quality,
-        })}
       />
     </div>
   );
