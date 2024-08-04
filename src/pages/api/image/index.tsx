@@ -87,21 +87,20 @@ export default async function handler(
     const cacheKey = generateKey(query.data);
     const isExist = await imageExist(cacheKey);
     if (isExist) {
-      console.warn('CACHED');
       const redirectUrl = `${process.env.CDN_URL}/${cacheKey}`;
-      res.redirect(307, redirectUrl);
+      res.redirect(301, redirectUrl);
+    } else {
+      const { data: newImg, contentType } = await processImage(query.data);
+      await S3.send(
+        new PutObjectCommand({
+          Bucket: process.env.BUCKET_NAME,
+          Key: cacheKey,
+          Body: newImg,
+          ContentType: contentType as string,
+        }),
+      );
+      res.redirect(301, `${process.env.CDN_URL}/${cacheKey}`);
     }
-    const { data: newImg, contentType } = await processImage(query.data);
-    await S3.send(
-      new PutObjectCommand({
-        Bucket: process.env.BUCKET_NAME,
-        Key: cacheKey,
-        Body: newImg,
-        ContentType: contentType as string,
-      }),
-    );
-    console.warn('PROCESSED');
-    res.redirect(307, `${process.env.CDN_URL}/${cacheKey}`);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'INTERNAL_SERVER_ERROR', code: 500 });

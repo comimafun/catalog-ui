@@ -1,43 +1,42 @@
 /* eslint-disable jsx-a11y/alt-text */
 import Image from 'next/image';
-import React, { ComponentProps, useState } from 'react';
+import QueryString from 'qs';
+import React, { ComponentProps, useCallback, useState } from 'react';
 
-type Props = ComponentProps<typeof Image>;
+type Props = ComponentProps<typeof Image> & {
+  manuallyOptimize?: boolean;
+};
 
-function ExtendedImage({ onLoad, ...props }: Props) {
+function ExtendedImage({ onLoad, manuallyOptimize = true, ...props }: Props) {
   const [isLoading, setIsLoading] = useState(true);
 
-  const generateSrc = () => {
+  const generateSrc = useCallback(() => {
+    if (!manuallyOptimize) return props.src;
+
     const BASE_URL = 'https://cdn.innercatalog.com';
     const splitted = props.src.toString().split(BASE_URL);
     const path = splitted[1];
     if (!path) {
       return props.src;
     }
-    const cfImages = '/cdn-cgi/image';
-
-    const format: string[] = [];
-
+    const NEW_BASE = process.env.NEXT_PUBLIC_UI_BASE_URL! + '/api/image';
+    const format: Record<string, number | string> = {};
     if (props.height) {
-      format.push(`height=${props.height}`);
+      format.height = props.height;
     }
-
     if (props.width) {
-      format.push(`width=${props.width}`);
+      format.width = props.width;
     }
-
     if (props.quality) {
-      format.push(`quality=${props.quality}`);
+      format.quality = props.quality;
     }
-
-    if (format.length > 0) {
-      const optimized = format.join(',');
-
-      return `${BASE_URL}${cfImages}/${optimized}${path}`;
+    format.path = path;
+    if (Object.keys(format).length > 0) {
+      const q = QueryString.stringify(format);
+      return `${NEW_BASE}?${q}`;
     }
-
     return props.src;
-  };
+  }, [props.src, props.height, props.width, props.quality]);
 
   return (
     <div className="relative h-full w-full">
