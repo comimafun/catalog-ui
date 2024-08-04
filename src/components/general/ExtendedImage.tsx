@@ -6,6 +6,39 @@ type Props = ComponentProps<typeof Image>;
 
 function ExtendedImage({ onLoad, ...props }: Props) {
   const [isLoading, setIsLoading] = useState(true);
+
+  const generateSrc = () => {
+    const BASE_URL = 'https://cdn.innercatalog.com';
+    const splitted = props.src.toString().split(BASE_URL);
+    const path = splitted[1];
+    if (!path) {
+      return props.src;
+    }
+    const cfImages = '/cdn-cgi/image';
+
+    const format: string[] = [];
+
+    if (props.height) {
+      format.push(`height=${props.height}`);
+    }
+
+    if (props.width) {
+      format.push(`width=${props.width}`);
+    }
+
+    if (props.quality) {
+      format.push(`quality=${props.quality}`);
+    }
+
+    if (format.length > 0) {
+      const optimized = format.join(',');
+
+      return `${BASE_URL}${cfImages}/${optimized}${path}`;
+    }
+
+    return props.src;
+  };
+
   return (
     <div className="relative h-full w-full">
       {isLoading && (
@@ -25,6 +58,7 @@ function ExtendedImage({ onLoad, ...props }: Props) {
         }}
         unoptimized
         {...props}
+        src={generateSrc()}
       />
     </div>
   );
