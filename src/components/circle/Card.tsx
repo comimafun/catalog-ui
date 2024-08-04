@@ -32,7 +32,7 @@ function CircleCard(circle: CircleCard) {
               width={192}
               src={circle.cover_picture_url}
               alt={`Circle cut of ` + circle.name}
-              quality={60}
+              quality={95}
               loading="lazy"
               className="h-full w-full object-cover"
             />
