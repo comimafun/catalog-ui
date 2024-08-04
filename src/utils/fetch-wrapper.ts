@@ -64,9 +64,7 @@ export const fetchInstance = async <T>(
 
   const headers: HeadersInit & {
     'Content-Type'?: string;
-  } = {
-    'Content-Type': 'application/json',
-  };
+  } = {};
 
   const accessToken = nookies.get(c).access_token;
   if (accessToken) {
@@ -80,8 +78,8 @@ export const fetchInstance = async <T>(
   }
 
   const isFormData = body instanceof FormData;
-  if (isFormData) {
-    delete headers['Content-Type'];
+  if (!isFormData) {
+    headers['Content-Type'] = 'application/json';
   }
 
   const config: RequestInit = {
