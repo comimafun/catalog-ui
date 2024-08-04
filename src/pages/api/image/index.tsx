@@ -88,7 +88,7 @@ export default async function handler(
     const isExist = await imageExist(cacheKey);
     if (isExist) {
       const redirectUrl = `${process.env.CDN_URL}/${cacheKey}`;
-      res.redirect(301, redirectUrl);
+      res.redirect(307, redirectUrl);
     } else {
       const { data: newImg, contentType } = await processImage(query.data);
       await S3.send(
@@ -99,7 +99,7 @@ export default async function handler(
           ContentType: contentType as string,
         }),
       );
-      res.redirect(301, `${process.env.CDN_URL}/${cacheKey}`);
+      res.redirect(307, `${process.env.CDN_URL}/${cacheKey}`);
     }
   } catch (error) {
     console.error(error);
