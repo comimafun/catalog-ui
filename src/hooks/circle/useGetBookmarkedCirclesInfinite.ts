@@ -1,10 +1,10 @@
 import { useSession } from '@/components/providers/SessionProvider';
 import { circleService } from '@/services/circle';
-import { GetCircleQueryParamsClient } from '@/types/circle';
+import { CircleRouterQueryParamsSchema } from '@/types/circle';
 import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/react-query';
 
 export const getBookmarkedCirclesOptions = (
-  params: Partial<GetCircleQueryParamsClient>,
+  params: Partial<CircleRouterQueryParamsSchema>,
   options?: Partial<{
     enabled: boolean;
   }>,
@@ -30,7 +30,7 @@ export const getBookmarkedCirclesOptions = (
 };
 
 export const useGetBookmarkedCirclesInfinite = (
-  params: Partial<GetCircleQueryParamsClient>,
+  params: Partial<CircleRouterQueryParamsSchema>,
 ) => {
   const { session } = useSession();
   const res = useInfiniteQuery(

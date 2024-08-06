@@ -6,11 +6,14 @@ export const productEntity = z.object({
   name: z.string(),
   image_url: z.string(),
 });
-
-export type Product = z.infer<typeof productEntity>;
-
 export const getProductsResponse = backendResponseSchema(
   z.array(productEntity),
 );
-
 export const getOneProductResponse = backendResponseSchema(productEntity);
+export const addProductPayoad = productEntity.omit({ id: true });
+export const updateProductPayload = productEntity;
+
+export type ProductEntity = z.infer<typeof productEntity>;
+export type GetProductsResponse = z.infer<typeof getProductsResponse>;
+export type GetOneProductResponse = z.infer<typeof getOneProductResponse>;
+export type AddProductPayload = z.infer<typeof addProductPayoad>;

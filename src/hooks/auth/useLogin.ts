@@ -1,5 +1,5 @@
 import { authService } from '@/services/auth';
-import { onSuccessGoogleSchema } from '@/types/auth';
+import { onSuccessGoogleResponseSchema } from '@/types/auth';
 import { prettifyError, setAccessToken } from '@/utils/helper';
 import { useGoogleLogin } from '@react-oauth/google';
 import { useQueryClient } from '@tanstack/react-query';
@@ -15,7 +15,7 @@ export const useLogin = () => {
     ux_mode: 'popup',
     onSuccess: async (response) => {
       try {
-        const parsed = onSuccessGoogleSchema.parse(response);
+        const parsed = onSuccessGoogleResponseSchema.parse(response);
         const { data } = await authService.googleCallback(parsed.code);
 
         setAccessToken(data.access_token, data.access_token_expired_at);

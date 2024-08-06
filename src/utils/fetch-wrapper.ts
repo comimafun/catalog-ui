@@ -1,8 +1,7 @@
 import { GetServerSidePropsContext } from 'next';
 import QueryString from 'qs';
 import nookies from 'nookies';
-import { newTokenResponse } from '@/types/auth';
-import { z } from 'zod';
+import { NewTokenResponse } from '@/types/auth';
 
 const TOKEN_NEED_TO_REFRESH = new Set(['TOKEN_INVALID', 'TOKEN_EXPIRED']);
 let refreshPromise: Promise<Response> | unknown = null;
@@ -141,9 +140,7 @@ export const fetchInstance = async <T>(
         return Promise.reject(refreshErrObj);
       }
 
-      const { data } = (await refreshing.json()) as z.infer<
-        typeof newTokenResponse
-      >;
+      const { data } = (await refreshing.json()) as NewTokenResponse;
 
       nookies.set(c, 'access_token', data.access_token, {
         path: '/',

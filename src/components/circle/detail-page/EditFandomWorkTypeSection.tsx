@@ -34,22 +34,22 @@ const TABS = [
   },
 ] as const;
 
-const updateFandomsSchema = z.object({
+const updateFandomsFormSchema = z.object({
   fandom: z
     .array(z.object({ id: z.coerce.number(), name: z.string() }))
     .max(5, { message: 'You can only select up to 5 fandoms' })
     .default([]),
 });
 
-const updateWorkTypesSchema = z.object({
+const updateWorkTypesFormSchema = z.object({
   work_type: z
     .array(z.object({ id: z.coerce.number(), name: z.string() }))
     .max(5, { message: 'You can only select up to 5 fandoms' })
     .default([]),
 });
 
-type UpdateFandomsSchema = z.infer<typeof updateFandomsSchema>;
-type UpdateWorkTypesSchema = z.infer<typeof updateWorkTypesSchema>;
+type UpdateFandomsFormSchema = z.infer<typeof updateFandomsFormSchema>;
+type UpdateWorkTypesFormSchema = z.infer<typeof updateWorkTypesFormSchema>;
 
 const Skeletons = () => (
   <ul className="mt-4 grid grid-cols-2 gap-2.5">
@@ -65,7 +65,7 @@ const Skeletons = () => (
 );
 
 const WorkTypeSection = () => {
-  const form = useFormContext<UpdateWorkTypesSchema>();
+  const form = useFormContext<UpdateWorkTypesFormSchema>();
   const { data: circle } = useGetCircleBySlug();
   const { data: workTypes } = useGetWorkType();
   const updateWorkType = useUpdateCircle();
@@ -218,7 +218,7 @@ const FandomSection = () => {
     search,
   });
   const createFandom = usePostFandom();
-  const form = useFormContext<UpdateFandomsSchema>();
+  const form = useFormContext<UpdateFandomsFormSchema>();
   const updateFandom = useUpdateCircle();
 
   return (
@@ -382,15 +382,15 @@ function EditFandomWorkTypeSection() {
   const setTab = useEditFandomWorkTypeStore((s) => s.setTab);
   const reset = useEditFandomWorkTypeStore((s) => s.reset);
   const { data } = useGetCircleBySlug();
-  const fandomForm = useForm<UpdateFandomsSchema>({
-    resolver: zodResolver(updateFandomsSchema),
+  const fandomForm = useForm<UpdateFandomsFormSchema>({
+    resolver: zodResolver(updateFandomsFormSchema),
     defaultValues: {
       fandom: data?.fandom ?? [],
     },
   });
 
-  const workTypeForm = useForm<UpdateWorkTypesSchema>({
-    resolver: zodResolver(updateWorkTypesSchema),
+  const workTypeForm = useForm<UpdateWorkTypesFormSchema>({
+    resolver: zodResolver(updateWorkTypesFormSchema),
     defaultValues: {
       work_type: data?.work_type ?? [],
     },

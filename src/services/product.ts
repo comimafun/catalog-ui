@@ -1,4 +1,9 @@
-import { getOneProductResponse, getProductsResponse } from '@/types/product';
+import {
+  AddProductPayload,
+  getOneProductResponse,
+  getProductsResponse,
+  ProductEntity,
+} from '@/types/product';
 import { fetchInstance } from '@/utils/fetch-wrapper';
 
 export const productService = {
@@ -8,10 +13,7 @@ export const productService = {
   },
   postAddProductByCircleID: async (
     circleID: number,
-    payload: {
-      name: string;
-      image_url: string;
-    },
+    payload: AddProductPayload,
   ) => {
     const res = await fetchInstance(null, `/v1/circle/${circleID}/product`, {
       body: payload,
@@ -35,11 +37,7 @@ export const productService = {
     payload,
   }: {
     circleID: number;
-    payload: {
-      id: number;
-      name: string;
-      image_url: string;
-    };
+    payload: ProductEntity;
   }) => {
     const res = await fetchInstance(
       null,

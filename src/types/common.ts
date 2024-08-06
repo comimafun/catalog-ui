@@ -6,7 +6,6 @@ export const backendResponseSchema = <T extends z.ZodTypeAny>(zodObj: T) => {
     data: zodObj,
   });
 };
-
 export const backendResponsePagination = <T extends AnyZodObject>(
   zodObj: T,
 ) => {
@@ -22,33 +21,16 @@ export const backendResponsePagination = <T extends AnyZodObject>(
     }),
   });
 };
-
 export const optionalUrl = z.union([
   z.literal(''),
   z.string().trim().url().max(255),
 ]);
-
 export const trimmedString = z.union([z.literal(''), z.string().trim()]);
-
 export const varchar255 = z
   .string()
   .max(255, { message: 'Too long' })
   .trim()
   .or(z.literal(''));
-
-export type CommonStoreSetter<T extends Record<string, unknown>> = {
-  [K in keyof T as `set${Capitalize<string & K>}`]: (value: T[K]) => void;
-};
-
-export type CommonStoreSetterWithPreviousSetter<
-  T extends Record<string, unknown>,
-> = {
-  [K in keyof T as `set${Capitalize<string & K>}`]: (
-    fn: (prev: T[K]) => T[K],
-  ) => void | ((value: T[K]) => void);
-};
-
-export type SVGS = JSX.IntrinsicElements['svg'];
 
 export const blockString = trimmedString.refine(
   (x) => {
@@ -63,3 +45,8 @@ export const blockString = trimmedString.refine(
 );
 
 export const dayEnum = z.enum(['first', 'second', 'both']);
+
+export type CommonStoreSetter<T extends Record<string, unknown>> = {
+  [K in keyof T as `set${Capitalize<string & K>}`]: (value: T[K]) => void;
+};
+export type SVGS = JSX.IntrinsicElements['svg'];

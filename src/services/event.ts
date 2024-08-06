@@ -1,7 +1,7 @@
 import { getOneCircleResponse } from '@/types/circle';
 import {
   getEventPaginationSchema,
-  UpdateAttendingEventBody,
+  UpdateAttendingEventPayload,
 } from '@/types/event';
 import { fetchInstance } from '@/utils/fetch-wrapper';
 
@@ -12,7 +12,7 @@ export const eventService = {
   },
   putUpdateAttendingEventByCircleID: async (
     circleID: number,
-    body: UpdateAttendingEventBody,
+    body: UpdateAttendingEventPayload,
   ) => {
     const res = await fetchInstance(null, `/v1/circle/${circleID}/event`, {
       body,

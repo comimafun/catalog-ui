@@ -9,8 +9,8 @@ import ChevronUpIcon from '@/icons/ChevronUpIcon';
 import ImageIcon from '@/icons/ImageIcon';
 import { uploadService } from '@/services/upload';
 import {
-  EditGeneralInfoPayload,
-  editGeneralInfoPayload,
+  EditGeneralInfoFormSchema,
+  editGeneralInfoFormSchema,
   RATING_ENUM,
   updateCirclePayload,
 } from '@/types/circle';
@@ -27,8 +27,8 @@ function EditGeneralInfoSection() {
   const [isUploading, setIsUploading] = useState(false);
   const { data, isLoading, error } = useGetCircleBySlug();
   const router = useRouter();
-  const form = useForm<EditGeneralInfoPayload>({
-    resolver: zodResolver(editGeneralInfoPayload),
+  const form = useForm<EditGeneralInfoFormSchema>({
+    resolver: zodResolver(editGeneralInfoFormSchema),
   });
   const { handleSubmit, register, control } = form;
   const { mutateAsync, isPending } = useUpdateCircle();

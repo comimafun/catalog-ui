@@ -4,16 +4,13 @@ import { create } from 'zustand';
 type LayoutStore = {
   openMenuDrawer: boolean;
 };
-
 type LayoutStoreAction = CommonStoreSetter<LayoutStore> & {
   toggleMenuDrawer: () => void;
   reset: () => void;
 };
-
 const LayoutInitialState = {
   openMenuDrawer: false,
 } as const;
-
 export const useLayoutStore = create<LayoutStore & LayoutStoreAction>(
   (set) => ({
     ...LayoutInitialState,

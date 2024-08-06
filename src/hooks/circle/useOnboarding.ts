@@ -1,6 +1,6 @@
 import { authService } from '@/services/auth';
 import { circleService } from '@/services/circle';
-import { OnboardingPayload, onboardingPayloadSchema } from '@/types/circle';
+import { OnboardingPayload, onboardingPayload } from '@/types/circle';
 import { prettifyError, setAccessToken } from '@/utils/helper';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
@@ -17,9 +17,7 @@ export const useOnboarding = () => {
   const handleOnboarding = async (payload: OnboardingPayload) => {
     try {
       setIsLoading(true);
-      const { data } = await mutateAsync(
-        onboardingPayloadSchema.parse(payload),
-      );
+      const { data } = await mutateAsync(onboardingPayload.parse(payload));
       const { data: refresh } = await authService.getRefreshToken();
       setAccessToken(refresh.access_token, refresh.access_token_expired_at);
       toast.success('Circle created, redirecting to your page');

@@ -143,7 +143,9 @@ const EditorProvider = ({
   };
   const editor = useEditor({
     content,
-    onUpdate: (c) => onChange?.(c.editor.getHTML()),
+    onUpdate: (c) => {
+      onChange?.(c.editor.getHTML());
+    },
     extensions,
     editorProps: {
       attributes: {
@@ -305,7 +307,7 @@ const ImageMenu = () => {
   return (
     <Uploader
       accept={Array.from(ACCEPTED_IMAGE_TYPES_SET).join(',')}
-      className="'flex text-neutral-500', items-center rounded border border-neutral-500 bg-white p-1"
+      className="'flex items-center rounded border border-neutral-500 bg-white p-1 text-neutral-500"
       customRequest={async (files) => {
         try {
           setLoading(true);

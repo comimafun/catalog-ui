@@ -1,5 +1,5 @@
 import { CommonStoreSetter } from '@/types/common';
-import { Product } from '@/types/product';
+import { ProductEntity } from '@/types/product';
 import { create } from 'zustand';
 
 type DrawerState = {
@@ -10,13 +10,11 @@ type DrawerState = {
 type DrawerAction = CommonStoreSetter<DrawerState> & {
   reset: () => void;
 };
-
 const drawerInitialState: DrawerState = {
   drawerFilterStep: null,
   drawerFilterIsOpen: false,
   searchFandom: '',
 };
-
 export const useDrawerFilterStore = create<DrawerState & DrawerAction>(
   (set) => ({
     ...drawerInitialState,
@@ -32,17 +30,14 @@ type EditFandomWorkTypeStore = {
   fandomSearch: string;
   fandomLocalSearch: string;
 };
-
 type EditFandomWorkTypeAction = CommonStoreSetter<EditFandomWorkTypeStore> & {
   reset: () => void;
 };
-
 const EditFandomInitialState: EditFandomWorkTypeStore = {
   tab: 'fandom',
   fandomSearch: '',
   fandomLocalSearch: '',
 };
-
 export const useEditFandomWorkTypeStore = create<
   EditFandomWorkTypeStore & EditFandomWorkTypeAction
 >((set) => ({
@@ -58,17 +53,14 @@ export const useEditFandomWorkTypeStore = create<
 }));
 
 type CirclePageStore = {
-  selectedProduct: Product | null;
+  selectedProduct: ProductEntity | null;
 };
-
 type CirclePageAction = CommonStoreSetter<CirclePageStore> & {
   reset: () => void;
 };
-
 const circlePageInitialState: CirclePageStore = {
   selectedProduct: null,
 };
-
 export const useCirclePageStore = create<CirclePageStore & CirclePageAction>(
   (set) => ({
     ...circlePageInitialState,

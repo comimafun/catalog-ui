@@ -30,7 +30,7 @@ import { Controller, FormProvider, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { z } from 'zod';
 
-const editEventSchema = z.object({
+const editEventFormSchema = z.object({
   event: eventEntity,
   day: dayEnum.or(z.literal('')).nullish(),
   block: z
@@ -71,8 +71,7 @@ const editEventSchema = z.object({
     .or(z.literal(''))
     .nullish(),
 });
-
-type EditEventForm = z.infer<typeof editEventSchema>;
+type EditEventFormSchema = z.infer<typeof editEventFormSchema>;
 
 const ConfirmationButton = () => {
   const { isOpen, onOpenChange } = useDisclosure();
@@ -156,14 +155,14 @@ function EditEventSection() {
   const { data: circle } = useGetCircleBySlug();
   const { data, isLoading } = useGetEvents({ limit: 20, page: 1 });
   const [initalized, setInitalized] = useState(false);
-  const form = useForm<EditEventForm>({
-    resolver: zodResolver(editEventSchema),
+  const form = useForm<EditEventFormSchema>({
+    resolver: zodResolver(editEventFormSchema),
   });
   const updateEvent = useUpdateEventByCircleID();
 
   useEffect(() => {
     if (initalized || !circle) return;
-    const values = {} as EditEventForm;
+    const values = {} as EditEventFormSchema;
     if (circle?.event) {
       values.event = circle.event;
     }
