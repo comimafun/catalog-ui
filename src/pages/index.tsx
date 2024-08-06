@@ -1,4 +1,4 @@
-import CirclePaginationSchema from '@/components/circle/Card';
+import CircleCard from '@/components/circle/Card';
 import SearchInput from '@/components/circle/Search';
 import {
   Button,
