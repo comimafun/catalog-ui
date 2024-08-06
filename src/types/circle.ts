@@ -15,8 +15,7 @@ export const RATING_ENUM = ['GA', 'PG', 'M'] as const;
 export const ratingEnumSchema = z.enum(RATING_ENUM, {
   message: 'Rating is required',
 });
-
-export const circlesQueryParamsClient = z.object({
+export const circleRouterQueryParamsSchema = z.object({
   search: trimmedString.optional(),
   work_type_id: z
     .array(z.coerce.number())
@@ -38,28 +37,21 @@ export const circlesQueryParamsClient = z.object({
 
   event: trimmedString.optional(),
 });
-
-export type GetCircleQueryParamsClient = z.infer<
-  typeof circlesQueryParamsClient
->;
-
-export const getCirclesQueryParams = circlesQueryParamsClient.partial().extend({
-  limit: z.number().min(1).max(20),
-  page: z.number().min(1).default(1),
-});
-
-export type GetCircleQueryParams = z.infer<typeof getCirclesQueryParams>;
+export const getCirclesQueryParams = circleRouterQueryParamsSchema
+  .partial()
+  .extend({
+    limit: z.number().min(1).max(20),
+    page: z.number().min(1).default(1),
+  });
 
 export const fandomWorkTypeBaseEntity = z.object({
   name: z.string(),
   id: z.number(),
 });
-
 export const circleBlockEntity = z.object({
   id: z.number(),
   name: z.string(),
 });
-
 export const circleEntity = z.object({
   id: z.number(),
   created_at: z.string(),
@@ -79,22 +71,18 @@ export const circleEntity = z.object({
   event_id: z.number().nullable(),
   rating: ratingEnumSchema.nullable(),
 });
-
-export const circleSchema = circleEntity.extend({
+export type CircleEntity = z.infer<typeof circleEntity>;
+export const circleJoinedSchema = circleEntity.extend({
   block: circleBlockEntity.nullable(),
   bookmarked: z.boolean(),
   work_type: z.array(fandomWorkTypeBaseEntity),
   fandom: z.array(fandomWorkTypeBaseEntity),
   event: eventEntity.nullable(),
 });
-
-export type CircleCard = z.infer<typeof circlePaginationSchema>;
-
 export const onboardCircleResponse = backendResponseSchema(circleEntity);
 export const getOneCircleResponse = backendResponseSchema(
-  circleSchema.omit({ event_id: true }),
+  circleJoinedSchema.omit({ event_id: true }),
 );
-
 export const circlePaginationSchema = circleEntity
   .omit({ description: true })
   .extend({
@@ -106,12 +94,10 @@ export const circlePaginationSchema = circleEntity
       .omit({ description: true, ended_at: true, started_at: true })
       .nullable(),
   });
-
 export const getCirclesResponse = backendResponsePagination(
   circlePaginationSchema,
 );
-
-export const onboardingPayloadSchema = z.object({
+export const onboardingPayload = z.object({
   name: z
     .string()
     .trim()
@@ -129,8 +115,7 @@ export const onboardingPayloadSchema = z.object({
     .transform((x) => (x === '' ? undefined : x.toUpperCase()))
     .optional(),
 });
-
-export const editGeneralInfoPayload = onboardingPayloadSchema.extend({
+export const editGeneralInfoFormSchema = onboardingPayload.extend({
   block: blockString.optional(),
   file:
     typeof window === 'undefined'
@@ -145,27 +130,17 @@ export const editGeneralInfoPayload = onboardingPayloadSchema.extend({
             message: 'File type must be jpg, jpeg, png, or webp',
           }),
 });
-
-export type EditGeneralInfoPayload = z.infer<typeof editGeneralInfoPayload>;
-
-export type OnboardingPayload = z.infer<typeof onboardingPayloadSchema>;
-
 export const fandomQueryParams = z.object({
   search: z.string().optional(),
   limit: z.number().min(1).max(20),
   page: z.number().min(1).default(1),
 });
-
-export type FandomQueryParams = z.infer<typeof fandomQueryParams>;
-
 export const getFandomResponse = backendResponsePagination(
   fandomWorkTypeBaseEntity,
 );
-
 export const getAllWorkTypeResponse = backendResponseSchema(
   z.array(fandomWorkTypeBaseEntity),
 );
-
 export const updateCirclePayload = z.object({
   name: varchar255.optional(),
   description: z.string().optional(),
@@ -180,18 +155,26 @@ export const updateCirclePayload = z.object({
   rating: ratingEnumSchema.optional(),
 });
 
-export type UpdateCirclePayload = z.infer<typeof updateCirclePayload>;
-
-export const updateFandomSchema = z.object({
-  fandom: z
-    .array(z.object({ id: z.coerce.number(), name: z.string() }))
-    .max(5, { message: 'You can only select up to 5 fandoms' })
-    .default([]),
-});
-
-export type UpdateFandomSchema = z.infer<typeof updateFandomSchema>;
-
-const circleFilterWithNoSearch = circlesQueryParamsClient.omit({
+const circleFilterWithNoSearch = circleRouterQueryParamsSchema.omit({
   search: true,
 });
+
+export type CircleRouterQueryParamsSchema = z.infer<
+  typeof circleRouterQueryParamsSchema
+>;
+export type GetCirclesQueryParams = z.infer<typeof getCirclesQueryParams>;
+export type FandomWorkTypeBaseEntity = z.infer<typeof fandomWorkTypeBaseEntity>;
+export type CircleBlockEntity = z.infer<typeof circleBlockEntity>;
+export type CirclePaginationSchema = z.infer<typeof circlePaginationSchema>;
+export type OnboardCircleResponse = z.infer<typeof onboardCircleResponse>;
+export type GetOneCircleResponse = z.infer<typeof getOneCircleResponse>;
+export type GetCirclesResponse = z.infer<typeof getCirclesResponse>;
+export type OnboardingPayload = z.infer<typeof onboardingPayload>;
+export type EditGeneralInfoFormSchema = z.infer<
+  typeof editGeneralInfoFormSchema
+>;
+export type FandomQueryParams = z.infer<typeof fandomQueryParams>;
+export type GetFandomResponse = z.infer<typeof getFandomResponse>;
+export type GetAllWorkTypeResponse = z.infer<typeof getAllWorkTypeResponse>;
+export type UpdateCirclePayload = z.infer<typeof updateCirclePayload>;
 export type CircleFilterWithNoSearch = z.infer<typeof circleFilterWithNoSearch>;

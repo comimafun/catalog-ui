@@ -143,7 +143,10 @@ const EditorProvider = ({
   };
   const editor = useEditor({
     content,
-    onUpdate: (c) => onChange?.(c.editor.getHTML()),
+    onUpdate: (c) => {
+      console.log(c.editor.getText());
+      onChange?.(c.editor.getHTML());
+    },
     extensions,
     editorProps: {
       attributes: {

@@ -6,7 +6,7 @@ import {
 import { useGetProducts } from '@/hooks/circle/useGetProducts';
 import SearchIcon from '@/icons/SearchIcon';
 import XCircleIcon from '@/icons/XCircleIcon';
-import { Product } from '@/types/product';
+import { ProductEntity } from '@/types/product';
 import { classNames } from '@/utils/classNames';
 import {
   Modal,
@@ -52,7 +52,7 @@ const ModalImageViewer = ({
   products,
   onOpenChange,
 }: {
-  products: Array<Product>;
+  products: Array<ProductEntity>;
   onOpenChange: () => void;
 }) => {
   const product = useCirclePageStore((state) => state.selectedProduct);
@@ -132,7 +132,7 @@ const ModalImageViewer = ({
   );
 };
 
-const ProductList = ({ products }: { products: Array<Product> }) => {
+const ProductList = ({ products }: { products: Array<ProductEntity> }) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const setProduct = useCirclePageStore((state) => state.setSelectedProduct);
   const { onOpenChange } = useDisclosure();

@@ -9,13 +9,15 @@ export const eventEntity = z.object({
   ended_at: z.string(),
   description: z.string().nullable(),
 });
-
 export const getEventPaginationSchema = backendResponsePagination(eventEntity);
-
-export const updateAttendingEventBody = z.object({
+export const updateAttendingEventPayload = z.object({
   circle_block: blockString.optional(),
   day: dayEnum.or(z.literal('')).nullish(),
   event_id: z.number(),
 });
 
-export type UpdateAttendingEventBody = z.infer<typeof updateAttendingEventBody>;
+export type EventEntity = z.infer<typeof eventEntity>;
+export type GetEventPaginationSchema = z.infer<typeof getEventPaginationSchema>;
+export type UpdateAttendingEventPayload = z.infer<
+  typeof updateAttendingEventPayload
+>;

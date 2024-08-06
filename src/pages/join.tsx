@@ -3,7 +3,7 @@ import Spin from '@/components/general/Spin';
 import { useSession } from '@/components/providers/SessionProvider';
 import { useOnboarding } from '@/hooks/circle/useOnboarding';
 import MegaphoneIcon from '@/icons/MegaphoneIcon';
-import { onboardingPayloadSchema, RATING_ENUM } from '@/types/circle';
+import { onboardingPayload, RATING_ENUM } from '@/types/circle';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button, Input, Select, SelectItem } from '@nextui-org/react';
 import { useRouter } from 'next/router';
@@ -14,7 +14,7 @@ import { z } from 'zod';
 import nookies from 'nookies';
 import { GetServerSidePropsContext } from 'next';
 
-const joinSchema = onboardingPayloadSchema;
+const joinSchema = onboardingPayload;
 
 type JoinSchema = z.infer<typeof joinSchema>;
 

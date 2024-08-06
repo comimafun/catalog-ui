@@ -1,10 +1,10 @@
 import {
-  circlesQueryParamsClient,
-  GetCircleQueryParamsClient,
+  circleRouterQueryParamsSchema,
+  CircleRouterQueryParamsSchema,
 } from '@/types/circle';
 import { useRouter } from 'next/router';
 
-export const CIRCLE_FILTER_CLIENT_PARAMS_INITIAL_VALUE: GetCircleQueryParamsClient =
+export const CIRCLE_FILTER_CLIENT_PARAMS_INITIAL_VALUE: CircleRouterQueryParamsSchema =
   {
     day: '',
     fandom_id: [],
@@ -16,7 +16,7 @@ export const CIRCLE_FILTER_CLIENT_PARAMS_INITIAL_VALUE: GetCircleQueryParamsClie
 
 export const useParseCircleQueryToParams = () => {
   const router = useRouter();
-  const parse = circlesQueryParamsClient.safeParse(router.query);
+  const parse = circleRouterQueryParamsSchema.safeParse(router.query);
   let params = CIRCLE_FILTER_CLIENT_PARAMS_INITIAL_VALUE;
   if (parse.success) {
     params = parse.data;

@@ -1,5 +1,5 @@
 import { eventService } from '@/services/event';
-import { UpdateAttendingEventBody } from '@/types/event';
+import { UpdateAttendingEventPayload } from '@/types/event';
 import { useMutation } from '@tanstack/react-query';
 
 export const useUpdateEventByCircleID = () => {
@@ -9,7 +9,7 @@ export const useUpdateEventByCircleID = () => {
       payload,
     }: {
       circleID: number;
-      payload: UpdateAttendingEventBody;
+      payload: UpdateAttendingEventPayload;
     }) => {
       const res = await eventService.putUpdateAttendingEventByCircleID(
         circleID,

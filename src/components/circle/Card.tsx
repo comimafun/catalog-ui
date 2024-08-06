@@ -1,5 +1,5 @@
 import StopIcon from '@/icons/StopIcon';
-import type { CircleCard } from '@/types/circle';
+import type { CirclePaginationSchema } from '@/types/circle';
 import Link from 'next/link';
 import CircleBookmarkButton from './CircleBookmarkButton';
 import ExtendedImage from '../general/ExtendedImage';
@@ -13,7 +13,7 @@ const NoImage = () => {
   );
 };
 
-function CircleCard(circle: CircleCard) {
+function CircleCard(circle: CirclePaginationSchema) {
   return (
     <li className="flex flex-col overflow-hidden rounded-lg border border-neutral-950 shadow-md">
       <Link
@@ -73,4 +73,4 @@ function CircleCard(circle: CircleCard) {
   );
 }
 
-export default CircleCard;
+export default CirclePaginationSchema;

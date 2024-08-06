@@ -1,4 +1,4 @@
-import CircleCard from '@/components/circle/Card';
+import CirclePaginationSchema from '@/components/circle/Card';
 import EachPageLayout from '@/components/general/EachPageLayout';
 import { useSession } from '@/components/providers/SessionProvider';
 import { useGetBookmarkedCirclesInfinite } from '@/hooks/circle/useGetBookmarkedCirclesInfinite';
