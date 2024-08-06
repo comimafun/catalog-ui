@@ -73,4 +73,4 @@ function CircleCard(circle: CirclePaginationSchema) {
   );
 }
 
-export default CirclePaginationSchema;
+export default CircleCard;
