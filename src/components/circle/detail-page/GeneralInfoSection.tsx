@@ -190,7 +190,11 @@ const ReferralButton = () => {
 };
 
 function GeneralInfoSection() {
-  const { data } = useGetCircleBySlug();
+  const { data } = useGetCircleBySlug({
+    options: {
+      refetchOnMount: true,
+    },
+  });
   const { isAllowed } = useIsMyCircle();
   const isAnyUrlExist =
     data?.url || data?.twitter_url || data?.instagram_url || data?.facebook_url;
