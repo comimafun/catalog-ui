@@ -1,11 +1,11 @@
 import EachPageLayout from '@/components/general/EachPageLayout';
 import {
-  getCircleBySlugOptions,
+  //   getCircleBySlugOptions,
   useGetCircleBySlug,
 } from '@/hooks/circle/useGetCircleBySlug';
 import { prettifyError } from '@/utils/helper';
-import { dehydrate, QueryClient } from '@tanstack/react-query';
-import { GetServerSidePropsContext } from 'next';
+// import { dehydrate, QueryClient } from '@tanstack/react-query';
+// import { GetServerSidePropsContext } from 'next';
 import SectionPartitionWrapper from '@/components/circle/detail-page/SectionPartitionWrapper';
 import GeneralInfoSection from '@/components/circle/detail-page/GeneralInfoSection';
 import FandomWorkTypeSection from '@/components/circle/detail-page/FandomWorkTypeSection';
@@ -16,31 +16,35 @@ import ProductSection from '@/components/circle/detail-page/ProductSection';
 import { Fragment } from 'react';
 import { NextSeo } from 'next-seo';
 
-export const getServerSideProps = async (c: GetServerSidePropsContext) => {
-  const circleSlug = c.query.circleSlug as string;
-  const queryClient = new QueryClient();
+// export const getServerSideProps = async (c: GetServerSidePropsContext) => {
+//   const circleSlug = c.query.circleSlug as string;
+//   const queryClient = new QueryClient();
 
-  try {
-    await queryClient.fetchQuery(
-      getCircleBySlugOptions(c, circleSlug, { retry: 0, throwOnError: true }),
-    );
-  } catch (error) {
-    return {
-      notFound: true,
-    };
-  }
+//   try {
+//     await queryClient.fetchQuery(
+//       getCircleBySlugOptions(c, circleSlug, { retry: 0, throwOnError: true }),
+//     );
+//   } catch (error) {
+//     return {
+//       notFound: true,
+//     };
+//   }
 
-  const dehydratedState = dehydrate(queryClient);
+//   const dehydratedState = dehydrate(queryClient);
 
-  return {
-    props: {
-      dehydratedState,
-    },
-  };
-};
+//   return {
+//     props: {
+//       dehydratedState,
+//     },
+//   };
+// };
 
 function CirclePage() {
-  const { error, isPending, data } = useGetCircleBySlug();
+  const { error, isPending, data } = useGetCircleBySlug({
+    options: {
+      refetchOnMount: true,
+    },
+  });
 
   const Content = () => {
     if (error) {
