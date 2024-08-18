@@ -40,7 +40,11 @@ export const getServerSideProps = async (c: GetServerSidePropsContext) => {
 };
 
 function CirclePage() {
-  const { error, isPending, data } = useGetCircleBySlug();
+  const { error, isPending, data } = useGetCircleBySlug({
+    options: {
+      refetchOnMount: true,
+    },
+  });
 
   const Content = () => {
     if (error) {

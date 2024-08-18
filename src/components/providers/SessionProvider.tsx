@@ -22,16 +22,16 @@ const SessionProvider = ({ children }: { children: React.ReactNode }) => {
       queryClient.invalidateQueries({
         queryKey: [getCircleBySlugOptions(null, '', {}).queryKey[0]],
         exact: false,
-        refetchType: 'active',
+        refetchType: 'all',
       }),
       queryClient.invalidateQueries({
         queryKey: [getCirclesOptions({}).queryKey[0]],
         exact: false,
-        refetchType: 'active',
+        refetchType: 'all',
       }),
       queryClient.invalidateQueries({
         queryKey: ['/v1/auth/self'],
-        refetchType: 'active',
+        refetchType: 'all',
         exact: false,
       }),
     ]);
