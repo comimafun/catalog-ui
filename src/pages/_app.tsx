@@ -51,15 +51,15 @@ export default function App({
             initialIsOpen={false}
           />
           <NextUIProvider navigate={router.push}>
-            <ViewportProvider>
-              <SessionProvider>
+            <SessionProvider>
+              <ViewportProvider>
                 <MainLayout>
                   <DefaultSeo {...DEFAULT_SEO} />
                   <Component {...pageProps} />
-                  <Toaster />
                 </MainLayout>
-              </SessionProvider>
-            </ViewportProvider>
+              </ViewportProvider>
+              <Toaster />
+            </SessionProvider>
           </NextUIProvider>
         </HydrationBoundary>
       </QueryClientProvider>
