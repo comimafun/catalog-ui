@@ -63,8 +63,8 @@ jobs:
         run: |
           container_id=$(docker create ${{ vars.DOCKER_REGISTRY_LOCATION }}/${{ secrets.GOOGLE_PROJECT }}/inner-catalog/catalog-ui:dev-${{ github.run_id }})
           docker create --name temp ${{ vars.DOCKER_REGISTRY_LOCATION }}/${{ secrets.GOOGLE_PROJECT }}/inner-catalog/catalog-ui:dev-${{ github.run_id }}
-          mkdir -p $GITHUB_WORKSPACE/temporary/.next/static
-          docker cp temp:/app/.next/static $GITHUB_WORKSPACE/temporary/.next/static
+          mkdir -p ./temporary/.next/static
+          docker cp temp:/app/.next/static ./temporary/.next/static
           docker rm temp
 
       - name: Upload static files to R2 bucket
@@ -74,7 +74,7 @@ jobs:
           r2-access-key-id: ${{ secrets.R2_ACCESS_KEY_ID }}
           r2-secret-access-key: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           r2-bucket: ${{ secrets.R2_BUCKET }}
-          source-dir: $GITHUB_WORKSPACE/temporary/.next/static
+          source-dir: ./temporary/.next/static
           destination-dir: ./static/development
 
   deploy:
