@@ -27,11 +27,7 @@ yarn-error.log*
 
 # local env files
 .env*.local
-<<<<<<< HEAD
 
-.env
-=======
->>>>>>> fd3cfa0 (Revert "chore: test upload-static")
 
 .env
 
