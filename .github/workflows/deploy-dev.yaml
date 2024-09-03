@@ -47,14 +47,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Login to Google Cloud
-        uses: google-github-actions/auth@v2
-        with:
-          credentials_json: ${{ secrets.SERVICE_ACCOUNT }}
-      - name: Docker auth
-        run: |
-          gcloud auth configure-docker ${{ vars.DOCKER_REGISTRY_LOCATION }} --quiet
-
       - name: Pull docker image
         run: |
           docker pull ${{ vars.DOCKER_REGISTRY_LOCATION }}/${{ secrets.GOOGLE_PROJECT }}/inner-catalog/catalog-ui:dev-${{ github.run_id }}
