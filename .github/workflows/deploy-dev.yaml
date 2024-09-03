@@ -40,8 +40,35 @@ jobs:
         run: |
           docker buildx build --tag ${{ vars.DOCKER_REGISTRY_LOCATION }}/${{ secrets.GOOGLE_PROJECT }}/inner-catalog/catalog-ui:dev-${{ github.run_id }} --push .
 
-  deploy:
+  upload-static:
     needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Pull docker image
+        run: |
+          docker pull ${{ vars.DOCKER_REGISTRY_LOCATION }}/${{ secrets.GOOGLE_PROJECT }}/inner-catalog/catalog-ui:dev-${{ github.run_id }}
+
+      - name: Copy app/.next/static directory
+        run: |
+          docker create --name temp ${{ vars.DOCKER_REGISTRY_LOCATION }}/${{ secrets.GOOGLE_PROJECT }}/inner-catalog/catalog-ui:dev-${{ github.run_id }}
+          docker cp temp:/app/.next/static ./.next/static
+          docker rm temp
+
+      - name: Upload static files to R2 bucket
+        uses: ryand56/r2-upload-action@latest
+        with:
+          r2-account-id: ${{ secrets.R2_ACCOUNT_ID }}
+          r2-access-key-id: ${{ secrets.R2_ACCESS_KEY_ID }}
+          r2-secret-access-key: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          r2-bucket: ${{ secrets.R2_BUCKET }}
+          source-dir: ./.next/static
+          destination-dir: ./static/development
+
+  deploy:
+    needs: [upload-static]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
