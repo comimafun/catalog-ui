@@ -1,4 +1,5 @@
 import { circleService } from '@/services/circle';
+import { UpdateCirclePayload } from '@/types/circle';
 import { useMutation } from '@tanstack/react-query';
 
 export const useUpdateCircle = () => {
@@ -8,7 +9,7 @@ export const useUpdateCircle = () => {
       payload,
     }: {
       circleID: number;
-      payload: Parameters<typeof circleService.patchUpdateCircleByID>[1];
+      payload: UpdateCirclePayload;
     }) => {
       const res = await circleService.patchUpdateCircleByID(circleID, payload);
       return res.data;

@@ -13,18 +13,17 @@ import { Controller, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { z } from 'zod';
 
-const updateDescriptionSchema = z.object({
+const updateDescriptionFormSchema = z.object({
   description: z.string(),
 });
-
-type UpdateDescriptionPayload = z.infer<typeof updateDescriptionSchema>;
+type UpdateDescriptionFormSchema = z.infer<typeof updateDescriptionFormSchema>;
 
 function EditDescriptionSection() {
   const [initalized, setInitalized] = useState(false);
   const { data } = useGetCircleBySlug();
   const router = useRouter();
-  const form = useForm<UpdateDescriptionPayload>({
-    resolver: zodResolver(updateDescriptionSchema),
+  const form = useForm<UpdateDescriptionFormSchema>({
+    resolver: zodResolver(updateDescriptionFormSchema),
     defaultValues: {
       description: data?.description ? sanitize(data?.description) : '',
     },

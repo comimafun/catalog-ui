@@ -1,4 +1,4 @@
-name: Build and Deploy to dev environment
+name: Dev Deployment
 
 on:
   push:
@@ -35,9 +35,11 @@ jobs:
       - name: Docker auth
         run: |
           gcloud auth configure-docker ${{ vars.DOCKER_REGISTRY_LOCATION }} --quiet
+
       - name: Build and push Docker image
         run: |
-          docker buildx build --tag ${{ vars.DOCKER_REGISTRY_LOCATION }}/${{ secrets.GOOGLE_PROJECT }}/inner-catalog/catalog-ui:dev-${{ github.run_id }} --push --no-cache .
+          docker buildx build --tag ${{ vars.DOCKER_REGISTRY_LOCATION }}/${{ secrets.GOOGLE_PROJECT }}/inner-catalog/catalog-ui:dev-${{ github.run_id }} --push .
+
   deploy:
     needs: [build]
     runs-on: ubuntu-latest

@@ -143,7 +143,9 @@ const EditorProvider = ({
   };
   const editor = useEditor({
     content,
-    onUpdate: (c) => onChange?.(c.editor.getHTML()),
+    onUpdate: (c) => {
+      onChange?.(c.editor.getHTML());
+    },
     extensions,
     editorProps: {
       attributes: {
@@ -203,23 +205,7 @@ const LinkMenu = () => {
         </button>
       </PopoverTrigger>
       <PopoverContent className="p-0">
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            if (!link) {
-              editor.chain().focus().extendMarkRange('link').unsetLink().run();
-              return;
-            }
-            // update link
-            editor
-              .chain()
-              .focus()
-              .extendMarkRange('link')
-              .setLink({ href: link })
-              .run();
-          }}
-          className="flex gap-1"
-        >
+        <form className="flex gap-1">
           <input
             type="text"
             className="rounded border border-neutral-500 p-1 px-2"
@@ -229,7 +215,25 @@ const LinkMenu = () => {
           />
           <button
             className="rounded border border-neutral-500 p-1"
-            type="submit"
+            type="button"
+            onClick={() => {
+              if (!link) {
+                editor
+                  .chain()
+                  .focus()
+                  .extendMarkRange('link')
+                  .unsetLink()
+                  .run();
+                return;
+              }
+              // update link
+              editor
+                .chain()
+                .focus()
+                .extendMarkRange('link')
+                .setLink({ href: link })
+                .run();
+            }}
           >
             {editor.isActive('link') ? 'Update' : 'Add'}
           </button>
@@ -303,7 +307,7 @@ const ImageMenu = () => {
   return (
     <Uploader
       accept={Array.from(ACCEPTED_IMAGE_TYPES_SET).join(',')}
-      className="'flex text-neutral-500', items-center rounded border border-neutral-500 bg-white p-1"
+      className="'flex items-center rounded border border-neutral-500 bg-white p-1 text-neutral-500"
       customRequest={async (files) => {
         try {
           setLoading(true);
@@ -324,7 +328,7 @@ const ImageMenu = () => {
           }
           const { data } = await uploadService.uploadImage({
             file,
-            type: 'profiles',
+            type: 'descriptions',
           });
 
           editor.chain().focus().setImage({ src: data, alt: file.name }).run();

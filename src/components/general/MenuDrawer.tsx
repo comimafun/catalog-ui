@@ -7,12 +7,14 @@ import { Button } from '@nextui-org/react';
 import { useSession } from '../providers/SessionProvider';
 import { useLayoutStore } from '@/store/layout';
 import { useLogout } from '@/hooks/auth/useLogout';
+import { MAIN_NAV_LINKS } from '@/constants/common';
 
 function MenuDrawer() {
   const { session } = useSession();
   const open = useLayoutStore((state) => state.openMenuDrawer);
   const setOpen = useLayoutStore((state) => state.setOpenMenuDrawer);
   const { logout, isPending } = useLogout();
+  const close = () => setOpen(false);
 
   return (
     <Drawer open={open} onOpenChange={setOpen} direction="top">
@@ -25,11 +27,15 @@ function MenuDrawer() {
         </div>
         <h1 className="mt-4 font-bold">Links</h1>
         <ul className="mt-2">
-          <li>
-            <Link onClick={close} href="/about">
-              About
-            </Link>
-          </li>
+          {MAIN_NAV_LINKS.map((link) => {
+            return (
+              <li key={link.key}>
+                <Link onClick={close} href={link.href}>
+                  {link.name}
+                </Link>
+              </li>
+            );
+          })}
         </ul>
         <hr className="my-2" />
 
@@ -47,6 +53,7 @@ function MenuDrawer() {
                   color="primary"
                   className="w-full"
                   onClick={close}
+                  shallow
                 >
                   Your circle
                 </Button>

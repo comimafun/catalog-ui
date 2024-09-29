@@ -1,13 +1,11 @@
 import { useDebounce } from '@/hooks/common/useDebounce';
 import { useDrawerFilterStore } from '@/store/circle';
-import { circlesQueryParamsClient } from '@/types/circle';
 import {
   Controller,
   FormProvider,
   useForm,
   useFormContext,
 } from 'react-hook-form';
-import { z } from 'zod';
 import { Drawer, DrawerContent } from '../general/Drawer';
 import {
   Button,
@@ -23,14 +21,9 @@ import { motion } from 'framer-motion';
 import { useGetWorkType } from '@/hooks/circle/useGetWorkType';
 import { prettifyError } from '@/utils/helper';
 import { useRouter } from 'next/router';
+import { useEffect } from 'react';
+import { CircleFilterWithNoSearch, RATING_ENUM } from '@/types/circle';
 import { useParseCircleQueryToParams } from '@/hooks/circle/useParseClientQueryToParams';
-import { useEffect, useState } from 'react';
-
-const circleFilterWithNoSearch = circlesQueryParamsClient.omit({
-  search: true,
-});
-
-type CircleFilterWithNoSearch = z.infer<typeof circleFilterWithNoSearch>;
 
 const WorkTypeSection = () => {
   const filterForm = useFormContext<CircleFilterWithNoSearch>();
@@ -231,25 +224,54 @@ const MainFilter = () => {
     (state) => state.setDrawerFilterStep,
   );
   const filterForm = useFormContext<CircleFilterWithNoSearch>();
+  const { filter } = useParseCircleQueryToParams();
 
   return (
     <>
+      {!!filter.event && (
+        <Controller
+          control={filterForm.control}
+          name="day"
+          render={({ field: { disabled, onChange, ...fields } }) => {
+            return (
+              <RadioGroup
+                label={<div className="font-medium">Day</div>}
+                orientation="horizontal"
+                isDisabled={disabled}
+                {...fields}
+                onValueChange={(a) => onChange(a)}
+              >
+                <Radio value="first">First Day</Radio>
+                <Radio value="second">Second Day</Radio>
+                <Radio value="both">Both Days</Radio>
+              </RadioGroup>
+            );
+          }}
+        />
+      )}
+
       <Controller
         control={filterForm.control}
-        name="day"
-        render={({ field: { disabled, onChange, ...fields } }) => {
+        name="rating"
+        render={({ field }) => {
           return (
-            <RadioGroup
-              label={<div className="font-medium">Day</div>}
-              orientation="horizontal"
-              isDisabled={disabled}
-              {...fields}
-              onValueChange={(a) => onChange(a)}
+            <CheckboxGroup
+              name={field.name}
+              ref={field.ref}
+              value={(field?.value ?? []).map(String)}
+              onChange={(val) => field.onChange(val)}
+              label={<div className="font-medium">Rating</div>}
             >
-              <Radio value="first">First Day</Radio>
-              <Radio value="second">Second Day</Radio>
-              <Radio value="both">Both Days</Radio>
-            </RadioGroup>
+              <div className="flex gap-2">
+                {RATING_ENUM.map((x) => {
+                  return (
+                    <Checkbox key={x} value={x}>
+                      {x}
+                    </Checkbox>
+                  );
+                })}
+              </div>
+            </CheckboxGroup>
           );
         }}
       />
@@ -314,26 +336,21 @@ const FilterDrawer = () => {
   );
   const reset = useDrawerFilterStore((state) => state.reset);
   const router = useRouter();
-  const params = useParseCircleQueryToParams();
-  const [initalized, setInitalized] = useState(false);
 
-  const filterForm = useForm<CircleFilterWithNoSearch>({
-    defaultValues: {
-      fandom_id: [],
-      work_type_id: [],
-    },
-  });
+  const { filter } = useParseCircleQueryToParams();
+
+  const filterForm = useForm<CircleFilterWithNoSearch>();
 
   useEffect(() => {
-    if (initalized) return;
-
-    filterForm.reset({
-      day: params.day,
-      fandom_id: params.fandom_id,
-      work_type_id: params.work_type_id,
-    });
-    setInitalized(true);
-  }, [params.day, params.fandom_id, params.work_type_id]);
+    if (open) {
+      filterForm.reset({
+        day: filter.day,
+        fandom_id: filter.fandom_id,
+        work_type_id: filter.work_type_id,
+        rating: filter.rating,
+      });
+    }
+  }, [open]);
 
   return (
     <Drawer
@@ -356,6 +373,7 @@ const FilterDrawer = () => {
                     day: '',
                     fandom_id: [],
                     work_type_id: [],
+                    rating: [],
                   },
                   {
                     keepTouched: true,
@@ -372,7 +390,10 @@ const FilterDrawer = () => {
             className="flex flex-col gap-3"
             onSubmit={filterForm.handleSubmit((formData) => {
               Object.entries(formData).forEach(([key, values]) => {
-                if (values?.length !== 0 || typeof values !== 'undefined') {
+                if (
+                  !!values &&
+                  (values?.length !== 0 || typeof values !== 'undefined')
+                ) {
                   router.query[key] = values as string | string[];
                 } else {
                   delete router.query[key];

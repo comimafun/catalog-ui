@@ -1,4 +1,4 @@
-import { useGetSelf } from '@/hooks/auth/useAuth';
+import { useGetSelf } from '@/hooks/auth/useGetSelf';
 import { getCircleBySlugOptions } from '@/hooks/circle/useGetCircleBySlug';
 import { getCirclesOptions } from '@/hooks/circle/useGetCirclesInfinite';
 import { SelfResponse } from '@/types/auth';
@@ -22,16 +22,16 @@ const SessionProvider = ({ children }: { children: React.ReactNode }) => {
       queryClient.invalidateQueries({
         queryKey: [getCircleBySlugOptions(null, '', {}).queryKey[0]],
         exact: false,
-        refetchType: 'active',
+        refetchType: 'all',
       }),
       queryClient.invalidateQueries({
         queryKey: [getCirclesOptions({}).queryKey[0]],
         exact: false,
-        refetchType: 'active',
+        refetchType: 'all',
       }),
       queryClient.invalidateQueries({
         queryKey: ['/v1/auth/self'],
-        refetchType: 'active',
+        refetchType: 'all',
         exact: false,
       }),
     ]);

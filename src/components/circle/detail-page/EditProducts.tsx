@@ -15,7 +15,8 @@ import TrashIcon from '@/icons/TrashIcon';
 import XCircleIcon from '@/icons/XCircleIcon';
 import { productService } from '@/services/product';
 import { uploadService } from '@/services/upload';
-import { productEntity } from '@/types/product';
+import { ProductEntity } from '@/types/product';
+import { classNames } from '@/utils/classNames';
 import { prettifyError } from '@/utils/helper';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -39,9 +40,7 @@ import {
 import toast from 'react-hot-toast';
 import { z } from 'zod';
 
-type Product = z.infer<typeof productEntity>;
-
-const schema = z.object({
+const updateProductFormSchema = z.object({
   id: z.number().min(1).optional(),
   name: z.string().trim().min(5).max(100),
   image_url: z
@@ -52,8 +51,7 @@ const schema = z.object({
     })
     .url(),
 });
-
-type FormValues = z.infer<typeof schema>;
+type UpdateProductFormSchema = z.infer<typeof updateProductFormSchema>;
 
 const useUpdateProduct = () => {
   const queryClient = useQueryClient();
@@ -61,7 +59,7 @@ const useUpdateProduct = () => {
     mutationFn: async ({
       circleID,
       ...payload
-    }: FormValues & { circleID: number }) => {
+    }: UpdateProductFormSchema & { circleID: number }) => {
       const { data } =
         await productService.putUpdateOneProductByCircleIDProductID({
           circleID,
@@ -84,7 +82,7 @@ const useUpdateProduct = () => {
 
       queryClient.setQueryData(
         getProductsOptions({ circleID: payload.circleID }).queryKey,
-        (oldData: Array<Product>) => {
+        (oldData: Array<ProductEntity>) => {
           return oldData?.map((x) => {
             if (x.id === payload.id) {
               return {
@@ -117,7 +115,7 @@ const useAddProduct = () => {
     mutationFn: async ({
       circleID,
       ...payload
-    }: FormValues & { circleID: number }) => {
+    }: UpdateProductFormSchema & { circleID: number }) => {
       const { data } = await productService.postAddProductByCircleID(
         circleID,
         payload,
@@ -135,7 +133,7 @@ const useAddProduct = () => {
 
       queryClient.setQueryData(
         getProductsOptions({ circleID: payload.circleID }).queryKey,
-        (oldData: Array<Product>) => {
+        (oldData: Array<ProductEntity>) => {
           return [
             ...(oldData ?? []),
             {
@@ -172,11 +170,13 @@ const ProductList = () => {
   const { data: products } = useGetProducts({
     circleID: data?.id,
   });
-  const [deleteSelected, setDeleteSelected] = useState<Product | null>(null);
+  const [deleteSelected, setDeleteSelected] = useState<ProductEntity | null>(
+    null,
+  );
   const { isOpen, onOpenChange } = useDisclosure();
   const [isLoading, setIsLoading] = useState(false);
   const queryClient = useQueryClient();
-  const form = useFormContext<FormValues>();
+  const form = useFormContext<UpdateProductFormSchema>();
   return (
     <ul className="mt-4 flex flex-col gap-2">
       <Modal
@@ -278,6 +278,11 @@ const ProductList = () => {
               </Button>
               <Button
                 onPress={() => {
+                  form.reset({
+                    id: undefined,
+                    image_url: '',
+                    name: '',
+                  });
                   setDeleteSelected(x);
                   onOpenChange();
                 }}
@@ -302,13 +307,18 @@ function EditProducts() {
   const { data: products } = useGetProducts({ circleID: data?.id });
   const addMutation = useAddProduct();
   const updateMutation = useUpdateProduct();
-  const form = useForm<FormValues>({
-    resolver: zodResolver(schema),
+  const form = useForm<UpdateProductFormSchema>({
+    resolver: zodResolver(updateProductFormSchema),
     defaultValues: {
       name: '',
       image_url: '',
     },
   });
+
+  const productsLength = products?.length ?? 0;
+  const id = form.watch('id');
+  const isEditing = !!id;
+  const isDisabled = productsLength >= 5 && !isEditing;
 
   return (
     <EachPageLayout className="space-y-4">
@@ -322,6 +332,10 @@ function EditProducts() {
         <h1 className="text-xl font-bold">Edit Works Displayed</h1>
       </div>
 
+      <div className="w-full rounded bg-warning p-4 font-semibold">
+        Current maximum product is 5
+      </div>
+
       <FormProvider {...form}>
         <section>
           <form
@@ -329,9 +343,6 @@ function EditProducts() {
               if (!data?.id) return;
 
               try {
-                if ((products?.length ?? 0) >= 5) {
-                  throw new Error('You can only add up to 5 products');
-                }
                 if (payload.id) {
                   await updateMutation.mutateAsync({
                     circleID: data.id,
@@ -340,6 +351,10 @@ function EditProducts() {
 
                   toast.success('Works updated ✅');
                 } else {
+                  if (productsLength >= 5) {
+                    throw new Error('You can only add 5 wowrks');
+                  }
+
                   await addMutation.mutateAsync({
                     circleID: data.id,
                     ...payload,
@@ -371,6 +386,7 @@ function EditProducts() {
                       variant="underlined"
                       placeholder='e.g. "Commision examples"'
                       size="sm"
+                      isDisabled={isDisabled}
                       {...field}
                     />
                   );
@@ -456,13 +472,26 @@ function EditProducts() {
                             setIsUploading(false);
                           }
                         }}
-                        className="flex w-full flex-col"
+                        className="flex w-full flex-col disabled:cursor-not-allowed"
+                        disabled={isDisabled}
                       >
-                        <div className="group:hover:bg-blue-500 group flex h-full max-h-[200px] w-full flex-col items-center justify-center bg-blue-100 transition-all delay-100 hover:bg-blue-500">
+                        <div
+                          className={classNames(
+                            'group:hover:bg-blue-500 group flex h-full max-h-[200px] w-full flex-col items-center justify-center bg-blue-100 transition-all delay-100',
+                            isDisabled
+                              ? 'cursor-not-allowed'
+                              : 'hover:bg-blue-500',
+                          )}
+                        >
                           <ImageIcon
                             width={24}
                             height={24}
-                            className="text-blue-500 delay-100 group-hover:text-white"
+                            className={classNames(
+                              'text-blue-500 delay-100',
+                              isDisabled
+                                ? 'cursor-not-allowed'
+                                : 'group-hover:text-white',
+                            )}
                           />
                         </div>
                       </Uploader>
@@ -480,7 +509,7 @@ function EditProducts() {
                         type="submit"
                         size="sm"
                         isLoading={isUploading}
-                        isDisabled={isUploading}
+                        isDisabled={isUploading || isDisabled}
                       >
                         {!!field.value ? 'Update' : 'Add'}
                       </Button>

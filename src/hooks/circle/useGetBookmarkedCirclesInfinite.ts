@@ -1,18 +1,18 @@
+import { useSession } from '@/components/providers/SessionProvider';
 import { circleService } from '@/services/circle';
 import { CircleRouterQueryParamsSchema } from '@/types/circle';
 import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/react-query';
-import { useMediaQuery } from '../common/useMediaQuery';
-import { useMemo } from 'react';
-import { chunk } from '@/utils/helper';
 
-export const getCirclesOptions = (
+export const getBookmarkedCirclesOptions = (
   params: Partial<CircleRouterQueryParamsSchema>,
+  options?: Partial<{
+    enabled: boolean;
+  }>,
 ) => {
   return infiniteQueryOptions({
-    initialPageParam: 1,
-    queryKey: ['/v1/circle', params],
+    queryKey: ['/v1/circle/bookmarked', params],
     queryFn: async ({ pageParam = 1 }) => {
-      const res = await circleService.getCircles({
+      const res = await circleService.getBookmarkedCircles({
         ...params,
         limit: 18,
         page: pageParam,
@@ -24,26 +24,22 @@ export const getCirclesOptions = (
       return undefined;
     },
     refetchOnWindowFocus: false,
-    refetchOnMount: false,
-    refetchOnReconnect: false,
+    initialPageParam: 1,
+    ...options,
   });
 };
 
-export const useGetCirclesInfinite = (
+export const useGetBookmarkedCirclesInfinite = (
   params: Partial<CircleRouterQueryParamsSchema>,
 ) => {
-  const res = useInfiniteQuery(getCirclesOptions(params));
-  const result = res.data?.pages.flatMap((page) => page.data) ?? [];
-  const isLargeScreen = useMediaQuery('(min-width: 640px)');
-
-  const chunked = useMemo(
-    () => chunk(result, isLargeScreen ? 3 : 2),
-    [isLargeScreen, result],
+  const { session } = useSession();
+  const res = useInfiniteQuery(
+    getBookmarkedCirclesOptions(params, { enabled: !!session }),
   );
+  const result = res.data?.pages.flatMap((page) => page.data) ?? [];
 
   return {
     ...res,
     result,
-    chunked,
   };
 };

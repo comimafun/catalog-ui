@@ -1,5 +1,5 @@
 import StopIcon from '@/icons/StopIcon';
-import type { CircleCard } from '@/types/circle';
+import type { CirclePaginationSchema } from '@/types/circle';
 import Link from 'next/link';
 import CircleBookmarkButton from './CircleBookmarkButton';
 import ExtendedImage from '../general/ExtendedImage';
@@ -13,7 +13,7 @@ const NoImage = () => {
   );
 };
 
-function CircleCard(circle: CircleCard) {
+function CircleCard(circle: CirclePaginationSchema) {
   return (
     <li className="flex flex-col overflow-hidden rounded-lg border border-neutral-950 shadow-md">
       <Link
@@ -21,6 +21,7 @@ function CircleCard(circle: CircleCard) {
           pathname: '/[circleSlug]',
           query: { circleSlug: circle.slug },
         }}
+        shallow
         className="flex h-full w-full flex-col"
       >
         <div className="relative flex aspect-[7/10] min-h-[262px] w-full items-center justify-center overflow-hidden border-b border-neutral-900 md:min-h-[273px]">
@@ -41,6 +42,9 @@ function CircleCard(circle: CircleCard) {
         </div>
         <div className="h-full w-full space-y-1.5 p-2 font-medium">
           <p className="break-all text-base font-semibold">{circle.name}</p>
+          {!!circle.rating && (
+            <div className="text-xs">Rated: {circle.rating}</div>
+          )}
           {circle.fandom.length > 0 && (
             <p className="text-xs">
               Fandom: {circle.fandom.map((x) => x.name).join(', ')}
@@ -51,6 +55,17 @@ function CircleCard(circle: CircleCard) {
             <p className="text-xs">
               Work Type: {circle.work_type.map((x) => x.name).join(', ')}
             </p>
+          )}
+
+          {!!circle.event && (
+            <>
+              <p className="text-xs">Convention: {circle.event.name}</p>
+              {!!circle.day && (
+                <p className="text-xs">
+                  Day: <span className="capitalize">{circle.day}</span> day(s)
+                </p>
+              )}
+            </>
           )}
         </div>
       </Link>

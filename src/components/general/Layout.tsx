@@ -1,7 +1,7 @@
 import { classNames } from '@/utils/classNames';
 import { useInView } from 'framer-motion';
 import Link from 'next/link';
-import { ReactNode, useRef } from 'react';
+import { ReactNode, useEffect, useRef, useState } from 'react';
 import { useSession } from '../providers/SessionProvider';
 import { Button } from '@nextui-org/react';
 import { useLogout } from '@/hooks/auth/useLogout';
@@ -9,6 +9,9 @@ import HamburgerIcon from '@/icons/HamburgerIcon';
 import { useLayoutStore } from '@/store/layout';
 import Logo from './Logo';
 import dynamic from 'next/dynamic';
+import { MAIN_NAV_LINKS } from '@/constants/common';
+import { useRouter } from 'next/router';
+import { useViewport } from '../providers/ViewportProvider';
 
 const MenuDrawer = dynamic(() => import('./MenuDrawer'), { ssr: false });
 
@@ -34,6 +37,7 @@ const RightMenu = () => {
                 size="sm"
                 variant="solid"
                 color="primary"
+                shallow
               >
                 Your circle
               </Button>
@@ -81,53 +85,116 @@ const RightMenu = () => {
   );
 };
 
+const ProgressBar = ({ isInView }: { isInView?: boolean }) => {
+  const router = useRouter();
+  const [state, setState] = useState<'' | 'start' | 'complete'>('');
+  const [prevPathname, setPrevPathname] = useState(router.pathname);
+
+  useEffect(() => {
+    const handleRouteChangeStart = (url: string) => {
+      const newPathname = url.split('?')[0];
+      if (newPathname !== prevPathname) {
+        setState('start');
+      }
+    };
+
+    const handleRouteChangeComplete = (url: string) => {
+      const newPathname = url.split('?')[0];
+      if (newPathname !== prevPathname) {
+        setState('complete');
+        setPrevPathname(newPathname);
+      }
+    };
+
+    router.events.on('routeChangeStart', handleRouteChangeStart);
+    router.events.on('routeChangeComplete', handleRouteChangeComplete);
+
+    return () => {
+      router.events.off('routeChangeStart', handleRouteChangeStart);
+      router.events.off('routeChangeComplete', handleRouteChangeComplete);
+    };
+  }, [router.events, prevPathname]);
+
+  useEffect(() => {
+    if (state === 'complete') {
+      const timer = setTimeout(() => {
+        setState('');
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [state]);
+
+  return (
+    <div
+      className={classNames(
+        'h-1 w-full transition-all',
+        state
+          ? 'bg-primary'
+          : isInView
+            ? 'bg-white'
+            : 'bg-white/70 backdrop-blur-md',
+      )}
+      style={{
+        width: state === 'start' ? '20%' : '100%',
+      }}
+    ></div>
+  );
+};
+
 const Navbar = () => {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref);
+  const { scrollToTop } = useViewport();
 
   return (
     <>
       <div
         className={classNames(
-          'fixed z-10 mx-auto w-full transition-all',
-          isInView ? 'bg-white shadow-none' : 'bg-white/70 shadow-lg',
+          'fixed z-[11] mx-auto w-full transition-all',
+          isInView
+            ? 'bg-white shadow-none'
+            : 'bg-white/70 shadow-lg backdrop-blur-md',
         )}
       >
+        <ProgressBar isInView={isInView} />
         <nav
           className={classNames(
-            'mx-auto flex w-full max-w-[640px] items-center justify-between px-4 py-5',
-            isInView ? 'bg-white' : 'bg-white/70',
+            'mx-auto flex w-full max-w-[1440px] items-center justify-between px-4 py-5',
+            isInView ? 'bg-white' : 'bg-transparent',
           )}
         >
           <div className="flex items-center gap-8">
-            <Logo />
+            <Logo onClick={scrollToTop} />
 
-            <ul className="hidden sm:block">
-              <li>
-                <Link
-                  className="font-medium underline-offset-8 transition-all hover:font-semibold hover:underline"
-                  href="/about"
-                >
-                  About
-                </Link>
-              </li>
+            <ul className="hidden space-x-4 sm:flex">
+              {MAIN_NAV_LINKS.map((link) => (
+                <li key={link.key}>
+                  <Link
+                    className="font-medium underline-offset-8 transition-all hover:font-semibold hover:underline"
+                    href={link.href}
+                  >
+                    {link.name}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
           <RightMenu />
         </nav>
       </div>
-      <div className="pt-[72px]" />
+      <div className="pt-[76px]" />
       <div ref={ref} className="w-full"></div>
     </>
   );
 };
 
 const Footer = () => {
+  const { scrollToTop } = useViewport();
   return (
     <footer className="mx-auto w-full border-t border-neutral-200 bg-white">
-      <div className="mx-auto flex w-full max-w-[640px] flex-col px-4 py-5">
-        <Logo />
+      <div className="mx-auto flex w-full max-w-[1440px] flex-col px-4 py-5">
+        <Logo onClick={scrollToTop} />
         <p className="mt-2 text-base">
           Alternative website to share your works before con.
         </p>

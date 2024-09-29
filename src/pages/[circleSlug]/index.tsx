@@ -13,13 +13,22 @@ import DescriptionSection from '@/components/circle/detail-page/DescriptionSecti
 import EventSection from '@/components/circle/detail-page/EventSection';
 import CircleCutSection from '@/components/circle/detail-page/CircleCutSection';
 import ProductSection from '@/components/circle/detail-page/ProductSection';
+import { Fragment } from 'react';
+import { NextSeo } from 'next-seo';
 
 export const getServerSideProps = async (c: GetServerSidePropsContext) => {
   const circleSlug = c.query.circleSlug as string;
   const queryClient = new QueryClient();
-  await queryClient.prefetchQuery(
-    getCircleBySlugOptions(c, circleSlug, { retry: 0 }),
-  );
+
+  try {
+    await queryClient.fetchQuery(
+      getCircleBySlugOptions(c, circleSlug, { retry: 0, throwOnError: true }),
+    );
+  } catch (error) {
+    return {
+      notFound: true,
+    };
+  }
 
   const dehydratedState = dehydrate(queryClient);
 
@@ -31,36 +40,59 @@ export const getServerSideProps = async (c: GetServerSidePropsContext) => {
 };
 
 function CirclePage() {
-  const { error } = useGetCircleBySlug();
+  const { error, isPending, data } = useGetCircleBySlug();
 
-  if (error) {
-    const errMsg = prettifyError(error);
+  const Content = () => {
+    if (error) {
+      const errMsg = prettifyError(error);
+      return (
+        <EachPageLayout className="flex items-center justify-center">
+          <p>{errMsg}</p>
+        </EachPageLayout>
+      );
+    }
+
+    if (isPending) {
+      return (
+        <div className="min-h-[calc(100vh-63px-141px)] space-y-4">
+          <SectionPartitionWrapper className="h-[132px] animate-pulse-faster bg-slate-300"></SectionPartitionWrapper>
+          <SectionPartitionWrapper className="h-[132px] animate-pulse-faster bg-slate-300"></SectionPartitionWrapper>
+          <SectionPartitionWrapper className="h-[132px] animate-pulse-faster bg-slate-300"></SectionPartitionWrapper>
+          <SectionPartitionWrapper className="h-[132px] animate-pulse-faster bg-slate-300"></SectionPartitionWrapper>
+          <SectionPartitionWrapper className="h-[132px] animate-pulse-faster bg-slate-300"></SectionPartitionWrapper>
+        </div>
+      );
+    }
+
     return (
-      <EachPageLayout className="flex items-center justify-center">
-        <p>{errMsg}</p>
-      </EachPageLayout>
+      <div className="mb-10 min-h-[calc(100vh-63px-141px)] space-y-4">
+        <SectionPartitionWrapper>
+          <GeneralInfoSection />
+        </SectionPartitionWrapper>
+        <CircleCutSection />
+        <SectionPartitionWrapper>
+          <EventSection />
+        </SectionPartitionWrapper>
+        <SectionPartitionWrapper>
+          <FandomWorkTypeSection />
+        </SectionPartitionWrapper>
+        <SectionPartitionWrapper>
+          <ProductSection />
+        </SectionPartitionWrapper>
+        <SectionPartitionWrapper>
+          <DescriptionSection />
+        </SectionPartitionWrapper>
+      </div>
     );
-  }
+  };
 
   return (
-    <div className="min-h-[calc(100vh-63px-141px)] space-y-4">
-      <SectionPartitionWrapper>
-        <GeneralInfoSection />
-      </SectionPartitionWrapper>
-      <CircleCutSection />
-      <SectionPartitionWrapper>
-        <EventSection />
-      </SectionPartitionWrapper>
-      <SectionPartitionWrapper>
-        <FandomWorkTypeSection />
-      </SectionPartitionWrapper>
-      <SectionPartitionWrapper>
-        <ProductSection />
-      </SectionPartitionWrapper>
-      <SectionPartitionWrapper>
-        <DescriptionSection />
-      </SectionPartitionWrapper>
-    </div>
+    <Fragment>
+      <NextSeo
+        title={!!data?.name ? `${data.name} | Inner Catalog` : undefined}
+      />
+      <Content />
+    </Fragment>
   );
 }
 

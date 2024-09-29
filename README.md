@@ -1,6 +1,8 @@
 # Project catalog-ui 📚
 
-Nextjs application for `Inner Catalog`
+Nextjs web application for `Inner Catalog`
+
+![logo](./public/flat-logo.png)
 
 ## Description
 
@@ -19,6 +21,7 @@ This is an alternatives from `comifuro` catalog but not solely for comifuro. I w
 
 - Node v20.9.0
 - pnpm v9.2.0
+- Docker
 - Google Client ID (for Google OAuth2)
 
 ### Installation

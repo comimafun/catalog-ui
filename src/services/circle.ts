@@ -6,7 +6,7 @@ import {
   getOneCircleResponse,
   onboardCircleResponse,
   type FandomQueryParams,
-  type GetCircleQueryParams,
+  type GetCirclesQueryParams,
   type OnboardingPayload,
   type UpdateCirclePayload,
 } from '@/types/circle';
@@ -14,8 +14,14 @@ import { backendResponseSchema } from '@/types/common';
 import { FetchContext, fetchInstance } from '@/utils/fetch-wrapper';
 
 export const circleService = {
-  getCircles: async (params: GetCircleQueryParams) => {
+  getCircles: async (params: GetCirclesQueryParams) => {
     const res = await fetchInstance(null, '/v1/circle', { params: params });
+    return getCirclesResponse.parse(res);
+  },
+  getBookmarkedCircles: async (params: GetCirclesQueryParams) => {
+    const res = await fetchInstance(null, '/v1/circle/bookmarked', {
+      params: params,
+    });
     return getCirclesResponse.parse(res);
   },
   getCircleBySlug: async (c: FetchContext, slug: string) => {
@@ -63,5 +69,12 @@ export const circleService = {
   getAllWorkTypes: async () => {
     const res = await fetchInstance(null, '/v1/worktype/all');
     return getAllWorkTypeResponse.parse(res);
+  },
+  getReferralByCircleID: async (circleID: number) => {
+    const res = await fetchInstance<{
+      code: number;
+      data: string | null;
+    }>(null, `/v1/circle/${circleID}/referral`);
+    return res;
   },
 };

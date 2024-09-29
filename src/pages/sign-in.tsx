@@ -48,7 +48,7 @@ const SignInWithGoogle = () => {
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const cookies = nookies.get(ctx);
-  if (cookies.access_token) {
+  if (cookies.access_token || cookies.refresh_token) {
     return {
       redirect: {
         destination: '/',
